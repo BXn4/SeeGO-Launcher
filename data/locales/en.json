@@ -4,5 +4,6 @@
   "language_native": "English",
   "splash-loading": "Loading",
   "splash-loading-news": "Loading news",
-  "splash-loading-serial": "Getting Serial"
+  "splash-loading-serial": "Getting Serial",
+  "notification-launcher-minimized": "The SeeGO Launcher was minimized, and running in the background."
 }

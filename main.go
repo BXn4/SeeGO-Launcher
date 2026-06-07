@@ -1,8 +1,10 @@
 package main
 
 import (
-	"changeme/internal/utils"
 	"embed"
+	"seegolauncher/internal/localization"
+	"seegolauncher/internal/services"
+	"seegolauncher/internal/utils"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
@@ -77,7 +79,7 @@ func main() {
 		},
 		Services: []application.Service{
 			// application.NewService(&GreetService{}),
-		},
+			application.NewService(services.LocalizationService())},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -124,7 +126,7 @@ func main() {
 			main.Hide()
 			a.appState = Minimized
 			log.Info("The app is minimized")
-			utils.Notify("A SeeGO launcher minimalizálva lett, és a háttérben fut.")
+			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, a.config.Language))
 		}
 	})
 

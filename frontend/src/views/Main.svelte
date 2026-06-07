@@ -1,7 +1,5 @@
 <script lang="ts">
     import logo from "../public/images/seego_nobg.svg";
-    import minimize from "../public/images/minimize.svg";
-    import close from "../public/images/close.svg";
 </script>
 
 <main>

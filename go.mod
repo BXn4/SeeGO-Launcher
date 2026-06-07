@@ -1,4 +1,4 @@
-module changeme
+module seegolauncher
 
 go 1.25.0
 

@@ -47,8 +47,13 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
+	println(config.Language)
+
 	if config.Language != "en" && config.Language != "hu" {
 		log.Warnf("The language is invalid, using default one: %s", DefaultConfig.Language)
+		config.Language = DefaultConfig.Language
+
+		SaveConfig(&config)
 	}
 
 	log.Info("App config:", "language", config.Language)

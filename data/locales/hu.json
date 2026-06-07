@@ -4,5 +4,6 @@
   "language_native": "Magyar",
   "splash-loading": "Betöltés",
   "splash-loading-news": "Hírek betöltése",
-  "splash-loading-serial": "Serial lekérdezése"
+  "splash-loading-serial": "Serial lekérdezése",
+  "notification-launcher-minimized": "A SeeGO launcher minimalizálva lett, és a háttérben fut."
 }
