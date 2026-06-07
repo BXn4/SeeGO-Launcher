@@ -19,8 +19,13 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+const (
+	Show int = iota
+	Minimized
+)
+
 type App struct {
-	appState int // -1 minimized 0 show
+	appState int
 	view     string
 	window   *application.WebviewWindow
 	app      *application.App
@@ -59,7 +64,7 @@ func main() {
 			UniqueID: "1000",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
 				switch a.appState {
-				case -1:
+				case Minimized:
 					{
 						a.window.Show()
 						a.window.UnMinimise()
@@ -103,29 +108,29 @@ func main() {
 		Title:            "SeeGO Launcher",
 		Width:            1200,
 		Height:           1200 / (16.0 / 9.0),
+		MinWidth:         800,
+		MinHeight:        400,
 		Frameless:        true,
 		AlwaysOnTop:      false,
-		DisableResize:    true,
+		DisableResize:    false,
 		BackgroundColour: application.NewRGB(52, 58, 64),
 		URL:              "/",
 		Hidden:           true,
 	})
-	println(main.Height())
 
 	main.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
-		if a.appState != -1 {
+		if a.appState == Show {
 			e.Cancel()
 			main.Hide()
-			a.appState = -1
+			a.appState = Minimized
 			log.Info("The app is minimized")
 			utils.Notify("A SeeGO launcher minimalizálva lett, és a háttérben fut.")
 		}
 	})
 
 	go func() {
-		time.Sleep(30 * time.Second)
+		time.Sleep(2 * time.Second)
 		main.Show()
-
 		a.window = main
 		splash.Close()
 		app.Event.Emit("navigate", "main")
@@ -142,10 +147,10 @@ func main() {
 
 func (a *App) UpdateAppState() {
 	switch a.appState {
-	case -1:
-		a.appState = 0
+	case Minimized:
+		a.appState = Show
 	default:
-		a.appState = -1
+		a.appState = Minimized
 	}
 }
 

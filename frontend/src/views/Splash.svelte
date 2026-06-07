@@ -26,6 +26,10 @@
             Segoe UI,
             Roboto,
             sans-serif;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 
     main {
@@ -53,7 +57,6 @@
             #161a21,
             #16191f
         );
-        background-size: 400% 400%;
     }
 
     #splash {
