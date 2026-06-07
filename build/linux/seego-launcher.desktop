@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=seego-launcher
+Exec=seego-launcher
+Icon=seego-launcher
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false
