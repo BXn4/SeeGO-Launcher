@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	TermsFile string = "terms.ver"
+	TermsDate string = "terms.ver"
+	TermsFile        = "terms.chc"
 )
 
 type CacheData struct {
@@ -27,6 +28,14 @@ func getCachePath() (string, error) {
 	return filepath.Join(home, ".config", "seego-launcher", "cache"), nil
 }
 
+func getNewsCachePath() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("Could not get home directory: %w", err)
+	}
+	return filepath.Join(home, ".config", "seego-launcher", "cache", "news"), nil
+}
+
 func getCacheFilePath(filename string) (string, error) {
 	dir, err := getCachePath()
 	if err != nil {
@@ -37,6 +46,14 @@ func getCacheFilePath(filename string) (string, error) {
 
 func checkCacheDir() error {
 	dir, err := getCachePath()
+	if err != nil {
+		return err
+	}
+	return os.MkdirAll(dir, 0755)
+}
+
+func checkNewsCacheDir() error {
+	dir, err := getNewsCachePath()
 	if err != nil {
 		return err
 	}
@@ -58,27 +75,108 @@ func request(url string) (string, error) {
 	return string(body), nil
 }
 
+func RequestTermsDate() (string, error) {
+	response, err := request(endpoints.TermsDate)
+	if err != nil {
+		log.Errorf("Failed to request terms: %s", err)
+		return "", err
+	}
+
+	return response, err
+}
+
+func WriteTermsDate(v string) error {
+	cacheDir, err := getCachePath()
+	if err != nil {
+		log.Errorf("Error getting cache path: %v", err)
+		return err
+	}
+
+	termsFile := filepath.Join(cacheDir, TermsDate)
+
+	if err := os.WriteFile(termsFile, []byte(v), 0644); err != nil {
+		log.Errorf("Failed to write %s: %v", TermsDate, err)
+		return err
+	}
+	return nil
+}
+
+func RequestTerms() (string, error) {
+	response, err := request(endpoints.Terms)
+	if err != nil {
+		log.Errorf("Failed to request terms: %s", err)
+		return "", err
+	}
+
+	return response, err
+}
+
+func WriteTerms(v string) error {
+	cacheDir, err := getCachePath()
+	if err != nil {
+		log.Errorf("Error getting cache path: %v", err)
+		return err
+	}
+
+	termsFile := filepath.Join(cacheDir, TermsFile)
+
+	if err := os.WriteFile(termsFile, []byte(v), 0644); err != nil {
+		log.Errorf("Failed to write %s: %v", TermsFile, err)
+		return err
+	}
+	return nil
+}
+
 func LoadCache() {
 	if err := checkCacheDir(); err != nil {
-		fmt.Println("Error creating cache directory:", err)
-		return
-	}
-	path, err := getCachePath()
-	if err != nil {
-		fmt.Println("Error getting cache path:", err)
+		log.Errorf("Error creating cache directory: %v", err)
 		return
 	}
 
-	if _, err := os.Stat(path + "/" + TermsFile); os.IsNotExist(err) {
-		log.Infof("%s is not found, requesting it.", TermsFile)
-		response, err := request(endpoints.TermsDate)
-		if err != nil {
-			log.Errorf("Failed to request terms: %s", err)
+	if err := checkNewsCacheDir(); err != nil {
+		log.Errorf("Error creating news cache directory: %v", err)
+		return
+	}
+
+	cacheDir, err := getCachePath()
+	if err != nil {
+		log.Errorf("Error getting cache path: %v", err)
+		return
+	}
+
+	termsFile := filepath.Join(cacheDir, TermsDate)
+	terms := filepath.Join(cacheDir, TermsFile)
+	termsDateresponse, _ := RequestTermsDate()
+
+	termsDateData, err := os.ReadFile(termsFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Infof("%s not found, requesting it", TermsDate)
+			WriteTermsDate(termsDateresponse)
 			return
 		}
-		if err := os.WriteFile(path+"/"+TermsFile, []byte(response), 0644); err != nil {
-			log.Errorf("Failed to write %s: %s", TermsFile, err)
+
+		log.Errorf("Failed to read %s: %v", TermsDate, err)
+		return
+	}
+
+	_, err = os.ReadFile(terms)
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Infof("%s not found, requesting it", TermsFile)
+			termsDataResponse, _ := RequestTerms()
+			WriteTerms(termsDataResponse)
 			return
 		}
+
+		log.Errorf("Failed to read %s: %v", TermsFile, err)
+		return
+	}
+
+	if string(termsDateData) != termsDateresponse {
+		WriteTermsDate(string(termsDateresponse))
+
+		response, _ := RequestTerms()
+		WriteTerms(response)
 	}
 }

@@ -2,11 +2,8 @@
     import logo from "../public/images/seego_nobg.svg";
 
     import { onMount } from "svelte";
-    import { Events } from "@wailsio/runtime";
 
     onMount(() => {
-        Events.Emit("dom-ready" as any, null);
-
         const interval = setInterval(() => {
             const el = document.getElementById("splash-alt");
             if (!el) return;

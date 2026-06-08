@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"os"
+	"seegolauncher/internal/cache"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
@@ -26,13 +28,10 @@ const (
 )
 
 type App struct {
-	appState     int
-	view         string
-	window       *application.WebviewWindow
-	app          *application.App
-	splashWindow *application.WebviewWindow
-	mainWindow   *application.WebviewWindow
-	termsWindow  *application.WebviewWindow
+	appState int
+	view     string
+	window   *application.WebviewWindow
+	splash   *application.WebviewWindow
 }
 
 func init() {
@@ -63,6 +62,7 @@ func main() {
 		SingleInstance: &application.SingleInstanceOptions{
 			UniqueID: "1000",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
+				log.Info("Tried to open a new instance, but its already running. Showing the instance.")
 				switch a.appState {
 				case Minimized:
 					{
@@ -70,7 +70,10 @@ func main() {
 						a.window.UnMinimise()
 						a.window.Focus()
 						a.UpdateAppState()
-						log.Info("Tried to open a new instance, but its already running. Showing the instance.")
+					}
+				case Show:
+					{
+						a.window.Focus()
 					}
 				}
 			},
@@ -84,14 +87,12 @@ func main() {
 		},
 	})
 
-	a.app = app
-
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
-	a.splashWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
+	a.splash = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "SeeGO Launcher",
 		Width:            476,
 		Height:           300,
@@ -103,21 +104,14 @@ func main() {
 		Hidden:           false,
 	})
 
-	a.mainWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "SeeGO Launcher",
-		Width:            1200,
-		Height:           1200 / (16.0 / 9.0),
-		MinWidth:         800,
-		MinHeight:        400,
-		Frameless:        true,
-		AlwaysOnTop:      false,
-		DisableResize:    false,
-		BackgroundColour: application.NewRGB(52, 58, 64),
-		URL:              "/",
-		Hidden:           true,
-	})
-
+	a.window = a.splash
 	a.window.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
+		if a.window == a.splash {
+			log.Info("App quit during the splash screen")
+			app.Quit()
+			os.Exit(0)
+			return
+		}
 		if a.appState == Show {
 			e.Cancel()
 			a.window.Hide()
@@ -127,9 +121,17 @@ func main() {
 		}
 	})
 
+	cache.LoadCache()
+
+	a.splash.OnWindowEvent(events.Common.WindowRuntimeReady, func(e *application.WindowEvent) {
+		app.Event.Emit("update-text", map[string]string{
+			"id":    "splash-alt",
+			"value": localization.SplashLoading,
+		})
+	})
+
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
-
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {
 		log.Fatal(err)
