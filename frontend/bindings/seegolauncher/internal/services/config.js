@@ -20,6 +20,7 @@ export function GetConfig() {
 }
 
 /**
+ * getters
  * @returns {$CancellablePromise<string>}
  */
 export function GetLanguage() {
@@ -27,6 +28,14 @@ export function GetLanguage() {
 }
 
 /**
+ * @returns {$CancellablePromise<boolean>}
+ */
+export function GetTermsAccepted() {
+    return $Call.ByID(3385061523);
+}
+
+/**
+ * setters
  * @param {string} lang
  * @returns {$CancellablePromise<void>}
  */

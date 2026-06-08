@@ -5,7 +5,6 @@ import (
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
-	"time"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
@@ -27,11 +26,13 @@ const (
 )
 
 type App struct {
-	appState int
-	view     string
-	window   *application.WebviewWindow
-	app      *application.App
-	config   *services.ConfigData
+	appState     int
+	view         string
+	window       *application.WebviewWindow
+	app          *application.App
+	splashWindow *application.WebviewWindow
+	mainWindow   *application.WebviewWindow
+	termsWindow  *application.WebviewWindow
 }
 
 func init() {
@@ -46,12 +47,9 @@ func init() {
 // logs any error that might occur.
 func main() {
 	log.Info("SeeGO Launcher by BXn4")
-	config, err := services.LoadConfig()
-	if err != nil {
-		log.Error("Failed to load config, using default.", "err", err)
-	}
+	config := services.ConfigService()
 
-	a := &App{config: config}
+	a := &App{}
 	initStyles()
 
 	// Create a new Wails application by providing the necessary options.
@@ -93,7 +91,7 @@ func main() {
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
-	splash := app.Window.NewWithOptions(application.WebviewWindowOptions{
+	a.splashWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "SeeGO Launcher",
 		Width:            476,
 		Height:           300,
@@ -105,9 +103,7 @@ func main() {
 		Hidden:           false,
 	})
 
-	a.window = splash
-
-	main := app.Window.NewWithOptions(application.WebviewWindowOptions{
+	a.mainWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "SeeGO Launcher",
 		Width:            1200,
 		Height:           1200 / (16.0 / 9.0),
@@ -121,46 +117,18 @@ func main() {
 		Hidden:           true,
 	})
 
-	main.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
+	a.window.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
 		if a.appState == Show {
 			e.Cancel()
-			main.Hide()
+			a.window.Hide()
 			a.appState = Minimized
 			log.Info("The app is minimized")
-			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, a.config.Language))
+			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
 		}
 	})
 
-	app.Event.On("dom-ready", func(event *application.CustomEvent) {
-		go func() {
-			app.Event.Emit("update-text", map[string]string{
-				"id":    "splash-alt",
-				"value": localization.SplashLoading,
-			})
-			time.Sleep(2 * time.Second)
-			app.Event.Emit("update-text", map[string]string{
-				"id":    "splash-alt",
-				"value": localization.SplashLoadingNews,
-			})
-			time.Sleep(2 * time.Second)
-			app.Event.Emit("update-text", map[string]string{
-				"id":    "splash-alt",
-				"value": localization.SplashLoadingSerial,
-			})
-			app.Event.Emit("update-text", map[string]string{
-				"id":    "splash-alt",
-				"value": localization.SplashLoading,
-			})
-			time.Sleep(2 * time.Second)
-			main.Show()
-			a.window = main
-			splash.Close()
-			app.Event.Emit("navigate", "main")
-		}()
-	})
-
 	// Run the application. This blocks until the application has been exited.
-	err = app.Run()
+	err := app.Run()
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {

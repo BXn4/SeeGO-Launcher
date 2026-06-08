@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
     import Splash from "./views/Splash.svelte";
+    import Terms from "./views/Terms.svelte";
     import Main from "./views/Main.svelte";
     import {
         Localization,
@@ -26,6 +27,8 @@
 
 {#if view === "splash"}
     <Splash />
+{:else if view === "terms"}
+    <Terms />
 {:else if view === "main"}
     <Main />
 {/if}

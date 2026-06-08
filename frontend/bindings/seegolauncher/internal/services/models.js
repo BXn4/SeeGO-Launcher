@@ -19,6 +19,13 @@ export class ConfigData {
              */
             this["language"] = "";
         }
+        if (!("terms_accepted" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["terms_accepted"] = false;
+        }
 
         Object.assign(this, $$source);
     }

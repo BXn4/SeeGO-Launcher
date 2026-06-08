@@ -6,16 +6,24 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sync"
 
 	"github.com/charmbracelet/log"
 )
 
+var (
+	configInstance *Config
+	configOnce     sync.Once
+)
+
 type ConfigData struct {
-	Language string `json:"language"`
+	Language      string `json:"language"`
+	TermsAccepted bool   `json:"terms_accepted"`
 }
 
 var DefaultConfig = ConfigData{
-	Language: "hu",
+	Language:      "hu",
+	TermsAccepted: false,
 }
 
 var validLanguages = []string{"en", "hu"}
@@ -24,30 +32,39 @@ type Config struct {
 	data *ConfigData
 }
 
-func ConfigService() *Config {
-	data, err := LoadConfig()
-	if err != nil {
-		log.Warn("Failed to load config, using defaults", "err", err)
-		defaultCopy := DefaultConfig
-		data = &defaultCopy
-	}
-	return &Config{data: data}
-}
-
+// getters
 func (s *Config) GetLanguage() string {
 	return s.data.Language
 }
 
+func (s *Config) GetTermsAccepted() bool {
+	return s.data.TermsAccepted
+}
+
+func (s *Config) GetConfig() ConfigData {
+	return *s.data
+}
+
+// setters
 func (s *Config) SetLanguage(lang string) error {
 	if !isValidLanguage(lang) {
-		return fmt.Errorf("invalid language: %s", lang)
+		return fmt.Errorf("Invalid language: %s", lang)
 	}
 	s.data.Language = lang
 	return saveConfig(s.data)
 }
 
-func (s *Config) GetConfig() ConfigData {
-	return *s.data
+func ConfigService() *Config {
+	configOnce.Do(func() {
+		data, err := LoadConfig()
+		if err != nil {
+			log.Warn("Failed to load config, using defaults", "err", err)
+			defaultCopy := DefaultConfig
+			data = &defaultCopy
+		}
+		configInstance = &Config{data: data}
+	})
+	return configInstance
 }
 
 func isValidLanguage(lang string) bool {
@@ -60,7 +77,7 @@ func isValidLanguage(lang string) bool {
 func getConfigPath() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("could not get home directory: %w", err)
+		return "", fmt.Errorf("Could not get home directory: %w", err)
 	}
 	return filepath.Join(home, ".config", "seego-launcher", "config.json"), nil
 }
@@ -73,25 +90,25 @@ func LoadConfig() (*ConfigData, error) {
 	log.Debugf("Loading config from: %s", path)
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		log.Info("config.json not found, creating default")
+		log.Info("config.json not found, creating and using default")
 		return createDefaultConfig()
 	}
 
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read config: %w", err)
+		return nil, fmt.Errorf("Failed to read config: %w", err)
 	}
 
 	var config ConfigData
 	if err := json.Unmarshal(data, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse config: %w", err)
+		return nil, fmt.Errorf("Failed to parse config: %w", err)
 	}
 
 	if !isValidLanguage(config.Language) {
-		log.Warnf("Invalid language '%s', reverting to default '%s'", config.Language, DefaultConfig.Language)
+		log.Warnf("Invalid language '%s', using default '%s'", config.Language, DefaultConfig.Language)
 		config.Language = DefaultConfig.Language
 		if err := saveConfig(&config); err != nil {
-			log.Warn("Failed to save corrected config", "err", err)
+			log.Warn("Failed to save config", "err", err)
 		}
 	}
 
@@ -102,7 +119,7 @@ func LoadConfig() (*ConfigData, error) {
 func createDefaultConfig() (*ConfigData, error) {
 	config := &ConfigData{Language: DefaultConfig.Language}
 	if err := saveConfig(config); err != nil {
-		return nil, fmt.Errorf("failed to create default config: %w", err)
+		return nil, fmt.Errorf("Failed to create default config: %w", err)
 	}
 	log.Info("Created default config.json")
 	return config, nil
@@ -114,14 +131,14 @@ func saveConfig(config *ConfigData) error {
 		return err
 	}
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
-		return fmt.Errorf("failed to create config directory: %w", err)
+		return fmt.Errorf("Failed to create config directory: %w", err)
 	}
 	data, err := json.MarshalIndent(config, "", "    ")
 	if err != nil {
-		return fmt.Errorf("failed to serialize config: %w", err)
+		return fmt.Errorf("Failed to serialize config: %w", err)
 	}
 	if err := os.WriteFile(path, data, 0644); err != nil {
-		return fmt.Errorf("failed to write config file: %w", err)
+		return fmt.Errorf("Failed to write config file: %w", err)
 	}
 	log.Info("Config saved", "language", config.Language)
 	return nil
