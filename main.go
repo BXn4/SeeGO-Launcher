@@ -31,7 +31,7 @@ type App struct {
 	view     string
 	window   *application.WebviewWindow
 	app      *application.App
-	config   *utils.Config
+	config   *services.ConfigData
 }
 
 func init() {
@@ -46,7 +46,7 @@ func init() {
 // logs any error that might occur.
 func main() {
 	log.Info("SeeGO Launcher by BXn4")
-	config, err := utils.LoadConfig()
+	config, err := services.LoadConfig()
 	if err != nil {
 		log.Error("Failed to load config, using default.", "err", err)
 	}
@@ -78,8 +78,9 @@ func main() {
 			},
 		},
 		Services: []application.Service{
-			// application.NewService(&GreetService{}),
-			application.NewService(services.LocalizationService())},
+			application.NewService(services.LocalizationService()),
+			application.NewService(services.ConfigService()),
+		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -130,13 +131,33 @@ func main() {
 		}
 	})
 
-	go func() {
-		time.Sleep(2 * time.Second)
-		main.Show()
-		a.window = main
-		splash.Close()
-		app.Event.Emit("navigate", "main")
-	}()
+	app.Event.On("dom-ready", func(event *application.CustomEvent) {
+		go func() {
+			app.Event.Emit("update-text", map[string]string{
+				"id":    "splash-alt",
+				"value": localization.SplashLoading,
+			})
+			time.Sleep(2 * time.Second)
+			app.Event.Emit("update-text", map[string]string{
+				"id":    "splash-alt",
+				"value": localization.SplashLoadingNews,
+			})
+			time.Sleep(2 * time.Second)
+			app.Event.Emit("update-text", map[string]string{
+				"id":    "splash-alt",
+				"value": localization.SplashLoadingSerial,
+			})
+			app.Event.Emit("update-text", map[string]string{
+				"id":    "splash-alt",
+				"value": localization.SplashLoading,
+			})
+			time.Sleep(2 * time.Second)
+			main.Show()
+			a.window = main
+			splash.Close()
+			app.Event.Emit("navigate", "main")
+		}()
+	})
 
 	// Run the application. This blocks until the application has been exited.
 	err = app.Run()

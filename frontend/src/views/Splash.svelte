@@ -1,12 +1,31 @@
 <script lang="ts">
     import logo from "../public/images/seego_nobg.svg";
+
+    import { onMount } from "svelte";
+    import { Events } from "@wailsio/runtime";
+
+    onMount(() => {
+        Events.Emit("dom-ready" as any, null);
+
+        const interval = setInterval(() => {
+            const el = document.getElementById("splash-alt");
+            if (!el) return;
+            if (el.textContent?.endsWith("...")) {
+                el.textContent = el.textContent.slice(0, -3);
+            } else {
+                el.textContent += ".";
+            }
+        }, 500);
+
+        return () => clearInterval(interval);
+    });
 </script>
 
 <main>
     <div id="splash">
         <img id="splash-logo" src={logo} alt="SeeGO Launcher logo" />
         <h1 id="splash-title">SeeGO Launcher</h1>
-        <p id="splash-alt">Betöltés</p>
+        <p id="splash-alt"></p>
 
         <div id="loading"></div>
     </div>
@@ -81,8 +100,8 @@
 
     #splash-alt {
         margin: 0;
-        opacity: 0.7;
         font-size: 14px;
+        display: block;
     }
 
     #loading {
@@ -98,28 +117,6 @@
     @keyframes spin {
         to {
             transform: rotate(360deg);
-        }
-    }
-
-    @keyframes popIn {
-        from {
-            transform: scale(0.7);
-            opacity: 0;
-        }
-        to {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadeUp {
-        from {
-            transform: translateY(10px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
         }
     }
 </style>
