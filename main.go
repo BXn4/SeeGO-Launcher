@@ -2,11 +2,10 @@ package main
 
 import (
 	"embed"
-	"os"
-	"seegolauncher/internal/cache"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
@@ -32,6 +31,7 @@ type App struct {
 	view     string
 	window   *application.WebviewWindow
 	splash   *application.WebviewWindow
+	main     *application.WebviewWindow
 }
 
 func init() {
@@ -105,23 +105,33 @@ func main() {
 	})
 
 	a.window = a.splash
-	a.window.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
-		if a.window == a.splash {
-			log.Info("App quit during the splash screen")
-			app.Quit()
-			os.Exit(0)
-			return
-		}
+
+	a.main = app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:            "SeeGO Launcher",
+		Width:            1200,
+		Height:           1200 / (16.0 / 9.0),
+		MinWidth:         600,
+		MinHeight:        320,
+		Frameless:        true,
+		AlwaysOnTop:      false,
+		DisableResize:    false,
+		BackgroundColour: application.NewRGB(52, 58, 64),
+		URL:              "/",
+		Hidden:           true,
+	})
+
+	a.main.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
 		if a.appState == Show {
 			e.Cancel()
-			a.window.Hide()
+			a.main.Minimise()
+			a.main.Hide()
 			a.appState = Minimized
 			log.Info("The app is minimized")
 			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
 		}
 	})
 
-	cache.LoadCache()
+	// cache.LoadCache()
 
 	a.splash.OnWindowEvent(events.Common.WindowRuntimeReady, func(e *application.WindowEvent) {
 		app.Event.Emit("update-text", map[string]string{
@@ -129,6 +139,17 @@ func main() {
 			"value": localization.SplashLoading,
 		})
 	})
+
+	app.OnShutdown(func() { log.Info("App shutdown") })
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		a.splash.Close()
+		a.splash = nil
+		a.window = a.main
+		a.main.Show()
+		app.Event.Emit("navigate", "main")
+	}()
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
