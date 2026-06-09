@@ -1,4 +1,3 @@
-
 # SeeGO Launcher
 
 <img src="https://gitea.com/BXn4/seego-launcher/raw/branch/main/frontend/src/public/images/seego_icon.svg" align="right"
@@ -13,3 +12,6 @@ Ez a projekt nem hivatalos. Nem áll kapcsolatban a SEE-ONLINE Kft.-vel vagy a S
 A projekt nem tartalmazza, nem terjeszti és nem használja fel a SeeRPG hivatalos kliensének, launcherének vagy egyéb szoftvereinek forráskódját.
 
 A projekt célja kizárólag a kompatibilitás biztosítása és a felhasználói élmény javítása a SeeRPG közösség számára.
+
+
+<img src="https://i.imgur.com/TbQ7sKT.png">
