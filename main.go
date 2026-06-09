@@ -265,6 +265,8 @@ func main() {
 		a.setWindow(main)
 	})
 
+	// https://youtu.be/xXKqODp94VA
+
 	go func() {
 		time.Sleep(2 * time.Second)
 

@@ -21,8 +21,7 @@
         <div id="drag-region">
             <div id="titlebar-hover-area"></div>
             <div id="window-title">
-                <span class="dim1">See</span>
-                <span class="dim2">Go</span>
+                <span class="dim1">See</span><span class="dim2">Go</span>
             </div>
             <div id="window-controls">
                 <span
