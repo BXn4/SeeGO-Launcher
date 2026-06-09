@@ -1,8 +1,6 @@
 <script lang="ts">
     import logo from "../public/images/seego_nobg.svg";
-
     import { onMount } from "svelte";
-
     onMount(() => {
         const interval = setInterval(() => {
             const el = document.getElementById("splash-alt");
@@ -13,7 +11,6 @@
                 el.textContent += ".";
             }
         }, 500);
-
         return () => clearInterval(interval);
     });
 </script>
@@ -46,6 +43,7 @@
         -ms-user-select: none;
         user-select: none;
     }
+
     main {
         width: 100vw;
         height: 100vh;
@@ -71,6 +69,7 @@
             #16191f
         );
     }
+
     #splash {
         text-align: center;
         display: flex;
@@ -78,21 +77,25 @@
         align-items: center;
         gap: 14px;
     }
+
     #splash-logo {
         width: 120px;
         height: auto;
     }
+
     #splash-title {
         font-size: 28px;
         margin: 0;
         font-weight: 600;
         letter-spacing: 0.5px;
     }
+
     #splash-alt {
         margin: 0;
         font-size: 14px;
         display: block;
     }
+
     #loading {
         margin-top: 16px;
         width: 28px;
@@ -102,6 +105,7 @@
         border-radius: 50%;
         animation: spin 1.5s linear infinite;
     }
+
     @keyframes spin {
         to {
             transform: rotate(360deg);

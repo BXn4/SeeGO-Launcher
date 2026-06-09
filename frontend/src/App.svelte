@@ -7,13 +7,10 @@
         Localization,
         Config,
     } from "../bindings/seegolauncher/internal/services";
-
     let view = $state("splash");
-
     Events.On("navigate", (e) => {
         view = e.data;
     });
-
     Events.On("update-text", async (e) => {
         const el = document.getElementById(e.data.id);
         if (el) {
