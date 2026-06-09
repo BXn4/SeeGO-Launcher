@@ -79,11 +79,18 @@
 
 <main>
     <Titlebar></Titlebar>
-    <div id="content-wrapper">
+    <div id="content">
         <h1 id="terms-title">{title}</h1>
         <p id="terms-modified">{modified}</p>
         <hr />
-        <div id="terms-content">{@html terms}</div>
+        <div id="terms-content">
+            <h3>
+                SeeGO Launcher is an open-source project distributed under the
+                MIT License. It is provided "as is", without warranty of any
+                kind. You are free to use, modify, and distribute it.
+            </h3>
+            {@html terms}
+        </div>
         <div id="actionbar">
             <button
                 class="button"
@@ -130,7 +137,7 @@
         );
     }
 
-    #content-wrapper {
+    #content {
         margin-top: var(--height);
         height: calc(100vh - var(--height) - 64px);
         overflow-y: auto;
