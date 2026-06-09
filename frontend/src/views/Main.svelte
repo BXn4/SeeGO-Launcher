@@ -1,8 +1,10 @@
 <script lang="ts">
     import logo from "../public/images/seego_nobg.svg";
+    import Titlebar from "./partials/Titlebar.svelte";
 </script>
 
 <main>
+    <Titlebar></Titlebar>
     <div id="navbar">
         <div class="navbar-item top">
             <button class="navbar-button" id="play" title="Play">
@@ -129,81 +131,6 @@
             #161a21,
             #16191f
         );
-    }
-
-    #titlebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: var(--height);
-        background: var(--surface);
-        border-bottom: 0.5px solid var(--border);
-        z-index: 10;
-    }
-
-    #drag-region {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        position: relative;
-        --wails-draggable: drag;
-    }
-
-    #titlebar-hover-area {
-        position: fixed;
-        top: calc(var(--height) - 8px);
-        left: 0;
-        right: 0;
-        height: 14px;
-        z-index: 11;
-        pointer-events: all;
-    }
-
-    #window-title {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        color: var(--text);
-        font-weight: 300;
-    }
-
-    #window-title .dim1 {
-        color: var(--dim1);
-    }
-
-    #window-title .dim2 {
-        color: var(--dim2);
-    }
-
-    #window-controls {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 100%;
-        display: flex;
-    }
-
-    .window-control {
-        width: 44px;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        color: var(--text);
-        cursor: pointer;
-    }
-
-    .window-control:hover {
-        color: var(--text);
-        background: var(--window-icon-hover);
-    }
-
-    #close-button:hover {
-        color: var(--red);
     }
 
     #navbar {

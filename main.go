@@ -191,18 +191,18 @@ func main() {
 		})
 	})
 
-	app.Event.On("shutdown", func(e *application.CustomEvent) {
-		os.Exit(0)
-	})
-
 	// im on hyprland, wails v3 not supports tray on linux, and also minimize not works for me, so i need to test it on win
 	app.Event.On("close", func(e *application.CustomEvent) {
-		a.mu.Lock()
-		defer a.mu.Unlock()
-		e.Cancel()
-		main.Hide()
-		a.appState = Tray
-		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
+		if a.getWindow() == main {
+			a.mu.Lock()
+			defer a.mu.Unlock()
+			e.Cancel()
+			main.Hide()
+			a.appState = Tray
+			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
+		} else {
+			os.Exit(0)
+		}
 	})
 
 	app.Event.On("minimize", func(e *application.CustomEvent) {
