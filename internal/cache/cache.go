@@ -140,33 +140,31 @@ func LoadCache() {
 		return
 	}
 
-	termsFile := filepath.Join(cacheDir, TermsDate)
-	terms := filepath.Join(cacheDir, TermsFile)
+	termsDatePath := filepath.Join(cacheDir, TermsDate)
+	termsFilePath := filepath.Join(cacheDir, TermsFile)
 	termsDateresponse, _ := RequestTermsDate()
 
-	termsDateData, err := os.ReadFile(termsFile)
+	termsDateData, err := os.ReadFile(termsDatePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			log.Infof("%s not found, requesting it", TermsDate)
 			WriteTermsDate(termsDateresponse)
+		} else {
+			log.Errorf("Failed to read %s: %v", TermsDate, err)
 			return
 		}
-
-		log.Errorf("Failed to read %s: %v", TermsDate, err)
-		return
 	}
 
-	_, err = os.ReadFile(terms)
+	_, err = os.ReadFile(termsFilePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			log.Infof("%s not found, requesting it", TermsFile)
 			termsDataResponse, _ := RequestTerms()
 			WriteTerms(termsDataResponse)
+		} else {
+			log.Errorf("Failed to read %s: %v", TermsFile, err)
 			return
 		}
-
-		log.Errorf("Failed to read %s: %v", TermsFile, err)
-		return
 	}
 
 	if string(termsDateData) != termsDateresponse {

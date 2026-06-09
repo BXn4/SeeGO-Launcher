@@ -18,8 +18,10 @@ import (
 var assets embed.FS
 
 const (
-	Show int = iota
+	Tray int = iota
+	Show
 	Minimized
+	Maximized
 )
 
 type App struct {
@@ -27,6 +29,7 @@ type App struct {
 	appState   int
 	window     *application.WebviewWindow
 	splashDone bool
+	dialog     *application.MessageDialog
 }
 
 func (a *App) setWindow(w *application.WebviewWindow) {
@@ -49,7 +52,9 @@ func main() {
 	log.Info("SeeGO Launcher by BXn4")
 	config := services.ConfigService()
 
-	a := &App{appState: Show}
+	a := &App{appState: Show, dialog: nil}
+
+	// cache.LoadCache()
 
 	app := application.New(application.Options{
 		Name:        "seego-launcher",
@@ -60,18 +65,16 @@ func main() {
 				log.Info("Tried to open a new instance, but its already running. Showing the instance.")
 				w := a.getWindow()
 				a.mu.Lock()
-				state := a.appState
-				a.mu.Unlock()
-				switch state {
-				case Minimized:
+				defer a.mu.Unlock()
+				switch a.appState {
+				case Tray:
 					w.UnMinimise()
 					w.Show()
 					w.Focus()
-					a.mu.Lock()
 					a.appState = Show
-					a.mu.Unlock()
-				case Show:
+				default:
 					w.Focus()
+					w.Flash(true)
 				}
 			},
 		},
@@ -85,47 +88,75 @@ func main() {
 		},
 	})
 
+	systray := app.SystemTray.New()
+	systray.SetLabel("SeeGO Launcher")
+
+	systray.OnClick(func() {
+		a.appState = Show
+		a.window.Show()
+		a.window.Focus()
+	})
+
+	menu := app.NewMenu()
+	menu.Add("Show").OnClick(func(ctx *application.Context) {
+		a.appState = Show
+		a.window.Show()
+		a.window.Focus()
+	})
+	menu.Add("Quit").OnClick(func(ctx *application.Context) {
+		app.Quit()
+	})
+	systray.SetMenu(menu)
+
 	splash := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "SeeGO Launcher",
-		Width:            476,
-		Height:           300,
-		Frameless:        true,
-		AlwaysOnTop:      true,
-		DisableResize:    true,
-		BackgroundColour: application.NewRGB(52, 58, 64),
-		URL:              "/",
-		Hidden:           false,
+		Title:                      "SeeGO Launcher",
+		Width:                      476,
+		Height:                     300,
+		Frameless:                  true,
+		AlwaysOnTop:                true,
+		DisableResize:              true,
+		BackgroundColour:           application.NewRGB(52, 58, 64),
+		URL:                        "/",
+		Hidden:                     false,
+		DevToolsEnabled:            false,
+		DefaultContextMenuDisabled: true,
 	})
 
 	main := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "SeeGO Launcher",
-		Width:            1200,
-		Height:           int(1200 / (16.0 / 9.0)),
-		Frameless:        true,
-		DisableResize:    false,
-		BackgroundColour: application.NewRGB(52, 58, 64),
-		URL:              "/",
-		Hidden:           true,
+		Title:                      "SeeGO Launcher",
+		Width:                      1200,
+		Height:                     int(1200 / (16.0 / 9.0)),
+		MinWidth:                   600,
+		MinHeight:                  400,
+		Frameless:                  true,
+		DisableResize:              false,
+		BackgroundColour:           application.NewRGB(52, 58, 64),
+		URL:                        "/",
+		Hidden:                     true,
+		DevToolsEnabled:            false,
+		DefaultContextMenuDisabled: true,
 	})
 
 	terms := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "SeeGO Launcher",
-		Width:            800,
-		Height:           600,
-		Frameless:        true,
-		AlwaysOnTop:      true,
-		DisableResize:    true,
-		BackgroundColour: application.NewRGB(52, 58, 64),
-		URL:              "/",
-		Hidden:           true,
+		Title:                      "SeeGO Launcher",
+		Width:                      800,
+		Height:                     600,
+		Frameless:                  true,
+		AlwaysOnTop:                false,
+		DisableResize:              true,
+		BackgroundColour:           application.NewRGB(52, 58, 64),
+		URL:                        "/",
+		Hidden:                     true,
+		DevToolsEnabled:            false,
+		DefaultContextMenuDisabled: true,
 	})
 
 	a.setWindow(splash)
 
 	splash.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
 		a.mu.Lock()
+		defer a.mu.Unlock()
 		done := a.splashDone
-		a.mu.Unlock()
 		if !done {
 			log.Info("Splash was closed, exiting the app")
 			os.Exit(0)
@@ -145,11 +176,11 @@ func main() {
 	})
 
 	main.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
+		a.mu.Lock()
+		defer a.mu.Unlock()
 		e.Cancel()
 		main.Hide()
-		a.mu.Lock()
-		a.appState = Minimized
-		a.mu.Unlock()
+		a.appState = Tray
 		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
 	})
 
@@ -166,11 +197,11 @@ func main() {
 
 	// im on hyprland, wails v3 not supports tray on linux, and also minimize not works for me, so i need to test it on win
 	app.Event.On("close", func(e *application.CustomEvent) {
+		a.mu.Lock()
+		defer a.mu.Unlock()
 		e.Cancel()
 		main.Hide()
-		a.mu.Lock()
-		a.appState = Minimized
-		a.mu.Unlock()
+		a.appState = Tray
 		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
 	})
 
@@ -182,32 +213,56 @@ func main() {
 		a.mu.Unlock()
 	})
 
+	app.Event.On("toggle-maximize", func(e *application.CustomEvent) {
+		e.Cancel()
+		switch a.appState {
+		case Show:
+			a.getWindow().Maximise()
+			a.mu.Lock()
+			a.appState = Maximized
+			a.mu.Unlock()
+		case Maximized:
+			a.getWindow().UnMaximise()
+			a.mu.Lock()
+			a.appState = Show
+			a.mu.Unlock()
+		}
+	})
+
 	app.Event.On("terms-declined", func(e *application.CustomEvent) {
-		dialog := app.Dialog.Warning().
-			SetTitle(services.LocalizationService().Get(localization.TermsDeclinedTitle, config.GetLanguage())).
-			SetMessage(services.LocalizationService().Get(localization.TermsDeclinedContent, config.GetLanguage()))
+		a.mu.Lock()
+		defer a.mu.Unlock()
 
-		ok := dialog.AddButton("Ok")
-		ok.OnClick(
-			func() {
-				os.Exit(0)
-			})
+		a.window.SetIgnoreMouseEvents(true)
+		if a.dialog == nil {
+			dialog := app.Dialog.Warning().
+				SetTitle(services.LocalizationService().Get(localization.TermsDeclinedTitle, config.GetLanguage())).
+				SetMessage(services.LocalizationService().Get(localization.TermsDeclinedContent, config.GetLanguage()))
 
-		dialog.SetDefaultButton(ok)
+			ok := dialog.AddButton("Ok")
+			ok.OnClick(
+				func() {
+					os.Exit(0)
+				})
 
-		dialog.Show()
+			dialog.SetDefaultButton(ok)
+
+			a.dialog = dialog
+		}
+
+		a.dialog.Show()
 	})
 
 	app.Event.On("terms-accepted", func(e *application.CustomEvent) {
 		config.SetTermsAccepted()
-		main.Show()
-		main.Focus()
-		a.setWindow(main)
-
 		time.Sleep(100 * time.Millisecond)
 		app.Event.Emit("navigate", "main")
 
 		terms.Close()
+
+		main.Show()
+		main.Focus()
+		a.setWindow(main)
 	})
 
 	go func() {
@@ -216,31 +271,32 @@ func main() {
 		if !config.GetTermsAccepted() {
 			log.Info("Terms is not accepted!")
 
-			terms.Show()
-			terms.Focus()
-			a.setWindow(terms)
-
-			time.Sleep(100 * time.Millisecond)
-			app.Event.Emit("navigate", "terms")
-
 			a.mu.Lock()
 			a.splashDone = true
 			a.mu.Unlock()
 			splash.Close()
+
+			time.Sleep(100 * time.Millisecond)
+			app.Event.Emit("navigate", "terms")
+
+			terms.Show()
+			terms.Focus()
+			a.setWindow(terms)
+
 			return
 		}
-
-		main.Show()
-		main.Focus()
-		a.setWindow(main)
-
-		time.Sleep(100 * time.Millisecond)
-		app.Event.Emit("navigate", "main")
 
 		a.mu.Lock()
 		a.splashDone = true
 		a.mu.Unlock()
 		splash.Close()
+
+		time.Sleep(100 * time.Millisecond)
+		app.Event.Emit("navigate", "main")
+
+		main.Show()
+		main.Focus()
+		a.setWindow(main)
 	}()
 
 	if err := app.Run(); err != nil {
