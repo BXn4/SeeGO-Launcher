@@ -1,9 +1,103 @@
-<script lang="ts"></script>
+<script lang="ts">
+    import { onMount } from "svelte";
+    import {
+        Config,
+        Localization,
+    } from "../../../bindings/seegolauncher/internal/services";
+
+    onMount(() => {
+        setLocales();
+    });
+
+    async function setLocales() {
+        const lang = await Config.GetLanguage();
+        const play = document.getElementById("play");
+        const home = document.getElementById("home");
+        const news = document.getElementById("news");
+        const forum = document.getElementById("forum");
+        const ucp = document.getElementById("ucp");
+        const shop = document.getElementById("shop");
+        const players = document.getElementById("players");
+        const images = document.getElementById("images");
+        const help = document.getElementById("help");
+        const settings = document.getElementById("settings");
+
+        if (play) {
+            play.setAttribute(
+                "title",
+                await Localization.Get("play-title-ready", lang),
+            );
+        }
+
+        if (home) {
+            home.setAttribute(
+                "title",
+                await Localization.Get("home-title", lang),
+            );
+        }
+
+        if (news) {
+            news.setAttribute(
+                "title",
+                await Localization.Get("news-title", lang),
+            );
+        }
+
+        if (forum) {
+            forum.setAttribute(
+                "title",
+                await Localization.Get("forum-title", lang),
+            );
+        }
+
+        if (ucp) {
+            ucp.setAttribute(
+                "title",
+                await Localization.Get("ucp-title", lang),
+            );
+        }
+
+        if (shop) {
+            shop.setAttribute(
+                "title",
+                await Localization.Get("shop-title", lang),
+            );
+        }
+
+        if (images) {
+            images.setAttribute(
+                "title",
+                await Localization.Get("images-title", lang),
+            );
+        }
+
+        if (players) {
+            players.setAttribute(
+                "title",
+                await Localization.Get("players-title", lang),
+            );
+        }
+
+        if (help) {
+            help.setAttribute(
+                "title",
+                await Localization.Get("help-title", lang),
+            );
+        }
+
+        if (settings) {
+            settings.setAttribute(
+                "title",
+                await Localization.Get("settings-title", lang),
+            );
+        }
+    }
+</script>
 
 <main>
     <div id="navbar">
         <div class="navbar-item top">
-            <button class="navbar-button" id="play" title="Play">
+            <button class="navbar-button" id="play" title="">
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -19,7 +113,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="home" title="Home">
+            <button class="navbar-button active" id="home" title="">
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -35,7 +129,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="news" title="News">
+            <button class="navbar-button" id="news" title="">
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -51,7 +145,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="forum" title="Forum">
+            <button class="navbar-button" id="forum" title="">
                 <svg
                     width="100%"
                     height="100%"
@@ -69,7 +163,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="ucp" title="UCP">
+            <button class="navbar-button" id="ucp" title="">
                 <svg
                     width="100%"
                     height="100%"
@@ -90,7 +184,7 @@
         </div>
         <div class="navbar-item bottom">
             <div class="divider"></div>
-            <button class="navbar-button" id="shop" title="Shop">
+            <button class="navbar-button" id="shop" title="">
                 <svg
                     width="100%"
                     height="100%"
@@ -108,7 +202,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="images" title="Images">
+            <button class="navbar-button" id="images" title="">
                 <svg
                     width="100%"
                     height="100%"
@@ -126,7 +220,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="players" title="Players">
+            <button class="navbar-button" id="players" title="">
                 <svg
                     width="100%"
                     height="100%"
@@ -144,7 +238,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="help" title="Help">
+            <button class="navbar-button" id="help" title="">
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -160,7 +254,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="settings" title="Settings">
+            <button class="navbar-button" id="settings" title="">
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -200,7 +294,7 @@
         left: 0;
         width: var(--width);
         height: calc(100vh - var(--height));
-        background: var(--surface);
+        background: var(--surface1);
         border-right: 0.5px solid var(--border);
         display: flex;
         flex-direction: column;

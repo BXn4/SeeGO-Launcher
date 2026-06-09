@@ -6,8 +6,8 @@
     --surface2: #0d1117;
     --border: #363a49;
     --text: #cacbcf;
-    --dim1: #69cae7;
-    --dim2: #dfa406;
+    --dim1: #dfa406;
+    --dim2: #69cae7;
     --accent: #4f9eff;
     --navbar-icon: #95979f;
     --navbar-icon-hover: #bfc1c5;
@@ -18,16 +18,19 @@
     --accept-hover-color: #36495a;
     --accept-hover-border: #4b7e95;
 
-    --window-icon-hover: #303543;
+    --window-icon-hover: #2a3244;
 
-    --navbar-icon-hover-bg: #353948;
-    --navbar-icon-active: #303a51;
+    --navbar-icon-hover-bg: #2a3244;
+    --navbar-icon-active: #0E2C40;
 
     --comment: #84888f;
 
     --navbar-icon-highlighted: #2D8CC8;
 
     --red: #e06c75;
+    --green: #5ec263;
+    --orange: #ffc04e;
+    --black: #141414;
 
     user-select: none;
 }

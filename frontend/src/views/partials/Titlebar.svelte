@@ -1,5 +1,11 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
+    import {
+        Config,
+        Localization,
+    } from "../../../bindings/seegolauncher/internal/services";
+    import { onMount } from "svelte";
+
     async function closeWindow() {
         await Events.Emit("close", null);
     }
@@ -8,6 +14,30 @@
     }
     async function toggleMaximize() {
         await Events.Emit("toggle-maximize", null);
+    }
+
+    onMount(() => {
+        setLocales();
+    });
+
+    async function setLocales() {
+        const lang = await Config.GetLanguage();
+        const minButton = document.getElementById("min-button");
+        const closeButton = document.getElementById("close-button");
+
+        if (minButton) {
+            minButton.setAttribute(
+                "title",
+                await Localization.Get("window-minimize", lang),
+            );
+        }
+
+        if (closeButton) {
+            closeButton.setAttribute(
+                "title",
+                await Localization.Get("window-close", lang),
+            );
+        }
     }
 </script>
 
@@ -27,7 +57,7 @@
                 <span
                     class="window-control"
                     id="min-button"
-                    title="Minimize"
+                    title=""
                     role="button"
                     tabindex="0"
                     onclick={() => minimizeWindow()}
@@ -38,7 +68,7 @@
                 <span
                     class="window-control"
                     id="close-button"
-                    title="Close"
+                    title=""
                     role="button"
                     tabindex="0"
                     onclick={() => closeWindow()}
@@ -58,7 +88,7 @@
         left: 0;
         right: 0;
         height: var(--height);
-        background: var(--surface);
+        background: var(--surface2);
         border-bottom: 0.5px solid var(--border);
         z-index: 10;
     }

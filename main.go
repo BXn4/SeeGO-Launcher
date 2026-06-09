@@ -30,6 +30,7 @@ type App struct {
 	window     *application.WebviewWindow
 	splashDone bool
 	dialog     *application.MessageDialog
+	ready      bool
 }
 
 func (a *App) setWindow(w *application.WebviewWindow) {
