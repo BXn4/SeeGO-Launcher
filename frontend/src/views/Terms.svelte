@@ -1,80 +1,78 @@
 <script lang="ts">
-  import {
-    onMount
-  } from "svelte";
-  import {
-    GetCachedTerms
-  } from "../../bindings/seegolauncher/internal/services/cacheservice";
-  import {
-    Events
-  } from "@wailsio/runtime";
-  let title = "";
-  let modified = "";
-  let terms = "";
+    import { onMount } from "svelte";
+    import { GetCachedTerms } from "../../bindings/seegolauncher/internal/services/cacheservice";
+    import { Events } from "@wailsio/runtime";
+    let title = "";
+    let modified = "";
+    let terms = "";
 
-  function parse(raw: string): string {
-    const lines = raw.split("\n");
-    let parsed = "";
-    let headerParsed = false;
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!headerParsed) {
-        if (trimmed === "ind#") {
-          headerParsed = true;
-          continue;
-        }
-        if (!title && trimmed) {
-          title = trimmed;
-          continue;
-        }
-        if (!modified && trimmed) {
-          modified = trimmed;
-          continue;
-        }
-        continue;
-      }
-      if (!trimmed) continue;
-      if (trimmed.startsWith("ncl# ###") || trimmed.startsWith("###")) {
-        const heading = trimmed.replace(/^ncl# ###|^###/, "").trim();
-        parsed += `
+    function parse(raw: string): string {
+        const lines = raw.split("\n");
+        let parsed = "";
+        let headerParsed = false;
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!headerParsed) {
+                if (trimmed === "ind#") {
+                    headerParsed = true;
+                    continue;
+                }
+                if (!title && trimmed) {
+                    title = trimmed;
+                    continue;
+                }
+                if (!modified && trimmed) {
+                    modified = trimmed;
+                    continue;
+                }
+                continue;
+            }
+            if (!trimmed) continue;
+            if (trimmed.startsWith("ncl# ###") || trimmed.startsWith("###")) {
+                const heading = trimmed.replace(/^ncl# ###|^###/, "").trim();
+                parsed += `
 	<h4>${heading}</h4>`;
-      } else if (trimmed.startsWith("ncl# ##") || trimmed.startsWith("##")) {
-        const heading = trimmed.replace(/^ncl# ##|^##/, "").trim();
-        parsed += `
+            } else if (
+                trimmed.startsWith("ncl# ##") ||
+                trimmed.startsWith("##")
+            ) {
+                const heading = trimmed.replace(/^ncl# ##|^##/, "").trim();
+                parsed += `
 	<h3>${heading}</h3>`;
-      } else if (trimmed.startsWith("#")) {
-        const heading = trimmed.replace(/^#/, "").trim();
-        parsed += `
+            } else if (trimmed.startsWith("#")) {
+                const heading = trimmed.replace(/^#/, "").trim();
+                parsed += `
 	<h2>${heading}</h2>`;
-      } else if (trimmed.startsWith("c#")) {
-        const text = trimmed.replace(/^c#/, "").trim();
-        parsed += `
+            } else if (trimmed.startsWith("c#")) {
+                const text = trimmed.replace(/^c#/, "").trim();
+                parsed += `
 	<p class="contact">${text}</p>`;
-      } else {
-        const text = trimmed.replace(/\[\[href\]\](.*?)\[\[href\]\]/g, ' < a href = "$1"
-          target = "_blank" > $1 < /a>',);
-        parsed += `
-	<p>${text}</p>`;
-      }
+            } else {
+                const text = trimmed.replace(
+                    /\[\[href\]\](.*?)\[\[href\]\]/g,
+                    '<a href="$1" target="_blank">$1</a>',
+                );
+                parsed += `<p>${text}</p>`;
+            }
+        }
+        return parsed;
     }
-    return parsed;
-  }
-  onMount(async () => {
-    const raw = await GetCachedTerms();
-    terms = parse(raw);
-  });
-  async function closeWindow() {
-    await Events.Emit("shutdown", null);
-  }
-  async function minimizeWindow() {
-    await Events.Emit("minimize", null);
-  }
-  async function acceptTerms() {
-    await Events.Emit("terms-accepted", null);
-  }
-  async function declineTerms() {
-    await Events.Emit("terms-declined", null);
-  }
+    onMount(async () => {
+        const raw = await GetCachedTerms();
+        terms = parse(raw);
+    });
+    async function closeWindow() {
+        await Events.Emit("shutdown", null);
+    }
+    async function minimizeWindow() {
+        await Events.Emit("minimize", null);
+    }
+    async function acceptTerms() {
+        await Events.Emit("terms-accepted", null);
+    }
+    async function declineTerms() {
+        await Events.Emit("terms-declined", null);
+    }
 </script>
 
 <main>
