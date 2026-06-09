@@ -23,14 +23,13 @@
         <img id="splash-logo" src={logo} alt="SeeGO Launcher logo" />
         <h1 id="splash-title">SeeGO Launcher</h1>
         <p id="splash-alt"></p>
-
         <div id="loading"></div>
     </div>
 </main>
 
 <style>
     :global(body, html) {
-        color: #ffffff;
+        color: var(--text);
         margin: 0;
         padding: 0;
         width: 100%;
@@ -47,14 +46,12 @@
         -ms-user-select: none;
         user-select: none;
     }
-
     main {
         width: 100vw;
         height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-
         background: linear-gradient(
             -30deg,
             #1b2636,
@@ -74,7 +71,6 @@
             #16191f
         );
     }
-
     #splash {
         text-align: center;
         display: flex;
@@ -82,35 +78,30 @@
         align-items: center;
         gap: 14px;
     }
-
     #splash-logo {
         width: 120px;
         height: auto;
     }
-
     #splash-title {
         font-size: 28px;
         margin: 0;
         font-weight: 600;
         letter-spacing: 0.5px;
     }
-
     #splash-alt {
         margin: 0;
         font-size: 14px;
         display: block;
     }
-
     #loading {
         margin-top: 16px;
         width: 28px;
         height: 28px;
-        border: 3px solid rgba(255, 255, 255, 0.2);
+        border: 3px solid var(--comment);
         border-top: 3px solid white;
         border-radius: 50%;
         animation: spin 1.5s linear infinite;
     }
-
     @keyframes spin {
         to {
             transform: rotate(360deg);

@@ -43,5 +43,12 @@ export function SetLanguage(lang) {
     return $Call.ByID(1329536589, lang);
 }
 
+/**
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetTermsAccepted() {
+    return $Call.ByID(1432659951);
+}
+
 // Private type creation functions
 const $$createType0 = $models.ConfigData.createFrom;

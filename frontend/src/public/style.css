@@ -1,1 +1,31 @@
+:root {
+    --height: 40px;
+    --width: 52px;
 
+    --surface1: #131820;
+    --surface2: #0d1117;
+    --border: #363a49;
+    --text: #cacbcf;
+    --dim1: #69cae7;
+    --dim2: #dfa406;
+    --accent: #4f9eff;
+    --navbar-icon: #95979f;
+    --navbar-icon-hover: #bfc1c5;
+
+    --button-border: #2a2e33;
+    --decline-hover-color: #3b3645;
+    --decline-hover-border: #634351;
+    --accept-hover-color: #36495a;
+    --accept-hover-border: #4b7e95;
+
+    --window-icon-hover: #303543;
+
+    --navbar-icon-hover-bg: #353948;
+    --navbar-icon-active: #303a51;
+
+    --comment: #84888f;
+
+    --red: #e06c75;
+
+    user-select: none;
+}

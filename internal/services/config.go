@@ -54,6 +54,11 @@ func (s *Config) SetLanguage(lang string) error {
 	return saveConfig(s.data)
 }
 
+func (s *Config) SetTermsAccepted() error {
+	s.data.TermsAccepted = true
+	return saveConfig(s.data)
+}
+
 func ConfigService() *Config {
 	configOnce.Do(func() {
 		data, err := LoadConfig()

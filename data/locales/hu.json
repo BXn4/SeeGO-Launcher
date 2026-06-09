@@ -5,5 +5,7 @@
   "splash-loading": "Betöltés",
   "splash-loading-news": "Hírek betöltése",
   "splash-loading-serial": "Serial lekérdezése",
-  "notification-launcher-minimized": "A SeeGO launcher minimalizálva lett, és a háttérben fut."
+  "notification-launcher-minimized": "A SeeGO launcher minimalizálva lett, és a háttérben fut.",
+  "terms-declined-dialog-title": "El kell fogadnia a felhasználási feltételeket!",
+  "terms-declined-dialog-content": "A folytatáshoz el kell fogadnia a felhasználási feltételeket. Ha kérdése van, kérjük, írjon a support@see-rpg.com címre."
 }

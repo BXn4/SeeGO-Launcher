@@ -2,10 +2,14 @@ package localization
 
 const (
 	// notifications
-	LauncherMinimized string = "notification-launcher-minimized"
+	LauncherMinimized = "notification-launcher-minimized"
 
 	// splash
-	SplashLoading       string = "splash-loading"
-	SplashLoadingNews   string = "splash-loading-news"
-	SplashLoadingSerial string = "splash-loading-serial"
+	SplashLoading       = "splash-loading"
+	SplashLoadingNews   = "splash-loading-news"
+	SplashLoadingSerial = "splash-loading-serial"
+
+	// dialog
+	TermsDeclinedTitle   = "terms-declined-dialog-title"
+	TermsDeclinedContent = "terms-declined-dialog-content"
 )

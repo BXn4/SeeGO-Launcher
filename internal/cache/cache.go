@@ -12,15 +12,11 @@ import (
 )
 
 const (
-	TermsDate string = "terms.ver"
-	TermsFile        = "terms.chc"
+	TermsDate = "terms.ver"
+	TermsFile = "terms.chc"
 )
 
-type CacheData struct {
-	TermsDate string
-}
-
-func getCachePath() (string, error) {
+func GetCachePath() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("Could not get home directory: %w", err)
@@ -37,7 +33,7 @@ func getNewsCachePath() (string, error) {
 }
 
 func getCacheFilePath(filename string) (string, error) {
-	dir, err := getCachePath()
+	dir, err := GetCachePath()
 	if err != nil {
 		return "", err
 	}
@@ -45,7 +41,7 @@ func getCacheFilePath(filename string) (string, error) {
 }
 
 func checkCacheDir() error {
-	dir, err := getCachePath()
+	dir, err := GetCachePath()
 	if err != nil {
 		return err
 	}
@@ -86,7 +82,7 @@ func RequestTermsDate() (string, error) {
 }
 
 func WriteTermsDate(v string) error {
-	cacheDir, err := getCachePath()
+	cacheDir, err := GetCachePath()
 	if err != nil {
 		log.Errorf("Error getting cache path: %v", err)
 		return err
@@ -112,7 +108,7 @@ func RequestTerms() (string, error) {
 }
 
 func WriteTerms(v string) error {
-	cacheDir, err := getCachePath()
+	cacheDir, err := GetCachePath()
 	if err != nil {
 		log.Errorf("Error getting cache path: %v", err)
 		return err
@@ -138,7 +134,7 @@ func LoadCache() {
 		return
 	}
 
-	cacheDir, err := getCachePath()
+	cacheDir, err := GetCachePath()
 	if err != nil {
 		log.Errorf("Error getting cache path: %v", err)
 		return

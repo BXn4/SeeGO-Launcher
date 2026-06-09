@@ -5,5 +5,7 @@
   "splash-loading": "Loading",
   "splash-loading-news": "Loading news",
   "splash-loading-serial": "Getting Serial",
-  "notification-launcher-minimized": "The SeeGO Launcher was minimized, and running in the background."
+  "notification-launcher-minimized": "The SeeGO Launcher was minimized, and running in the background.",
+  "terms-declined-dialog-title": "You must accept the terms of service!",
+  "terms-declined-dialog-content": "Accepting the terms of service is required to continue. If you have questions, please contact support@see-rpg.com."
 }
