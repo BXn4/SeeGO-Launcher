@@ -29,8 +29,18 @@ export function GetItems(categoryID) {
     }));
 }
 
+/**
+ * @returns {$CancellablePromise<$models.ServerDetail>}
+ */
+export function GetServerPlayers() {
+    return $Call.ByID(2408052814).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType4($result);
+    }));
+}
+
 // Private type creation functions
 const $$createType0 = $models.Category.createFrom;
 const $$createType1 = $Create.Array($$createType0);
 const $$createType2 = $models.Item.createFrom;
 const $$createType3 = $Create.Array($$createType2);
+const $$createType4 = $models.ServerDetail.createFrom;

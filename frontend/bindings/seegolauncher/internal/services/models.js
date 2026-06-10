@@ -152,3 +152,52 @@ export class Item {
         return new Item(/** @type {Partial<Item>} */($$parsedSource));
     }
 }
+
+export class ServerDetail {
+    /**
+     * Creates a new ServerDetail instance.
+     * @param {Partial<ServerDetail>} [$$source = {}] - The source object to create the ServerDetail.
+     */
+    constructor($$source = {}) {
+        if (!("players" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["players"] = 0;
+        }
+        if (!("admins" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["admins"] = 0;
+        }
+        if (!("queue" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["queue"] = 0;
+        }
+        if (!("slots" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["slots"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ServerDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {ServerDetail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ServerDetail(/** @type {Partial<ServerDetail>} */($$parsedSource));
+    }
+}

@@ -16,5 +16,6 @@ export {
 export {
     Category,
     ConfigData,
-    Item
+    Item,
+    ServerDetail
 } from "./models.js";

@@ -4,6 +4,16 @@
     import { onMount } from "svelte";
     import { getCategories, getItems } from "../lib/api";
     import { Events } from "@wailsio/runtime";
+    import { GetServerPlayers } from "../../bindings/seegolauncher/internal/services/api";
+
+    let serverPlayersBefore = -1;
+    let serverSlotsBefore = -1;
+    let serverAdminsBefore = -1;
+    let serverQueueBefore = -1;
+    let serverPlayersNow = -1;
+    let serverSlotsNow = -1;
+    let serverAdminsNow = -1;
+    let serverQueueNow = -1;
 
     interface Category {
         id: number;
@@ -26,6 +36,7 @@
     let membershipCategory: Category | null = null;
 
     onMount(async () => {
+        await fetchServerStatus();
         categories = (await getCategories()) as Category[];
         membershipCategory =
             categories.find((c) => c.slug === "seerpg-club-tagság-a") ?? null;
@@ -34,11 +45,59 @@
             membershipItems = (await getItems(membershipCategory.id)) as Item[];
         }
 
+        setInterval(fetchServerStatus, 60 * 1000);
+
         await Events.Emit("app-ready", null);
     });
 
-    let currentPlayers = 830;
-    let maxPlayers = 830;
+    async function fetchServerStatus() {
+        const server = await GetServerPlayers();
+        serverPlayersNow = server.players;
+        serverSlotsNow = server.slots;
+        serverAdminsNow = server.admins;
+        serverQueueNow = server.queue;
+
+        if (serverPlayersNow != serverPlayersBefore) {
+            const element = document.getElementById("players-count");
+            if (element?.classList.contains("updated")) {
+                element.classList.remove("updated");
+            }
+            void element?.offsetWidth;
+            element?.classList.add("updated");
+        }
+
+        if (serverSlotsNow != serverSlotsBefore) {
+            const element = document.getElementById("players-count");
+            if (element?.classList.contains("updated")) {
+                element.classList.remove("updated");
+            }
+            void element?.offsetWidth;
+            element?.classList.add("updated");
+        }
+
+        if (serverAdminsNow != serverAdminsBefore) {
+            const element = document.getElementById("admins-count");
+            if (element?.classList.contains("updated")) {
+                element.classList.remove("updated");
+            }
+            void element?.offsetWidth;
+            element?.classList.add("updated");
+        }
+
+        if (serverQueueNow != serverQueueBefore) {
+            const element = document.getElementById("queue-count");
+            if (element?.classList.contains("updated")) {
+                element.classList.remove("updated");
+            }
+            void element?.offsetWidth;
+            element?.classList.add("updated");
+        }
+
+        serverPlayersBefore = serverPlayersNow;
+        serverSlotsBefore = serverSlotsNow;
+        serverAdminsBefore = serverAdminsNow;
+        serverQueueBefore = serverQueueNow;
+    }
 </script>
 
 <main>
@@ -94,8 +153,8 @@
                     <div class="status-indicator"></div>
                     <div class="status-info">
                         <span class="status-text">Online</span>
-                        <span class="player-count"
-                            >{currentPlayers} / {maxPlayers}</span
+                        <span id="players-count" class="player-count"
+                            >{serverPlayersNow} / {serverSlotsNow}</span
                         >
                     </div>
                 </div>
@@ -103,18 +162,23 @@
                 <div class="progress-bar">
                     <div
                         class="progress-bar-fill"
-                        style="width: {(currentPlayers / maxPlayers) * 100}%"
+                        style="width: {(serverPlayersNow / serverSlotsNow) *
+                            100}%"
                     ></div>
                 </div>
 
                 <div class="stats">
                     <div class="stat-box">
                         <span class="stat-title">Adminok</span>
-                        <span class="stat-value">12</span>
+                        <span id="admins-count" class="stat-value"
+                            >{serverAdminsNow}</span
+                        >
                     </div>
                     <div class="stat-box">
                         <span class="stat-title">Várólistán</span>
-                        <span class="stat-value">1000</span>
+                        <span id="queue-count" class="stat-value"
+                            >{serverQueueNow}</span
+                        >
                     </div>
                 </div>
             </div>
@@ -483,5 +547,19 @@
         .sidebar {
             order: 0;
         }
+    }
+    @keyframes refresh {
+        0% {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    :global(.updated) {
+        animation: refresh 0.5s ease-out;
     }
 </style>
