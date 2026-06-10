@@ -8,7 +8,7 @@ import (
 
 type API struct{}
 
-var OA string // setting it during the build
+var OA string
 
 type Category struct {
 	ID   int    `json:"id"`
