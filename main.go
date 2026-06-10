@@ -18,6 +18,9 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed frontend/src/public/images/seego_icon.png
+var icon []byte
+
 const (
 	Tray int = iota
 	Show
@@ -26,14 +29,12 @@ const (
 )
 
 type App struct {
-	mu         sync.Mutex
-	appState   int
-	window     *application.WebviewWindow
-	view       string
-	tray       *application.SystemTray
-	splashDone bool
-	dialog     *application.MessageDialog
-	ready      bool
+	mu       sync.Mutex
+	appState int
+	window   *application.WebviewWindow
+	view     string
+	dialog   *application.MessageDialog
+	ready    bool
 }
 
 func (a *App) setWindow(w *application.WebviewWindow) {
@@ -103,6 +104,7 @@ func main() {
 
 	systray := app.SystemTray.New()
 	systray.SetLabel("SeeGO Launcher")
+	systray.SetIcon(icon)
 
 	systray.OnClick(func() {
 		w := a.getWindow()
@@ -119,6 +121,8 @@ func main() {
 	})
 
 	menu := app.NewMenu()
+	menu.Add("SeeGO Launcher")
+	menu.AddSeparator()
 	menu.Add("Show").OnClick(func(ctx *application.Context) {
 		w := a.getWindow()
 		switch a.appState {
