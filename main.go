@@ -57,7 +57,9 @@ func main() {
 		log.Warnf("Cannot find .env file!")
 	}
 
-	services.OA = envFile["OA"]
+	if services.OA == "" {
+		services.OA = envFile["OA"]
+	}
 
 	log.Info("SeeGO Launcher by BXn4")
 	config := services.ConfigService()
