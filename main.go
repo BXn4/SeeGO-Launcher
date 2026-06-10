@@ -225,6 +225,7 @@ func main() {
 		window.SetSize(1200, int(1200/(16.0/9.0)))
 		app.Event.Emit("navigate", "main")
 		a.view = "main"
+		window.Center()
 	})
 
 	/*app.Event.On("app-ready", func(e *application.CustomEvent) {
@@ -247,11 +248,13 @@ func main() {
 			window.SetSize(620, 480)
 			app.Event.Emit("navigate", "terms")
 			a.view = "terms"
+			window.Center()
 			return
 		}
 		window.SetSize(1200, int(1200/(16.0/9.0)))
 		app.Event.Emit("navigate", "main")
 		a.view = "main"
+		window.Center()
 	}()
 
 	if err := app.Run(); err != nil {
