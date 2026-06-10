@@ -6,6 +6,48 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+export class Category {
+    /**
+     * Creates a new Category instance.
+     * @param {Partial<Category>} [$$source = {}] - The source object to create the Category.
+     */
+    constructor($$source = {}) {
+        if (!("id" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["id"] = 0;
+        }
+        if (!("name" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["name"] = "";
+        }
+        if (!("slug" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["slug"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Category instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {Category}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Category(/** @type {Partial<Category>} */($$parsedSource));
+    }
+}
+
 export class ConfigData {
     /**
      * Creates a new ConfigData instance.
@@ -38,5 +80,75 @@ export class ConfigData {
     static createFrom($$source = {}) {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new ConfigData(/** @type {Partial<ConfigData>} */($$parsedSource));
+    }
+}
+
+export class Item {
+    /**
+     * Creates a new Item instance.
+     * @param {Partial<Item>} [$$source = {}] - The source object to create the Item.
+     */
+    constructor($$source = {}) {
+        if (!("id" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["id"] = 0;
+        }
+        if (!("name" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["name"] = "";
+        }
+        if (!("description" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["description"] = "";
+        }
+        if (!("image" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["image"] = "";
+        }
+        if (!("total_price" in $$source)) {
+            /**
+             * @member
+             * @type {number}
+             */
+            this["total_price"] = 0;
+        }
+        if (!("currency" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["currency"] = "";
+        }
+        if (!("created_at" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["created_at"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Item instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {Item}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Item(/** @type {Partial<Item>} */($$parsedSource));
     }
 }

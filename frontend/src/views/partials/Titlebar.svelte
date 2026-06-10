@@ -13,7 +13,7 @@
         await Events.Emit("minimize", null);
     }
     async function toggleMaximize() {
-        await Events.Emit("toggle-maximize", null);
+        // await Events.Emit("toggle-maximize", null);
     }
 
     onMount(() => {

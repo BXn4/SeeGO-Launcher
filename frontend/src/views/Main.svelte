@@ -1,6 +1,41 @@
 <script lang="ts">
     import Titlebar from "./partials/Titlebar.svelte";
     import Navbar from "./partials/Navbar.svelte";
+    import { onMount } from "svelte";
+    import { getCategories, getItems } from "../lib/api";
+    import { Events } from "@wailsio/runtime";
+
+    interface Category {
+        id: number;
+        name: string;
+        slug: string;
+    }
+
+    interface Item {
+        id: number;
+        name: string;
+        description: string;
+        image: string;
+        total_price: number;
+        currency: string;
+        created_at: string;
+    }
+
+    let categories: Category[] = [];
+    let membershipItems: Item[] = [];
+    let membershipCategory: Category | null = null;
+
+    onMount(async () => {
+        categories = (await getCategories()) as Category[];
+        membershipCategory =
+            categories.find((c) => c.slug === "seerpg-club-tagság-a") ?? null;
+
+        if (membershipCategory) {
+            membershipItems = (await getItems(membershipCategory.id)) as Item[];
+        }
+
+        await Events.Emit("app-ready", null);
+    });
 
     let currentPlayers = 830;
     let maxPlayers = 830;
@@ -16,9 +51,13 @@
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
                     <span class="badge">Friss</span>
-                    <h2>Megnyitottuk az Adminsegéd Tagfelvételt!</h2>
+                    <h2>
+                        Kényelmesebb játékélmény és hasznos javítások érkeztek!
+                    </h2>
                     <p>
-                        Jelentkezési lapok beadásának határideje: 2026.06.12-ig.
+                        Frissítés érkezett a szerverre! A legújabb frissítésben
+                        több fontos kényelmi fejlesztés, hibajavítás és tartalmi
+                        bővítés is bekerült a szerverre.
                     </p>
                     <button class="hero-news-button" id="hero-news-read-latest"
                         >Elolvasom</button
@@ -28,76 +67,29 @@
 
             <div class="items">
                 <h3 class="items-title">SeeRPG Club tagság</h3>
-                <div class="items-grid">
-                    <div class="item-square-card">
-                        <div class="item-header">
-                            <span class="item-tag">7 nap</span>
+                <div id="items-container">
+                    {#each membershipItems as item}
+                        <div class="item-square-card" title={item.name}>
+                            <div class="item-header">
+                                <span class="item-tag">7 nap</span>
+                            </div>
+                            <div class="item-image">
+                                <img src={item.image} alt={item.name} />
+                            </div>
+                            <div class="item-name">
+                                <h4>{item.name.split(" ")[0]}</h4>
+                                <span class="item-price"
+                                    >{item.total_price} {item.currency}</span
+                                >
+                            </div>
                         </div>
-                        <div class="item-image">
-                            <img
-                                src="https://dunb17ur4ymx4.cloudfront.net/packages/images/3f0789ad03f2dad50ebaa1c60b9c8dcfd259dd1a.png"
-                                alt="Smaragd"
-                            />
-                        </div>
-                        <div class="item-name">
-                            <h4>Smaragd</h4>
-                            <span class="item-price">12.19 EUR</span>
-                        </div>
-                    </div>
-
-                    <div class="item-square-card">
-                        <div class="item-header">
-                            <span class="item-tag">7 nap</span>
-                        </div>
-                        <div class="item-image">
-                            <img
-                                src="https://dunb17ur4ymx4.cloudfront.net/packages/images/7118e68e259c38fd947e9660fc930ae5efa29017.png"
-                                alt="Gyémánt"
-                            />
-                        </div>
-                        <div class="item-name">
-                            <h4>Gyémánt</h4>
-                            <span class="item-price">6.99 EUR</span>
-                        </div>
-                    </div>
-
-                    <div class="item-square-card">
-                        <div class="item-header">
-                            <span class="item-tag">7 nap</span>
-                        </div>
-                        <div class="item-image">
-                            <img
-                                src="https://dunb17ur4ymx4.cloudfront.net/packages/images/722e66d738b39cb06138462a8e8bfda62f299d2b.png"
-                                alt="Arany"
-                            />
-                        </div>
-                        <div class="item-name">
-                            <h4>Arany</h4>
-                            <span class="item-price">5.69 EUR</span>
-                        </div>
-                    </div>
-
-                    <div class="item-square-card">
-                        <div class="item-header">
-                            <span class="item-tag">7 nap</span>
-                        </div>
-                        <div class="item-image">
-                            <img
-                                src="https://dunb17ur4ymx4.cloudfront.net/packages/images/5c268d8b4d7984c2e727e564e8f489ce14b9a35e.png"
-                                alt="Ezüst"
-                            />
-                        </div>
-                        <div class="item-name">
-                            <h4>Ezüst</h4>
-                            <span class="item-price">3.69 EUR</span>
-                        </div>
-                    </div>
+                    {/each}
                 </div>
             </div>
         </div>
 
         <aside class="sidebar">
-            <div class="status-widget">
+            <div class="widget">
                 <div class="status-container">
                     <div class="status-indicator"></div>
                     <div class="status-info">
@@ -126,6 +118,40 @@
                     </div>
                 </div>
             </div>
+            <div class="widget">
+                <h3 class="widget-title">Közösség</h3>
+                <div class="social-links-grid">
+                    <a href="/" class="social-box" title="Discord">
+                        <svg viewBox="0 0 24 24" fill="currentColor"
+                            ><path
+                                d="M18.59 5.89c-1.23-.57-2.54-.99-3.92-1.23c-.17.3-.37.71-.5 1.04c-1.46-.22-2.91-.22-4.34 0c-.14-.33-.34-.74-.51-1.04c-1.38.24-2.69.66-3.92 1.23c-2.48 3.74-3.15 7.39-2.82 10.98c1.65 1.23 3.24 1.97 4.81 2.46c.39-.53.73-1.1 1.03-1.69c-.57-.21-1.11-.48-1.62-.79c.14-.1.27-.21.4-.31c3.13 1.46 6.52 1.46 9.61 0c.13.11.26.21.4.31c-.51.31-1.06.57-1.62.79c.3.59.64 1.16 1.03 1.69c1.57-.49 3.17-1.23 4.81-2.46c.39-4.17-.67-7.78-2.82-10.98Zm-9.75 8.78c-.94 0-1.71-.87-1.71-1.94s.75-1.94 1.71-1.94s1.72.87 1.71 1.94c0 1.06-.75 1.94-1.71 1.94m6.31 0c-.94 0-1.71-.87-1.71-1.94s.75-1.94 1.71-1.94s1.72.87 1.71 1.94c0 1.06-.75 1.94-1.71 1.94"
+                            ></path></svg
+                        >
+                    </a>
+                    <a href="/" class="social-box" title="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"
+                            ><path
+                                d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396z"
+                            ></path></svg
+                        >
+                    </a>
+                    <a href="/" class="social-box" title="TikTok">
+                        <svg viewBox="0 0 16 16" fill="currentColor"
+                            ><path
+                                d="M8.3 1.01c.75-.01 1.5 0 2.25-.01c.05.89.36 1.8 1.01 2.43c.64.65 1.55.94 2.44 1.04v2.35c-.83-.03-1.66-.2-2.42-.56c-.33-.15-.63-.34-.93-.54c0 1.7 0 3.41-.01 5.1c-.04.82-.31 1.63-.78 2.3c-.75 1.12-2.06 1.85-3.4 1.87c-.82.05-1.65-.18-2.35-.6c-1.16-.69-1.98-1.97-2.1-3.33q-.03-.435 0-.87c.1-1.11.65-2.17 1.49-2.89c.95-.84 2.29-1.24 3.54-1c.01.86-.02 1.73-.02 2.59c-.57-.19-1.24-.13-1.74.22c-.37.24-.64.6-.79 1.02c-.12.3-.09.62-.08.94c.14.96 1.05 1.76 2.01 1.67c.64 0 1.26-.39 1.59-.94c.11-.19.23-.39.24-.62c.06-1.04.03-2.08.04-3.13c0-2.35 0-4.7.01-7.04"
+                            ></path></svg
+                        >
+                    </a>
+                    <a href="/" class="social-box" title="YouTube">
+                        <svg viewBox="0 0 24 24" fill="currentColor"
+                            ><path
+                                d="M12.006 19.012h-.02c-.062 0-6.265-.012-7.83-.437a2.5 2.5 0 0 1-1.764-1.765A26.494 26.494 0 0 1 1.986 12a26.646 26.646 0 0 1 .417-4.817A2.564 2.564 0 0 1 4.169 5.4c1.522-.4 7.554-.4 7.81-.4H12c.063 0 6.282.012 7.831.437c.859.233 1.53.904 1.762 1.763c.29 1.594.427 3.211.407 4.831a26.568 26.568 0 0 1-.418 4.811a2.51 2.51 0 0 1-1.767 1.763c-1.52.403-7.553.407-7.809.407Zm-2-10.007l-.005 6l5.212-3l-5.207-3Z"
+                            ></path></svg
+                        >
+                    </a>
+                </div>
+            </div>
+            <div class="widget"></div>
         </aside>
     </div>
 </main>
@@ -179,7 +205,7 @@
         position: relative;
         min-height: 200px;
         border-radius: 24px;
-        background: url("https://news.see-rpg.com/img/YhWW8icjGa7KbAtF3j1V.png")
+        background: url("https://news.see-rpg.com/img/S2YAXN7DQbg7loLhgpMl.png")
             center/cover;
         border: 1px solid var(--border);
         overflow: hidden;
@@ -221,7 +247,7 @@
 
     .hero-content h2 {
         margin: 0 0 8px 0;
-        font-size: 24px;
+        font-size: 32px;
     }
 
     .hero-content p {
@@ -239,7 +265,11 @@
         font-size: 14px;
     }
 
-    .status-widget {
+    .hero-news-button:hover {
+        transform: scale(1.05);
+    }
+
+    .widget {
         background: var(--surface1);
         border: 1px solid var(--border);
         border-radius: 16px;
@@ -335,7 +365,7 @@
         color: var(--text);
     }
 
-    .items-grid {
+    #items-container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 16px;
@@ -397,6 +427,53 @@
     .item-price {
         font-size: 12px;
         color: var(--green);
+    }
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .widget-title {
+        margin: 0;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+    }
+
+    .social-links-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .social-box {
+        aspect-ratio: 1;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--comment);
+        text-decoration: none;
+        width: 48px;
+        height: 48px;
+    }
+
+    .social-box svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .social-box:hover {
+        color: var(--dim1);
+    }
+
+    .social-box:hover svg {
+        transform: scale(1.1);
     }
 
     @media (max-width: 900px) {

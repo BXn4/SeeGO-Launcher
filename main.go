@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
+	"github.com/joho/godotenv"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
 )
@@ -28,20 +29,18 @@ type App struct {
 	mu         sync.Mutex
 	appState   int
 	window     *application.WebviewWindow
+	view       string
+	tray       *application.SystemTray
 	splashDone bool
 	dialog     *application.MessageDialog
 	ready      bool
 }
 
 func (a *App) setWindow(w *application.WebviewWindow) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
 	a.window = w
 }
 
 func (a *App) getWindow() *application.WebviewWindow {
-	a.mu.Lock()
-	defer a.mu.Unlock()
 	return a.window
 }
 
@@ -50,6 +49,16 @@ func init() {
 }
 
 func main() {
+	envFile, err := godotenv.Read(".env")
+
+	hasConfig := err == nil
+
+	if !hasConfig {
+		log.Warnf("Cannot find .env file!")
+	}
+
+	services.OA = envFile["OA"]
+
 	log.Info("SeeGO Launcher by BXn4")
 	config := services.ConfigService()
 
@@ -63,10 +72,10 @@ func main() {
 		SingleInstance: &application.SingleInstanceOptions{
 			UniqueID: "1000",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
-				log.Info("Tried to open a new instance, but its already running. Showing the instance.")
-				w := a.getWindow()
 				a.mu.Lock()
 				defer a.mu.Unlock()
+				log.Info("Tried to open a new instance, but its already running. Showing the instance.")
+				w := a.getWindow()
 				switch a.appState {
 				case Tray:
 					w.UnMinimise()
@@ -83,6 +92,7 @@ func main() {
 			application.NewService(services.LocalizationService()),
 			application.NewService(services.ConfigService()),
 			application.NewService(&services.CacheService{}),
+			application.NewService(&services.API{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -93,23 +103,40 @@ func main() {
 	systray.SetLabel("SeeGO Launcher")
 
 	systray.OnClick(func() {
-		a.appState = Show
-		a.window.Show()
-		a.window.Focus()
+		w := a.getWindow()
+		switch a.appState {
+		case Tray:
+			w.UnMinimise()
+			w.Show()
+			w.Focus()
+			a.appState = Show
+		default:
+			w.Focus()
+			w.Flash(true)
+		}
 	})
 
 	menu := app.NewMenu()
 	menu.Add("Show").OnClick(func(ctx *application.Context) {
-		a.appState = Show
-		a.window.Show()
-		a.window.Focus()
+		w := a.getWindow()
+		switch a.appState {
+		case Tray:
+			w.UnMinimise()
+			w.Show()
+			w.Focus()
+			a.appState = Show
+		default:
+			w.Focus()
+			w.Flash(true)
+		}
 	})
+
 	menu.Add("Quit").OnClick(func(ctx *application.Context) {
 		app.Quit()
 	})
 	systray.SetMenu(menu)
 
-	splash := app.Window.NewWithOptions(application.WebviewWindowOptions{
+	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:                      "SeeGO Launcher",
 		Width:                      476,
 		Height:                     300,
@@ -123,110 +150,46 @@ func main() {
 		DefaultContextMenuDisabled: true,
 	})
 
-	main := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:                      "SeeGO Launcher",
-		Width:                      1200,
-		Height:                     int(1200 / (16.0 / 9.0)),
-		MinWidth:                   600,
-		MinHeight:                  400,
-		Frameless:                  true,
-		DisableResize:              false,
-		BackgroundColour:           application.NewRGB(52, 58, 64),
-		URL:                        "/",
-		Hidden:                     true,
-		DevToolsEnabled:            false,
-		DefaultContextMenuDisabled: true,
-	})
+	a.setWindow(window)
+	a.view = "splash"
 
-	terms := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:                      "SeeGO Launcher",
-		Width:                      800,
-		Height:                     600,
-		Frameless:                  true,
-		AlwaysOnTop:                false,
-		DisableResize:              true,
-		BackgroundColour:           application.NewRGB(52, 58, 64),
-		URL:                        "/",
-		Hidden:                     true,
-		DevToolsEnabled:            false,
-		DefaultContextMenuDisabled: true,
-	})
-
-	a.setWindow(splash)
-
-	splash.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
-		a.mu.Lock()
-		defer a.mu.Unlock()
-		done := a.splashDone
-		if !done {
-			log.Info("Splash was closed, exiting the app")
-			os.Exit(0)
-		}
-	})
-
-	terms.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
-		if !config.GetTermsAccepted() {
-			a.mu.Lock()
-			done := a.splashDone
-			a.mu.Unlock()
-			if done {
-				log.Info("Terms was closed, exiting the app")
-				os.Exit(0)
-			}
-		}
-	})
-
-	main.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
-		a.mu.Lock()
-		defer a.mu.Unlock()
-		e.Cancel()
-		main.Hide()
-		a.appState = Tray
-		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
-	})
-
-	splash.OnWindowEvent(events.Common.WindowRuntimeReady, func(e *application.WindowEvent) {
-		app.Event.Emit("update-text", map[string]string{
-			"id":    "splash-alt",
-			"value": localization.SplashLoading,
-		})
-	})
-
-	// im on hyprland, wails v3 not supports tray on linux, and also minimize not works for me, so i need to test it on win
-	app.Event.On("close", func(e *application.CustomEvent) {
-		if a.getWindow() == main {
-			a.mu.Lock()
-			defer a.mu.Unlock()
+	window.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
+		switch a.view {
+		case "main":
 			e.Cancel()
-			main.Hide()
+			a.getWindow().Hide()
 			a.appState = Tray
 			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
-		} else {
-			os.Exit(0)
+
+		default:
+			e.Cancel()
+			app.Quit()
+			return
 		}
+	})
+
+	window.OnWindowEvent(events.Common.WindowRuntimeReady, func(e *application.WindowEvent) {
+
 	})
 
 	app.Event.On("minimize", func(e *application.CustomEvent) {
 		e.Cancel()
 		a.getWindow().Minimise()
-		a.mu.Lock()
 		a.appState = Minimized
-		a.mu.Unlock()
 	})
 
-	app.Event.On("toggle-maximize", func(e *application.CustomEvent) {
-		e.Cancel()
-		switch a.appState {
-		case Show:
-			a.getWindow().Maximise()
-			a.mu.Lock()
-			a.appState = Maximized
-			a.mu.Unlock()
-		case Maximized:
-			a.getWindow().UnMaximise()
-			a.mu.Lock()
-			a.appState = Show
-			a.mu.Unlock()
+	app.Event.On("close", func(e *application.CustomEvent) {
+		switch a.view {
+		case "main":
+			e.Cancel()
+			a.getWindow().Hide()
+			a.appState = Tray
+			utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, config.GetLanguage()))
+
+		default:
+			e.Cancel()
+			app.Quit()
+			return
 		}
 	})
 
@@ -256,50 +219,37 @@ func main() {
 
 	app.Event.On("terms-accepted", func(e *application.CustomEvent) {
 		config.SetTermsAccepted()
-		time.Sleep(100 * time.Millisecond)
+
+		window.SetSize(1200, int(1200/(16.0/9.0)))
 		app.Event.Emit("navigate", "main")
-
-		terms.Close()
-
-		main.Show()
-		main.Focus()
-		a.setWindow(main)
+		a.view = "main"
 	})
+
+	/*app.Event.On("app-ready", func(e *application.CustomEvent) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	}) */
 
 	// https://youtu.be/xXKqODp94VA
 
 	go func() {
 		time.Sleep(2 * time.Second)
 
+		//after splash
+		window.SetAlwaysOnTop(false)
+
 		if !config.GetTermsAccepted() {
-			log.Info("Terms is not accepted!")
+			log.Info("Terms is not accepted, showing the terms window")
 
-			a.mu.Lock()
-			a.splashDone = true
-			a.mu.Unlock()
-			splash.Close()
-
-			time.Sleep(100 * time.Millisecond)
+			window.SetSize(620, 480)
 			app.Event.Emit("navigate", "terms")
-
-			terms.Show()
-			terms.Focus()
-			a.setWindow(terms)
-
+			a.view = "terms"
 			return
 		}
-
-		a.mu.Lock()
-		a.splashDone = true
-		a.mu.Unlock()
-		splash.Close()
-
-		time.Sleep(100 * time.Millisecond)
+		window.SetSize(1200, int(1200/(16.0/9.0)))
 		app.Event.Emit("navigate", "main")
-
-		main.Show()
-		main.Focus()
-		a.setWindow(main)
+		a.view = "main"
 	}()
 
 	if err := app.Run(); err != nil {

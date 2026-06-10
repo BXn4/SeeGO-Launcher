@@ -1,25 +1,16 @@
 <script lang="ts">
     import logo from "../public/images/seego_nobg.svg";
     import { onMount } from "svelte";
-    onMount(() => {
-        const interval = setInterval(() => {
-            const el = document.getElementById("splash-alt");
-            if (!el) return;
-            if (el.textContent?.endsWith("...")) {
-                el.textContent = el.textContent.slice(0, -3);
-            } else {
-                el.textContent += ".";
-            }
-        }, 500);
-        return () => clearInterval(interval);
-    });
+    import {
+        Localization,
+        Config,
+    } from "../../bindings/seegolauncher/internal/services";
 </script>
 
 <main>
     <div id="splash">
         <img id="splash-logo" src={logo} alt="SeeGO Launcher logo" />
         <h1 id="splash-title">SeeGO Launcher</h1>
-        <p id="splash-alt"></p>
         <div id="loading"></div>
     </div>
 </main>
@@ -88,12 +79,6 @@
         margin: 0;
         font-weight: 600;
         letter-spacing: 0.5px;
-    }
-
-    #splash-alt {
-        margin: 0;
-        font-size: 14px;
-        display: block;
     }
 
     #loading {

@@ -11,7 +11,6 @@
 
     async function setLocales() {
         const lang = await Config.GetLanguage();
-        const play = document.getElementById("play");
         const home = document.getElementById("home");
         const news = document.getElementById("news");
         const forum = document.getElementById("forum");
@@ -21,13 +20,6 @@
         const images = document.getElementById("images");
         const help = document.getElementById("help");
         const settings = document.getElementById("settings");
-
-        if (play) {
-            play.setAttribute(
-                "title",
-                await Localization.Get("play-title-ready", lang),
-            );
-        }
 
         if (home) {
             home.setAttribute(
@@ -97,22 +89,6 @@
 <main>
     <div id="navbar">
         <div class="navbar-item top">
-            <button class="navbar-button" id="play" title="">
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M5 4.98951C5 4.01835 5 3.53277 5.20249 3.2651C5.37889 3.03191 5.64852 2.88761 5.9404 2.87018C6.27544 2.85017 6.67946 3.11953 7.48752 3.65823L18.0031 10.6686C18.6708 11.1137 19.0046 11.3363 19.1209 11.6168C19.2227 11.8621 19.2227 12.1377 19.1209 12.383C19.0046 12.6635 18.6708 12.886 18.0031 13.3312L7.48752 20.3415C6.67946 20.8802 6.27544 21.1496 5.9404 21.1296C5.64852 21.1122 5.37889 20.9679 5.20249 20.7347C5 20.467 5 19.9814 5 19.0103V4.98951Z"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                </svg>
-                <span class="indicator"></span>
-            </button>
             <button class="navbar-button active" id="home" title="">
                 <svg
                     viewBox="0 0 24 24"
