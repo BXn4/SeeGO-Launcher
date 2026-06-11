@@ -5,6 +5,10 @@
     import { getCategories, getItems } from "../lib/api";
     import { Browser } from "@wailsio/runtime";
     import { GetServerPlayers } from "../../bindings/seegolauncher/internal/services/api";
+    import {
+        Config,
+        Localization,
+    } from "../../bindings/seegolauncher/internal/services";
 
     let serverPlayersBefore = -1;
     let serverSlotsBefore = -1;
@@ -35,7 +39,23 @@
     let membershipItems: Item[] = [];
     let membershipCategory: Category | null = null;
 
+    let latest: string = "";
+    let read: string = "";
+    let membership: string = "";
+    let day: string = "";
+    let serverStatus: string = "";
+    let admins: string = "";
+    let queue: string = "";
+    let estimated: string = "";
+    let hours: string = "";
+    let minutes: string = "";
+    let seconds: string = "";
+    let community: string = "";
+    let launcherStatus: string = "";
+    let launcherConnect: string = "";
+
     onMount(async () => {
+        await setLocales();
         await fetchServerStatus();
         categories = (await getCategories()) as Category[];
         membershipCategory =
@@ -50,6 +70,42 @@
         // await Events.Emit("app-ready", null);
     });
 
+    async function setLocales() {
+        let lang = await Config.GetLanguage();
+
+        [
+            latest,
+            read,
+            membership,
+            day,
+            serverStatus,
+            admins,
+            queue,
+            estimated,
+            hours,
+            minutes,
+            seconds,
+            community,
+            launcherStatus,
+            launcherConnect,
+        ] = await Promise.all([
+            Localization.Get("news-latest", lang),
+            Localization.Get("news-read", lang),
+            Localization.Get("club-membership", lang),
+            Localization.Get("club-membership-day", lang),
+            Localization.Get("server-status-online", lang),
+            Localization.Get("server-status-admins", lang),
+            Localization.Get("server-status-queue", lang),
+            Localization.Get("server-status-estimated", lang),
+            Localization.Get("hours", lang),
+            Localization.Get("minutes", lang),
+            Localization.Get("seconds", lang),
+            Localization.Get("community", lang),
+            Localization.Get("launcher-ready", lang),
+            Localization.Get("launcher-connect", lang),
+        ]);
+    }
+
     async function fetchServerStatus() {
         const server = await GetServerPlayers();
         serverPlayersNow = server.players;
@@ -58,6 +114,7 @@
         serverQueueNow = server.queue;
 
         let connectionIn = "";
+        let lang = await Config.GetLanguage();
 
         if (serverPlayersNow != serverPlayersBefore) {
             const element = document.getElementById("players-count");
@@ -102,22 +159,34 @@
 
         if (serverStatus && serverFill) {
             if (serverPlayersNow <= 0 && serverQueueNow <= 0) {
-                serverStatus.textContent = "Offline";
+                serverStatus.textContent = await Localization.Get(
+                    "server-status-offline",
+                    lang,
+                );
                 serverStatus.style.color = "var(--gray)";
                 serverFill.style.background = "";
             } else if (serverPlayersNow <= 0 && serverQueueNow > 0) {
-                serverStatus.textContent = "Újraindítás";
+                serverStatus.textContent = await Localization.Get(
+                    "server-status-restart",
+                    lang,
+                );
                 serverStatus.style.color = "var(--orange)";
                 serverFill.style.background = "var(--green)";
             } else if (
                 serverPlayersNow === serverAdminsNow &&
                 serverAdminsNow > 0
             ) {
-                serverStatus.textContent = "Karbantartás";
+                serverStatus.textContent = await Localization.Get(
+                    "server-status-maintenance",
+                    lang,
+                );
                 serverStatus.style.color = "var(--orange)";
                 serverFill.style.background = "var(--green)";
             } else {
-                serverStatus.textContent = "Online";
+                serverStatus.textContent = await Localization.Get(
+                    "server-status-online",
+                    lang,
+                );
                 serverStatus.style.color = "var(--green)";
                 serverFill.style.background = "var(--green)";
             }
@@ -140,11 +209,11 @@
                             Math.floor(serverQueueNow * 0.35) * 60;
                     }
                     if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} óra`;
+                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${hours}`;
                     } else if (totalSeconds >= 60) {
-                        connectionIn = `${(totalSeconds / 60).toFixed()} perc`;
+                        connectionIn = `${(totalSeconds / 60).toFixed()} ${minutes}`;
                     } else {
-                        connectionIn = `${Math.round(totalSeconds)} másodperc`;
+                        connectionIn = `${Math.round(totalSeconds)} ${seconds}`;
                     }
                 }
             } else {
@@ -152,19 +221,18 @@
                     // about 2 seconds one player connects
                     const totalSeconds = serverQueueNow * 2;
                     if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} óra`;
+                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${hours}`;
                     } else if (totalSeconds >= 60) {
-                        connectionIn = `${(totalSeconds / 60).toFixed()} perc`;
+                        connectionIn = `${(totalSeconds / 60).toFixed()} ${minutes}`;
                     } else {
-                        connectionIn = `${Math.round(totalSeconds)} másodperc`;
+                        connectionIn = `${Math.round(totalSeconds)} ${seconds}`;
                     }
                 } else {
                     estimatedConnection.textContent = "";
                 }
             }
 
-            estimatedConnection.textContent =
-                "Becsült csatlakozás: " + connectionIn;
+            estimatedConnection.textContent = `${estimated} ` + connectionIn;
         }
 
         serverPlayersBefore = serverPlayersNow;
@@ -183,7 +251,7 @@
             <header class="hero-card">
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
-                    <span class="badge">Friss</span>
+                    <span class="badge">{latest}</span>
                     <h2>
                         Kényelmesebb játékélmény és hasznos javítások érkeztek!
                     </h2>
@@ -193,18 +261,18 @@
                         bővítés is bekerült a szerverre.
                     </p>
                     <button class="button hero-news" id="hero-news-read-latest"
-                        >Elolvasom</button
+                        >{read}</button
                     >
                 </div>
             </header>
 
             <div class="items">
-                <h3 class="items-title">SeeRPG Club tagság</h3>
+                <h3 class="items-title">SeeRPG Club {membership}</h3>
                 <div id="items-container">
                     {#each membershipItems as item}
                         <div class="item-square-card" title={item.name}>
                             <div class="item-header">
-                                <span class="item-tag">7 nap</span>
+                                <span class="item-tag">7 {day}</span>
                             </div>
                             <div class="item-image">
                                 <img src={item.image} alt={item.name} />
@@ -242,13 +310,13 @@
 
                 <div class="stats">
                     <div class="stat-box">
-                        <span class="stat-title">Adminok</span>
+                        <span class="stat-title">{admins}</span>
                         <span id="admins-count" class="stat-value"
                             >{serverAdminsNow}</span
                         >
                     </div>
                     <div class="stat-box">
-                        <span class="stat-title">Várólistán</span>
+                        <span class="stat-title">{queue}</span>
                         <span id="queue-count" class="stat-value"
                             >{serverQueueNow}</span
                         >
@@ -257,7 +325,7 @@
                 <p id="estimated-connect" class="estimated-connect"></p>
             </div>
             <div class="widget">
-                <h3 class="widget-title">Közösség</h3>
+                <h3 class="widget-title">{community}</h3>
                 <div class="social-links-grid">
                     <button
                         on:click={() =>
@@ -318,9 +386,9 @@
                 </div>
             </div>
             <div class="widget">
-                <h3 class="widget-title">Csatlakozásra kész!</h3>
+                <h3 class="widget-title">{launcherStatus}</h3>
                 <button id="connect-button" class="button connect"
-                    >Csatlakozás</button
+                    >{launcherConnect}</button
                 >
             </div>
         </aside>

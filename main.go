@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"os"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
@@ -247,10 +248,11 @@ func main() {
 		window.SetAlwaysOnTop(false)
 
 		if !config.GetTermsAccepted() {
-			app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage("A SeeGO Launcher egy nonprofit, nyílt forráskódú launcher.\n" +
-				"Ez a szoftver nem hivatalos. Nem áll kapcsolatban a SEE-ONLINE Kft.-vel vagy a SeeRPG üzemeltetőivel, és nem rendelkezik azok támogatásával, jóváhagyásával vagy partnerségével.\n" +
-				"!!! A szoftver használata saját felelősségre történik. Nem vállalok felelősséget a szoftver használatából eredő fiókkorlátozásokért, tiltásokért vagy egyéb következményekért.\n" +
-				"A projekt nem tartalmazza, nem terjeszti és nem használja fel a SeeRPG hivatalos kliensének, launcherének vagy egyéb szoftvereinek forráskódját.\n").Show()
+			seeGOInfo1 := services.LocalizationService().Get(localization.SeeGOInfo1, config.GetLanguage())
+			seeGOInfo2 := services.LocalizationService().Get(localization.SeeGOInfo2, config.GetLanguage())
+			seeGOInfo3 := services.LocalizationService().Get(localization.SeeGOInfo3, config.GetLanguage())
+			seeGOInfo4 := services.LocalizationService().Get(localization.SeeGOInfo4, config.GetLanguage())
+			app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
 			log.Info("Terms is not accepted, showing the terms window")
 
 			window.SetSize(620, 480)

@@ -11,87 +11,38 @@
         setLocales();
     });
 
+    let home: string = "";
+    let news: string = "";
+    let forum: string = "";
+    let ucp: string = "";
+    let shop: string = "";
+    let images: string = "";
+    let players: string = "";
+    let help: string = "";
+    let settings: string = "";
+
     async function setLocales() {
         const lang = await Config.GetLanguage();
-        const home = document.getElementById("home");
-        const news = document.getElementById("news");
-        const forum = document.getElementById("forum");
-        const ucp = document.getElementById("ucp");
-        const shop = document.getElementById("shop");
-        const players = document.getElementById("players");
-        const images = document.getElementById("images");
-        const help = document.getElementById("help");
-        const settings = document.getElementById("settings");
 
-        if (home) {
-            home.setAttribute(
-                "title",
-                await Localization.Get("home-title", lang),
-            );
-        }
-
-        if (news) {
-            news.setAttribute(
-                "title",
-                await Localization.Get("news-title", lang),
-            );
-        }
-
-        if (forum) {
-            forum.setAttribute(
-                "title",
-                await Localization.Get("forum-title", lang),
-            );
-        }
-
-        if (ucp) {
-            ucp.setAttribute(
-                "title",
-                await Localization.Get("ucp-title", lang),
-            );
-        }
-
-        if (shop) {
-            shop.setAttribute(
-                "title",
-                await Localization.Get("shop-title", lang),
-            );
-        }
-
-        if (images) {
-            images.setAttribute(
-                "title",
-                await Localization.Get("images-title", lang),
-            );
-        }
-
-        if (players) {
-            players.setAttribute(
-                "title",
-                await Localization.Get("players-title", lang),
-            );
-        }
-
-        if (help) {
-            help.setAttribute(
-                "title",
-                await Localization.Get("help-title", lang),
-            );
-        }
-
-        if (settings) {
-            settings.setAttribute(
-                "title",
-                await Localization.Get("settings-title", lang),
-            );
-        }
+        [home, news, forum, ucp, shop, images, players, help, settings] =
+            await Promise.all([
+                Localization.Get("home-title", lang),
+                Localization.Get("news-title", lang),
+                Localization.Get("forum-title", lang),
+                Localization.Get("ucp-title", lang),
+                Localization.Get("shop-title", lang),
+                Localization.Get("images-title", lang),
+                Localization.Get("players-title", lang),
+                Localization.Get("help-title", lang),
+                Localization.Get("settings-title", lang),
+            ]);
     }
 </script>
 
 <main>
     <div id="navbar">
         <div class="navbar-item top">
-            <button class="navbar-button active" id="home" title="">
+            <button class="navbar-button active" id="home" title={home}>
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -107,7 +58,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="news" title="">
+            <button class="navbar-button" id="news" title={news}>
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -123,7 +74,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="forum" title="">
+            <button class="navbar-button" id="forum" title={forum}>
                 <svg
                     width="100%"
                     height="100%"
@@ -144,7 +95,7 @@
             <button
                 class="navbar-button"
                 id="ucp"
-                title=""
+                title={ucp}
                 on:click={() => Browser.OpenURL("https://ucp.see-rpg.com/")}
             >
                 <svg
@@ -167,7 +118,7 @@
         </div>
         <div class="navbar-item bottom">
             <div class="divider"></div>
-            <button class="navbar-button" id="shop" title="">
+            <button class="navbar-button" id="shop" title={shop}>
                 <svg
                     width="100%"
                     height="100%"
@@ -185,7 +136,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="images" title="">
+            <button class="navbar-button" id="images" title={images}>
                 <svg
                     width="100%"
                     height="100%"
@@ -203,7 +154,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="players" title="">
+            <button class="navbar-button" id="players" title={players}>
                 <svg
                     width="100%"
                     height="100%"
@@ -221,7 +172,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="help" title="">
+            <button class="navbar-button" id="help" title={help}>
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -237,7 +188,7 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="settings" title="">
+            <button class="navbar-button" id="settings" title={settings}>
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"

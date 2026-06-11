@@ -3,10 +3,18 @@
     import { GetCachedTerms } from "../../bindings/seegolauncher/internal/services/cacheservice";
     import { Events } from "@wailsio/runtime";
     import Titlebar from "./partials/Titlebar.svelte";
+    import {
+        Config,
+        Localization,
+    } from "../../bindings/seegolauncher/internal/services";
 
     let title = "";
     let modified = "";
     let terms = "";
+
+    let accept: string = "";
+    let decline: string = "";
+    let lang: string = "";
 
     function parse(raw: string): string {
         const lines = raw.split("\n");
@@ -62,13 +70,19 @@
     onMount(async () => {
         const raw = await GetCachedTerms();
         terms = parse(raw);
+
+        setLocales();
     });
-    async function closeWindow() {
-        await Events.Emit("shutdown", null);
+
+    async function setLocales() {
+        lang = await Config.GetLanguage();
+
+        [accept, decline] = await Promise.all([
+            Localization.Get("accept", lang),
+            Localization.Get("decline", lang),
+        ]);
     }
-    async function minimizeWindow() {
-        await Events.Emit("minimize", null);
-    }
+
     async function acceptTerms() {
         await Events.Emit("terms-accepted", null);
     }
@@ -97,14 +111,14 @@
                 id="terms-decline-button"
                 onclick={() => declineTerms()}
             >
-                Elutasítom
+                {decline}
             </button>
             <button
                 class="button"
                 id="terms-accept-button"
                 onclick={() => acceptTerms()}
             >
-                Elfogadom
+                {accept}
             </button>
         </div>
     </div>
