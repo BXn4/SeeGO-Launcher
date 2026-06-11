@@ -57,6 +57,8 @@
         serverAdminsNow = server.admins;
         serverQueueNow = server.queue;
 
+        let connectionIn = "";
+
         if (serverPlayersNow != serverPlayersBefore) {
             const element = document.getElementById("players-count");
             if (element?.classList.contains("updated")) {
@@ -91,6 +93,68 @@
             }
             void element?.offsetWidth;
             element?.classList.add("updated");
+        }
+
+        const serverStatus = document.getElementById("server-status");
+        const serverFill = document.getElementById("server-fill");
+        const estimatedConnection =
+            document.getElementById("estimated-connect");
+
+        if (serverStatus && serverFill) {
+            if (serverPlayersNow <= 0 && serverQueueNow <= 0) {
+                serverStatus.textContent = "Offline";
+                serverStatus.style.color = "var(--gray)";
+                serverFill.style.background = "";
+            } else if (serverPlayersNow <= 0 && serverQueueNow > 0) {
+                serverStatus.textContent = "Újraindítás";
+                serverStatus.style.color = "var(--orange)";
+                serverFill.style.background = "var(--green)";
+            } else if (
+                serverPlayersNow === serverAdminsNow &&
+                serverAdminsNow > 0
+            ) {
+                serverStatus.textContent = "Karbantartás";
+                serverStatus.style.color = "var(--orange)";
+                serverFill.style.background = "var(--green)";
+            } else {
+                serverStatus.textContent = "Online";
+                serverStatus.style.color = "var(--green)";
+                serverFill.style.background = "var(--green)";
+            }
+        }
+
+        if (estimatedConnection) {
+            if (serverPlayersNow >= serverSlotsNow) {
+                // about 30-35 seconds one player disconnects
+                // sometimes with the gold prio theres 100 queue, so without pro its like 30-35 seconds disconnect * 10
+                if (serverQueueNow > 0) {
+                    const totalSeconds = serverQueueNow * 32;
+                    if (totalSeconds >= 3600) {
+                        connectionIn = `${(totalSeconds / 3600).toFixed()} óra`;
+                    } else if (totalSeconds >= 60) {
+                        connectionIn = `${(totalSeconds / 60).toFixed()} perc`;
+                    } else {
+                        connectionIn = `${Math.round(totalSeconds)} másodperc`;
+                    }
+                }
+            } else {
+                if (serverQueueNow > 0) {
+                    // about 2 seconds one player connects
+                    const totalSeconds = serverQueueNow * 2;
+                    if (totalSeconds >= 3600) {
+                        connectionIn = `${(totalSeconds / 3600).toFixed()} óra`;
+                    } else if (totalSeconds >= 60) {
+                        connectionIn = `${(totalSeconds / 60).toFixed()} perc`;
+                    } else {
+                        connectionIn = `${Math.round(totalSeconds)} másodperc`;
+                    }
+                } else {
+                    estimatedConnection.textContent = "";
+                }
+            }
+
+            estimatedConnection.textContent =
+                "Becsült csatlakozás: " + connectionIn;
         }
 
         serverPlayersBefore = serverPlayersNow;
@@ -150,16 +214,15 @@
         <aside class="sidebar">
             <div class="widget">
                 <div class="status-container">
-                    <div class="status-indicator"></div>
                     <div class="status-info">
-                        <span class="status-text">Online</span>
+                        <span id="server-status" class="status-text"></span>
                         <span id="players-count" class="player-count"
                             >{serverPlayersNow} / {serverSlotsNow}</span
                         >
                     </div>
                 </div>
 
-                <div class="progress-bar">
+                <div id="server-fill" class="progress-bar">
                     <div
                         class="progress-bar-fill"
                         style="width: {(serverPlayersNow / serverSlotsNow) *
@@ -181,6 +244,7 @@
                         >
                     </div>
                 </div>
+                <p id="estimated-connect" class="estimated-connect"></p>
             </div>
             <div class="widget">
                 <h3 class="widget-title">Közösség</h3>
@@ -349,13 +413,6 @@
         gap: 12px;
     }
 
-    .status-indicator {
-        width: 10px;
-        height: 10px;
-        background: var(--green);
-        border-radius: 50%;
-    }
-
     .status-info {
         display: flex;
         justify-content: space-between;
@@ -365,7 +422,6 @@
 
     .status-text {
         font-size: 16px;
-        color: var(--green);
     }
 
     .player-count {
@@ -383,7 +439,6 @@
 
     .progress-bar-fill {
         height: 100%;
-        background: var(--green);
         border-radius: 10px;
     }
 
@@ -412,6 +467,13 @@
 
     .stat-value {
         font-size: 14px;
+        color: var(--comment);
+    }
+
+    .estimated-connect {
+        font-size: 12px;
+        margin-top: -4px;
+        margin-bottom: -8px;
         color: var(--comment);
     }
 
