@@ -14,4 +14,4 @@ A projekt nem tartalmazza, nem terjeszti és nem használja fel a SeeRPG hivatal
 A projekt célja kizárólag a kompatibilitás biztosítása és a felhasználói élmény javítása a SeeRPG közösség számára.
 
 
-<img src="https://i.imgur.com/qjiGDiA.png">
+<img src="https://i.imgur.com/FpvOuVU.png">
