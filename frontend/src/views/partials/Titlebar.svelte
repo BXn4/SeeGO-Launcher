@@ -118,7 +118,6 @@
         font-size: 11px;
         letter-spacing: 0.12em;
         color: var(--text);
-        font-weight: 300;
     }
 
     #window-title .dim1 {

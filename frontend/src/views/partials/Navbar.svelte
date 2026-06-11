@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { Browser } from "@wailsio/runtime";
+
     import {
         Config,
         Localization,
@@ -139,7 +141,12 @@
                 </svg>
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="ucp" title="">
+            <button
+                class="navbar-button"
+                id="ucp"
+                title=""
+                on:click={() => Browser.OpenURL("https://ucp.see-rpg.com/")}
+            >
                 <svg
                     width="100%"
                     height="100%"

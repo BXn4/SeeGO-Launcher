@@ -184,7 +184,6 @@
 
     #terms-title {
         font-size: 18px;
-        font-weight: 500;
         margin-bottom: 6px;
         letter-spacing: 0.01em;
     }
@@ -197,7 +196,6 @@
 
     #terms-content :global(h2) {
         font-size: 13px;
-        font-weight: 500;
         color: var(--dim1);
         letter-spacing: 0.02em;
         margin: 28px 0 12px;
@@ -207,7 +205,6 @@
 
     #terms-content :global(h3) {
         font-size: 11px;
-        font-weight: 500;
         color: var(--text-dim);
         letter-spacing: 0.06em;
         text-transform: uppercase;
@@ -217,7 +214,6 @@
 
     #terms-content :global(h4) {
         font-size: 11px;
-        font-weight: 400;
         margin: 8px 0 4px;
         padding-left: 26px;
     }

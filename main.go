@@ -247,6 +247,10 @@ func main() {
 		window.SetAlwaysOnTop(false)
 
 		if !config.GetTermsAccepted() {
+			app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage("A SeeGO Launcher egy nonprofit, nyílt forráskódú launcher.\n" +
+				"Ez a szoftver nem hivatalos. Nem áll kapcsolatban a SEE-ONLINE Kft.-vel vagy a SeeRPG üzemeltetőivel, és nem rendelkezik azok támogatásával, jóváhagyásával vagy partnerségével.\n" +
+				"!!! A szoftver használata saját felelősségre történik. Nem vállalok felelősséget a szoftver használatából eredő fiókkorlátozásokért, tiltásokért vagy egyéb következményekért.\n" +
+				"A projekt nem tartalmazza, nem terjeszti és nem használja fel a SeeRPG hivatalos kliensének, launcherének vagy egyéb szoftvereinek forráskódját.\n").Show()
 			log.Info("Terms is not accepted, showing the terms window")
 
 			window.SetSize(620, 480)

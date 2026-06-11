@@ -23,12 +23,6 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        font-family:
-            system-ui,
-            -apple-system,
-            Segoe UI,
-            Roboto,
-            sans-serif;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;

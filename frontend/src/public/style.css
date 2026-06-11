@@ -34,5 +34,12 @@
     --gray: #84888f;
     --nikis-color: #ffff99;
 
+    font-family:
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        sans-serif;
+
     user-select: none;
 }
