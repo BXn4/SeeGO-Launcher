@@ -18,20 +18,4 @@ const (
 	SeeGOInfo2 = "seego-info2"
 	SeeGOInfo3 = "seego-info3"
 	SeeGOInfo4 = "seego-info4"
-
-	// not needed
-	// window
-	Minimize    = "window-minimize"
-	Close       = "window-close"
-	PlayReady   = "play-title-ready"
-	PlayOffline = "play-title-offline"
-	Home        = "home-title"
-	News        = "news-title"
-	Forum       = "forum-title"
-	UCP         = "ucp-title"
-	Shop        = "shop-title"
-	Images      = "images-title"
-	Players     = "players-title"
-	Help        = "help-title"
-	Settings    = "settings-title"
 )

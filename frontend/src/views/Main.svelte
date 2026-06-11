@@ -9,6 +9,7 @@
         Config,
         Localization,
     } from "../../bindings/seegolauncher/internal/services";
+    import { Icons } from "../utils/icons";
 
     let serverPlayersBefore = -1;
     let serverSlotsBefore = -1;
@@ -334,12 +335,7 @@
                             )}
                         class="button social"
                         title="Discord"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor"
-                            ><path
-                                d="M18.59 5.89c-1.23-.57-2.54-.99-3.92-1.23c-.17.3-.37.71-.5 1.04c-1.46-.22-2.91-.22-4.34 0c-.14-.33-.34-.74-.51-1.04c-1.38.24-2.69.66-3.92 1.23c-2.48 3.74-3.15 7.39-2.82 10.98c1.65 1.23 3.24 1.97 4.81 2.46c.39-.53.73-1.1 1.03-1.69c-.57-.21-1.11-.48-1.62-.79c.14-.1.27-.21.4-.31c3.13 1.46 6.52 1.46 9.61 0c.13.11.26.21.4.31c-.51.31-1.06.57-1.62.79c.3.59.64 1.16 1.03 1.69c1.57-.49 3.17-1.23 4.81-2.46c.39-4.17-.67-7.78-2.82-10.98Zm-9.75 8.78c-.94 0-1.71-.87-1.71-1.94s.75-1.94 1.71-1.94s1.72.87 1.71 1.94c0 1.06-.75 1.94-1.71 1.94m6.31 0c-.94 0-1.71-.87-1.71-1.94s.75-1.94 1.71-1.94s1.72.87 1.71 1.94c0 1.06-.75 1.94-1.71 1.94"
-                            ></path></svg
-                        >
+                        >{@html Icons.Community.Discord}
                     </button>
                     <button
                         on:click={() =>
@@ -348,12 +344,7 @@
                             )}
                         class="button social"
                         title="Facebook"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor"
-                            ><path
-                                d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396z"
-                            ></path></svg
-                        >
+                        >{@html Icons.Community.FaceBook}
                     </button>
                     <button
                         on:click={() =>
@@ -362,12 +353,7 @@
                             )}
                         class="button social"
                         title="TikTok"
-                    >
-                        <svg viewBox="0 0 16 16" fill="currentColor"
-                            ><path
-                                d="M8.3 1.01c.75-.01 1.5 0 2.25-.01c.05.89.36 1.8 1.01 2.43c.64.65 1.55.94 2.44 1.04v2.35c-.83-.03-1.66-.2-2.42-.56c-.33-.15-.63-.34-.93-.54c0 1.7 0 3.41-.01 5.1c-.04.82-.31 1.63-.78 2.3c-.75 1.12-2.06 1.85-3.4 1.87c-.82.05-1.65-.18-2.35-.6c-1.16-.69-1.98-1.97-2.1-3.33q-.03-.435 0-.87c.1-1.11.65-2.17 1.49-2.89c.95-.84 2.29-1.24 3.54-1c.01.86-.02 1.73-.02 2.59c-.57-.19-1.24-.13-1.74.22c-.37.24-.64.6-.79 1.02c-.12.3-.09.62-.08.94c.14.96 1.05 1.76 2.01 1.67c.64 0 1.26-.39 1.59-.94c.11-.19.23-.39.24-.62c.06-1.04.03-2.08.04-3.13c0-2.35 0-4.7.01-7.04"
-                            ></path></svg
-                        >
+                        >{@html Icons.Community.TikTok}
                     </button>
                     <button
                         on:click={() =>
@@ -376,19 +362,14 @@
                             )}
                         class="button social"
                         title="YouTube"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor"
-                            ><path
-                                d="M12.006 19.012h-.02c-.062 0-6.265-.012-7.83-.437a2.5 2.5 0 0 1-1.764-1.765A26.494 26.494 0 0 1 1.986 12a26.646 26.646 0 0 1 .417-4.817A2.564 2.564 0 0 1 4.169 5.4c1.522-.4 7.554-.4 7.81-.4H12c.063 0 6.282.012 7.831.437c.859.233 1.53.904 1.762 1.763c.29 1.594.427 3.211.407 4.831a26.568 26.568 0 0 1-.418 4.811a2.51 2.51 0 0 1-1.767 1.763c-1.52.403-7.553.407-7.809.407Zm-2-10.007l-.005 6l5.212-3l-5.207-3Z"
-                            ></path></svg
-                        >
+                        >{@html Icons.Community.YouTube}
                     </button>
                 </div>
             </div>
             <div class="widget">
                 <h3 class="widget-title">{launcherStatus}</h3>
                 <button id="connect-button" class="button connect"
-                    >{launcherConnect}</button
+                    ><!-->{@html Icons.Launcher.Play}<--->{launcherConnect}</button
                 >
             </div>
         </aside>
@@ -696,7 +677,7 @@
         height: 48px;
     }
 
-    .button.social svg {
+    :global(.button.social svg) {
         width: 22px;
         height: 22px;
     }
