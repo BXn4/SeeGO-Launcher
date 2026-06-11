@@ -47,7 +47,7 @@
 
         setInterval(fetchServerStatus, 60 * 1000);
 
-        await Events.Emit("app-ready", null);
+        // await Events.Emit("app-ready", null);
     });
 
     async function fetchServerStatus() {
@@ -130,7 +130,7 @@
                 if (serverQueueNow > 0) {
                     const totalSeconds = serverQueueNow * 32;
                     if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed()} óra`;
+                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} óra`;
                     } else if (totalSeconds >= 60) {
                         connectionIn = `${(totalSeconds / 60).toFixed()} perc`;
                     } else {
@@ -142,7 +142,7 @@
                     // about 2 seconds one player connects
                     const totalSeconds = serverQueueNow * 2;
                     if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed()} óra`;
+                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} óra`;
                     } else if (totalSeconds >= 60) {
                         connectionIn = `${(totalSeconds / 60).toFixed()} perc`;
                     } else {
@@ -182,7 +182,7 @@
                         több fontos kényelmi fejlesztés, hibajavítás és tartalmi
                         bővítés is bekerült a szerverre.
                     </p>
-                    <button class="hero-news-button" id="hero-news-read-latest"
+                    <button class="button hero-news" id="hero-news-read-latest"
                         >Elolvasom</button
                     >
                 </div>
@@ -279,7 +279,12 @@
                     </a>
                 </div>
             </div>
-            <div class="widget"></div>
+            <div class="widget">
+                <h3 class="widget-title">Csatlakozásra kész!</h3>
+                <button id="connect-button" class="button connect"
+                    >Csatlakozás</button
+                >
+            </div>
         </aside>
     </div>
 </main>
@@ -383,7 +388,7 @@
         color: var(--comment);
     }
 
-    .hero-news-button {
+    .button.hero-news {
         background: var(--orange);
         color: var(--black);
         border: none;
@@ -393,10 +398,6 @@
         font-size: 14px;
     }
 
-    .hero-news-button:hover {
-        transform: scale(1.05);
-    }
-
     .widget {
         background: var(--surface1);
         border: 1px solid var(--border);
@@ -404,7 +405,7 @@
         padding: 24px;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 27px;
     }
 
     .status-container {
@@ -472,7 +473,7 @@
 
     .estimated-connect {
         font-size: 12px;
-        margin-top: -4px;
+        margin-top: -12px;
         margin-bottom: -8px;
         color: var(--comment);
     }
@@ -600,6 +601,18 @@
 
     .social-box:hover svg {
         transform: scale(1.1);
+    }
+
+    .button.connect {
+        border: none;
+        padding: 24px;
+        background-color: var(--darker-green);
+        border-radius: 16px;
+    }
+
+    .button:hover {
+        cursor: pointer;
+        transform: scale(1.05);
     }
 
     @media (max-width: 900px) {
