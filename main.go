@@ -228,7 +228,7 @@ func main() {
 		config.SetTermsAccepted()
 
 		window.SetSize(1200, int(1200/(16.0/9.0)))
-		app.Event.Emit("navigate", "main")
+		app.Event.Emit("app:navigate", "main")
 		a.view = "main"
 		window.Center()
 	})
@@ -256,13 +256,13 @@ func main() {
 			log.Info("Terms is not accepted, showing the terms window")
 
 			window.SetSize(620, 480)
-			app.Event.Emit("navigate", "terms")
+			app.Event.Emit("app:navigate", "terms")
 			a.view = "terms"
 			window.Center()
 			return
 		}
 		window.SetSize(1200, int(1200/(16.0/9.0)))
-		app.Event.Emit("navigate", "main")
+		app.Event.Emit("app:navigate", "main")
 		a.view = "main"
 		window.Center()
 	}()

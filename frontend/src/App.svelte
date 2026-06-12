@@ -3,8 +3,10 @@
     import Splash from "./views/Splash.svelte";
     import Terms from "./views/Terms.svelte";
     import Main from "./views/Main.svelte";
+    import Titlebar from "./views/partials/Titlebar.svelte";
+    import Navbar from "./views/partials/Navbar.svelte";
     let view = $state("splash");
-    Events.On("navigate", (e) => {
+    Events.On("app:navigate", (e) => {
         view = e.data;
     });
 </script>
@@ -15,4 +17,6 @@
     <Terms />
 {:else if view === "main"}
     <Main />
+    <Titlebar />
+    <Navbar />
 {/if}
