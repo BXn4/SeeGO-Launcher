@@ -37,6 +37,7 @@
     }
 
     let categories: Category[] = [];
+    let items: Item[] = [];
     let membershipItems: Item[] = [];
     let membershipCategory: Category | null = null;
 
@@ -55,20 +56,20 @@
     let launcherStatus: string = "";
     let launcherConnect: string = "";
 
+    let itemDialogName: string = "";
+    let itemDialogDesc: string = "";
+    let itemDialogImage: string = "";
+    let itemDialogPrice: string = "";
+    let itemDialogCurrency: string = "";
+
+    let showDialog: Boolean = false;
+
     onMount(async () => {
         await setLocales();
+        await fetchItems();
         await fetchServerStatus();
-        categories = (await getCategories()) as Category[];
-        membershipCategory =
-            categories.find((c) => c.slug === "seerpg-club-tagság-a") ?? null;
-
-        if (membershipCategory) {
-            membershipItems = (await getItems(membershipCategory.id)) as Item[];
-        }
 
         setInterval(fetchServerStatus, 60 * 1000);
-
-        // await Events.Emit("app-ready", null);
     });
 
     async function setLocales() {
@@ -105,6 +106,37 @@
             Localization.Get("launcher-ready", lang),
             Localization.Get("launcher-connect", lang),
         ]);
+    }
+
+    async function fetchItems() {
+        categories = (await getCategories()) as Category[];
+        membershipCategory =
+            categories.find((c) => c.slug === "seerpg-club-tagság-a") ?? null;
+
+        const allItems = await Promise.all(
+            categories.map((c) => getItems(c.id) as Promise<Item[]>),
+        );
+        items = allItems.flat();
+
+        if (membershipCategory) {
+            membershipItems = (await getItems(membershipCategory.id)) as Item[];
+        }
+    }
+
+    function showItemDialog(id: number) {
+        let selectedItem = items.find((item) => item.id === id) ?? null;
+        if (selectedItem) {
+            itemDialogName = selectedItem.name;
+            itemDialogDesc = selectedItem.description;
+            itemDialogImage = selectedItem.image;
+            itemDialogPrice = selectedItem.total_price.toString();
+            itemDialogCurrency = selectedItem.currency;
+            showDialog = true;
+        }
+    }
+
+    function closeItemDialog() {
+        showDialog = false;
     }
 
     async function fetchServerStatus() {
@@ -273,7 +305,7 @@
                 <h3 class="items-title">SeeRPG Club {membership}</h3>
                 <div id="items-container">
                     {#each membershipItems as item}
-                        <div class="item-square-card" title={item.name}>
+                        <div class="item-square-card">
                             <div class="item-header">
                                 <span class="item-tag">7 {day}</span>
                             </div>
@@ -286,6 +318,9 @@
                                     >{item.total_price} {item.currency}</span
                                 >
                             </div>
+                            <button class="button add-to-card">
+                                {@html Icons.Launcher.Cart}
+                            </button>
                         </div>
                     {/each}
                 </div>
@@ -331,7 +366,7 @@
                 <h3 class="widget-title">{community}</h3>
                 <div class="social-links-grid">
                     <button
-                        on:click={() =>
+                        onclick={() =>
                             Browser.OpenURL(
                                 "https://discord.com/invite/seerpg",
                             )}
@@ -340,7 +375,7 @@
                         >{@html Icons.Community.Discord}
                     </button>
                     <button
-                        on:click={() =>
+                        onclick={() =>
                             Browser.OpenURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
@@ -349,7 +384,7 @@
                         >{@html Icons.Community.FaceBook}
                     </button>
                     <button
-                        on:click={() =>
+                        onclick={() =>
                             Browser.OpenURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
@@ -358,7 +393,7 @@
                         >{@html Icons.Community.TikTok}
                     </button>
                     <button
-                        on:click={() =>
+                        onclick={() =>
                             Browser.OpenURL(
                                 "https://www.youtube.com/@seerpgofficial",
                             )}
@@ -376,6 +411,29 @@
             </div>
         </aside>
     </div>
+    {#if showDialog}
+        <div
+            class="dialog-backdrop"
+            role="button"
+            tabindex="0"
+            onclick={closeItemDialog}
+            onkeydown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    closeItemDialog();
+                }
+            }}
+        >
+            <div class="dialog">
+                <img src={itemDialogImage} alt={itemDialogName} />
+                <h2>{itemDialogName}</h2>
+                {@html itemDialogDesc}
+                <span class="item-price">
+                    {itemDialogPrice}
+                    {itemDialogCurrency}
+                </span>
+            </div>
+        </div>
+    {/if}
 </main>
 
 <style>
@@ -578,7 +636,27 @@
         justify-content: space-between;
         aspect-ratio: 1 / 1;
         box-sizing: border-box;
+        position: relative;
+    }
+
+    .add-to-card {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: var(--darker-green);
+        color: var(--text);
+        border: none;
+        border-radius: 8px;
+        padding: 6px;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    :global(.add-to-card svg) {
+        width: 18px;
+        height: 18px;
     }
 
     .item-tag {
@@ -595,6 +673,8 @@
         align-items: center;
         flex-grow: 1;
         margin: 8px 0;
+        background: none;
+        border: none;
     }
 
     .item-image img {
@@ -605,8 +685,9 @@
         transition: transform 0.2s;
     }
 
-    .item-square-card:hover .item-image img {
+    .item-image img:hover {
         transform: scale(1.2);
+        cursor: pointer;
     }
 
     .item-name {
@@ -679,6 +760,7 @@
     .button:hover {
         cursor: pointer;
         transform: scale(1.05);
+        transition: transform 0.2s ease-in-out;
     }
 
     @media (max-width: 900px) {
@@ -702,5 +784,15 @@
 
     :global(.updated) {
         animation: refresh 0.5s ease-out;
+    }
+
+    .dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>

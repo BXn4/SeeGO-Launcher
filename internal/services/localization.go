@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"seegolauncher/data"
+	"sync"
 )
 
 var localization = &Localization{
@@ -11,6 +12,7 @@ var localization = &Localization{
 
 type Localization struct {
 	cache map[string]map[string]string
+	mutex sync.RWMutex
 }
 
 func LocalizationService() *Localization {
@@ -18,6 +20,8 @@ func LocalizationService() *Localization {
 }
 
 func (s *Localization) load(lang string) (map[string]string, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 	if v, ok := s.cache[lang]; ok {
 		return v, nil
 	}

@@ -11,6 +11,11 @@ import (
 	"github.com/charmbracelet/log"
 )
 
+// cache all news (cache/news), store it in json with timestamp
+// due to i want to make the app work offline too (with connection disabled),
+// i need to store the images
+// always show the latest on top
+// and also, create categories. changelogs etc, but i dont think that theyre using categories
 const (
 	TermsDate = "terms.ver"
 	TermsFile = "terms.chc"
