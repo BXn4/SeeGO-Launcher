@@ -1,0 +1,6 @@
+cache everything on startup
+create a hash to compare the local -> remote
+make stylesheet better. use the classess better to support custom themes.
+rewrote the entire views
+
+enable/disable anims, because not everyone likes it.

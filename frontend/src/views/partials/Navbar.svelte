@@ -83,6 +83,7 @@
                 {@html Icons.Navbar.UCP}
                 <span class="indicator"></span>
             </button>
+            <div class="divider"></div>
         </div>
         <div class="navbar-item bottom">
             <div class="divider"></div>
@@ -156,92 +157,11 @@
 </main>
 
 <style>
+    @import "../../public/styles/partials/navbar.css";
+
     * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-    }
-
-    #navbar {
-        position: fixed;
-        top: var(--height);
-        left: 0;
-        width: var(--width);
-        height: calc(100vh - var(--height));
-        background: var(--surface1);
-        border-right: 0.5px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 16px 0;
-        z-index: 5;
-    }
-
-    .navbar-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .divider {
-        width: 24px;
-        height: 1px;
-        background: var(--border);
-        margin-bottom: 8px;
-    }
-
-    .navbar-button {
-        position: relative;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        border: none;
-        background: transparent;
-        color: var(--navbar-icon);
-        cursor: pointer;
-    }
-
-    :global(.navbar-button svg) {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-
-    .navbar-button:hover {
-        color: var(--navbar-icon-hover);
-        background: var(--navbar-icon-hover-bg);
-        transform: translateY(-1px);
-    }
-
-    .navbar-button:active {
-        transform: scale(0.94);
-    }
-
-    .navbar-button.active {
-        color: var(--accent);
-        background: var(--navbar-icon-active);
-    }
-
-    .navbar-button .indicator {
-        position: absolute;
-        left: -1px;
-        top: 50%;
-        transform: translateY(-50%) scaleY(0);
-        width: 2px;
-        height: 16px;
-        border-radius: 0 2px 2px 0;
-        background: var(--accent);
-    }
-
-    .navbar-button.active .indicator {
-        transform: translateY(-50%) scaleY(1);
-    }
-
-    #shop {
-        color: var(--navbar-icon-highlighted);
     }
 </style>

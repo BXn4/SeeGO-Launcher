@@ -1,6 +1,4 @@
 <script lang="ts">
-    import Titlebar from "../partials/Titlebar.svelte";
-    import Navbar from "../partials/Navbar.svelte";
     import { onMount } from "svelte";
     import { getCategories, getItems } from "../../lib/api";
     import { Browser } from "@wailsio/runtime";
@@ -227,19 +225,20 @@
 
         // without prio
         // about 1-3 players enters from the queue to the server in every 1 mins
+        // update: i connected at 14:00 with 200 queue. After 2 hours, i was 150. My pos always changed between 140 and 160, so i will incrase the queue
         if (estimatedConnection) {
             if (serverPlayersNow >= serverSlotsNow) {
-                // about 30-35 seconds one player disconnects
+                // about 30-35 seconds one player disconnects // update up (changed to 50)
                 // sometimes with the gold prio theres 100 queue, so without pro its like 30-35 seconds disconnect * 10
                 if (serverQueueNow > 0) {
                     // base
-                    let totalSeconds = serverQueueNow * 32;
+                    let totalSeconds = serverQueueNow * 50;
                     if (serverQueueNow >= 100) {
-                        // queue * prio ratio (35%) and + 60 seconds extra
+                        // queue * prio ratio (35%) and + 120 seconds extra
                         // its quite close, because one member in discord waited 7 hours with 500 queue without prio
                         totalSeconds =
                             totalSeconds +
-                            Math.floor(serverQueueNow * 0.35) * 60;
+                            Math.floor(serverQueueNow * 0.35) * 120;
                     }
                     if (totalSeconds >= 3600) {
                         connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${hours}`;
@@ -279,41 +278,39 @@
 </script>
 
 <main>
-    <Titlebar />
-    <Navbar />
     <div id="home-view">
         <div class="feed-layout">
             <header class="hero-card">
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
                     <span class="badge">{latest}</span>
-                    <h2>
+                    <p class="text news-title">
                         Kényelmesebb játékélmény és hasznos javítások érkeztek!
-                    </h2>
-                    <p>
+                    </p>
+                    <p class="comment news-comment">
                         Frissítés érkezett a szerverre! A legújabb frissítésben
                         több fontos kényelmi fejlesztés, hibajavítás és tartalmi
                         bővítés is bekerült a szerverre.
                     </p>
-                    <button class="button hero-news" id="hero-news-read-latest"
+                    <button class="button news-read" id="hero-news-read-latest"
                         >{read}</button
                     >
                 </div>
             </header>
 
-            <div class="items">
-                <h3 class="items-title">SeeRPG Club {membership}</h3>
+            <div class="home-items">
+                <h3 class="text items-title">SeeRPG Club {membership}</h3>
                 <div id="items-container">
                     {#each membershipItems as item}
                         <div class="item-square-card">
                             <div class="item-header">
-                                <span class="item-tag">7 {day}</span>
+                                <span class="text item-tag">7 {day}</span>
                             </div>
                             <div class="item-image">
                                 <img src={item.image} alt={item.name} />
                             </div>
                             <div class="item-name">
-                                <h4>{item.name.split(" ")[0]}</h4>
+                                <h4 class="text">{item.name.split(" ")[0]}</h4>
                                 <span class="item-price"
                                     >{item.total_price} {item.currency}</span
                                 >
@@ -332,7 +329,7 @@
                 <div class="status-container">
                     <div class="status-info">
                         <span id="server-status" class="status-text"></span>
-                        <span id="players-count" class="player-count"
+                        <span id="players-count" class="text player-count"
                             >{serverPlayersNow} / {serverSlotsNow}</span
                         >
                     </div>
@@ -348,29 +345,29 @@
 
                 <div class="stats">
                     <div class="stat-box">
-                        <span class="stat-title">{admins}</span>
+                        <span class="text stat-title">{admins}</span>
                         <span id="admins-count" class="stat-value"
                             >{serverAdminsNow}</span
                         >
                     </div>
                     <div class="stat-box">
-                        <span class="stat-title">{queue}</span>
+                        <span class="text stat-title">{queue}</span>
                         <span id="queue-count" class="stat-value"
                             >{serverQueueNow}</span
                         >
                     </div>
                 </div>
-                <p id="estimated-connect" class="estimated-connect"></p>
+                <p id="estimated-connect" class="comment estimated-connect"></p>
             </div>
             <div class="widget">
-                <h3 class="widget-title">{community}</h3>
+                <h3 class="text widget-title">{community}</h3>
                 <div class="social-links-grid">
                     <button
                         onclick={() =>
                             Browser.OpenURL(
                                 "https://discord.com/invite/seerpg",
                             )}
-                        class="button social"
+                        class="socials"
                         title="Discord"
                         >{@html Icons.Community.Discord}
                     </button>
@@ -379,7 +376,7 @@
                             Browser.OpenURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
-                        class="button social"
+                        class="socials"
                         title="Facebook"
                         >{@html Icons.Community.FaceBook}
                     </button>
@@ -388,7 +385,7 @@
                             Browser.OpenURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
-                        class="button social"
+                        class="socials"
                         title="TikTok"
                         >{@html Icons.Community.TikTok}
                     </button>
@@ -397,15 +394,15 @@
                             Browser.OpenURL(
                                 "https://www.youtube.com/@seerpgofficial",
                             )}
-                        class="button social"
+                        class="socials"
                         title="YouTube"
                         >{@html Icons.Community.YouTube}
                     </button>
                 </div>
             </div>
             <div class="widget">
-                <h3 class="widget-title">{launcherStatus}</h3>
-                <button id="connect-button" class="button connect"
+                <h3 class="text widget-title">{launcherStatus}</h3>
+                <button id="connect-button" class="text button connect"
                     ><!-->{@html Icons.Launcher.Play}<--->{launcherConnect}</button
                 >
             </div>
@@ -437,6 +434,7 @@
 </main>
 
 <style>
+    @import "../../public/styles/views/home.css";
     main {
         width: 100vw;
         height: 100vh;
@@ -444,355 +442,5 @@
         grid-template-columns: var(--width, 240px) 1fr;
         grid-template-rows: var(--height, 48px) 1fr;
         overflow: hidden;
-    }
-
-    #home-view {
-        grid-column: 2;
-        grid-row: 2;
-        padding: 32px;
-        display: grid;
-        grid-template-columns: 1fr 280px;
-        gap: 32px;
-        overflow-y: auto;
-    }
-
-    .feed-layout {
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-    }
-
-    .hero-card {
-        position: relative;
-        min-height: 200px;
-        border-radius: 24px;
-        background: url("https://news.see-rpg.com/img/S2YAXN7DQbg7loLhgpMl.png")
-            center/cover;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        display: flex;
-        align-items: flex-end;
-        padding: 48px;
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-    }
-
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            to top,
-            rgba(11, 15, 23, 0.8) 40%,
-            rgba(11, 15, 23, 0.4) 100%
-        );
-        z-index: 1;
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 600px;
-    }
-
-    .badge {
-        background: var(--green);
-        color: var(--black);
-        font-size: 12px;
-        padding: 4px 8px;
-        border-radius: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: inline-block;
-        margin-bottom: 12px;
-        font-weight: bold;
-    }
-
-    .hero-content h2 {
-        margin: 0 0 8px 0;
-        font-size: 32px;
-    }
-
-    .hero-content p {
-        margin: 0 0 20px 0;
-        color: var(--comment);
-    }
-
-    .button.hero-news {
-        background: var(--orange);
-        color: var(--black);
-        border: none;
-        padding: 10px 20px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .widget {
-        background: var(--surface1);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 27px;
-    }
-
-    .status-container {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .status-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-grow: 1;
-    }
-
-    .status-text {
-        font-size: 16px;
-    }
-
-    .player-count {
-        font-size: 14px;
-        color: var(--text);
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 6px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .progress-bar-fill {
-        height: 100%;
-        border-radius: 10px;
-    }
-
-    .stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-top: 4px;
-    }
-
-    .stat-box {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--border);
-        padding: 12px;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .stat-title {
-        font-size: 12px;
-        color: var(--text);
-        text-transform: uppercase;
-    }
-
-    .stat-value {
-        font-size: 14px;
-        color: var(--comment);
-    }
-
-    .estimated-connect {
-        font-size: 12px;
-        margin-top: -12px;
-        margin-bottom: -8px;
-        color: var(--comment);
-    }
-
-    .items {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .items-title {
-        margin: 0;
-        font-size: 18px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: var(--text);
-    }
-
-    #items-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 16px;
-    }
-
-    .item-square-card {
-        background: var(--surface1);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        aspect-ratio: 1 / 1;
-        box-sizing: border-box;
-        position: relative;
-    }
-
-    .add-to-card {
-        position: absolute;
-        bottom: 12px;
-        right: 12px;
-        background: var(--darker-green);
-        color: var(--text);
-        border: none;
-        border-radius: 8px;
-        padding: 6px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    :global(.add-to-card svg) {
-        width: 18px;
-        height: 18px;
-    }
-
-    .item-tag {
-        font-size: 10px;
-        color: var(--text);
-        background: rgba(255, 255, 255, 0.06);
-        padding: 4px 8px;
-        border-radius: 8px;
-    }
-
-    .item-image {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-grow: 1;
-        margin: 8px 0;
-        background: none;
-        border: none;
-    }
-
-    .item-image img {
-        max-height: 65px;
-        max-width: 100%;
-        object-fit: contain;
-        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
-        transition: transform 0.2s;
-    }
-
-    .item-image img:hover {
-        transform: scale(1.2);
-        cursor: pointer;
-    }
-
-    .item-name {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
-
-    .item-name h4 {
-        margin: 0;
-        font-size: 14px;
-        color: var(--text);
-    }
-
-    .item-price {
-        font-size: 12px;
-        color: var(--green);
-    }
-
-    .sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .widget-title {
-        margin: 0;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text-muted);
-    }
-
-    .social-links-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-    }
-
-    .button.social {
-        aspect-ratio: 1;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--comment);
-        text-decoration: none;
-        width: 48px;
-        height: 48px;
-    }
-
-    :global(.button.social svg) {
-        width: 22px;
-        height: 22px;
-    }
-
-    .button.social:hover {
-        color: var(--dim1);
-    }
-
-    .button.connect {
-        border: none;
-        padding: 24px;
-        background-color: var(--darker-green);
-        border-radius: 16px;
-    }
-
-    .button:hover {
-        cursor: pointer;
-        transform: scale(1.05);
-        transition: transform 0.2s ease-in-out;
-    }
-
-    @media (max-width: 900px) {
-        #home-view {
-            grid-template-columns: 1fr;
-        }
-        .sidebar {
-            order: 0;
-        }
-    }
-    @keyframes refresh {
-        0% {
-            opacity: 0;
-            transform: scale(0.97);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-    :global(.updated) {
-        animation: refresh 0.5s ease-out;
-    }
-
-    .dialog-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 </style>

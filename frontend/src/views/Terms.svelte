@@ -41,28 +41,28 @@
             if (trimmed.startsWith("ncl# ###") || trimmed.startsWith("###")) {
                 const heading = trimmed.replace(/^ncl# ###|^###/, "").trim();
                 parsed += `
-	<h4>${heading}</h4>`;
+    <p class="highlighted terms-category-sub">${heading}</p>`;
             } else if (
                 trimmed.startsWith("ncl# ##") ||
                 trimmed.startsWith("##")
             ) {
                 const heading = trimmed.replace(/^ncl# ##|^##/, "").trim();
                 parsed += `
-	<h3>${heading}</h3>`;
+	<p class="highlighted terms-category-sub">${heading}</p>`;
             } else if (trimmed.startsWith("#")) {
                 const heading = trimmed.replace(/^#/, "").trim();
                 parsed += `
-	<h2>${heading}</h2>`;
+	<p class="highlighted terms-category">${heading}<p>`;
             } else if (trimmed.startsWith("c#")) {
                 const text = trimmed.replace(/^c#/, "").trim();
                 parsed += `
-	<p class="contact">${text}</p>`;
+	<p class="comment terms-contact">${text}</p>`;
             } else {
                 const text = trimmed.replace(
                     /\[\[href\]\](.*?)\[\[href\]\]/g,
-                    '<a href="$1" target="_blank">$1</a>',
+                    '<a class="highlighted link" onclick="window._openURL(\'$1\')">$1</a>',
                 );
-                parsed += `<p>${text}</p>`;
+                parsed += `<p class="text terms-text">${text}</p>`;
             }
         }
         return parsed;
@@ -93,31 +93,23 @@
 
 <main>
     <Titlebar></Titlebar>
-    <div id="content">
-        <h1 id="terms-title">{title}</h1>
-        <p id="terms-modified">{modified}</p>
+    <div id="terms">
+        <h1 class="text terms-title">{title}</h1>
+        <p class="comment terms-modified">{modified}</p>
         <hr />
         <div id="terms-content">
-            <h3>
+            <p class="comment terms-comment">
                 SeeGO Launcher is an open-source project distributed under the
                 MIT License. It is provided "as is", without warranty of any
                 kind. You are free to use, modify, and distribute it.
-            </h3>
+            </p>
             {@html terms}
         </div>
-        <div id="actionbar">
-            <button
-                class="button"
-                id="terms-decline-button"
-                onclick={() => declineTerms()}
-            >
+        <div id="terms-actionbar">
+            <button class="button cancel" onclick={() => declineTerms()}>
                 {decline}
             </button>
-            <button
-                class="button"
-                id="terms-accept-button"
-                onclick={() => acceptTerms()}
-            >
+            <button class="button ok" onclick={() => acceptTerms()}>
                 {accept}
             </button>
         </div>
@@ -125,119 +117,12 @@
 </main>
 
 <style>
+    @import "../public/styles/views/terms.css";
     main {
         width: 100vw;
         height: 100vh;
-        overflow: hidden;
-        position: relative;
-    }
-
-    #content {
-        margin-top: var(--height);
-        height: calc(100vh - var(--height) - 64px);
-        overflow-y: auto;
-        padding: 32px 48px 32px;
-        scrollbar-width: thin;
-    }
-
-    #actionbar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 64px;
-        background: var(--surface2);
         display: flex;
         align-items: center;
-        justify-content: flex-end;
-        gap: 10px;
-        padding: 0 48px;
-        z-index: 10;
-    }
-
-    .button {
-        padding: 0 20px;
-        height: 34px;
-        border-radius: 6px;
-        border: 0.5px solid var(--button-border);
-        background: transparent;
-        color: var(--text);
-        font-size: 12px;
-        cursor: pointer;
-    }
-
-    #terms-decline-button:hover {
-        background: var(--decline-hover-color);
-        border-color: var(--decline-hover-border);
-        color: var(--red);
-    }
-
-    #terms-accept-button:hover {
-        background: var(--accept-hover-color);
-        border-color: var(--accept-hover-border);
-    }
-
-    #terms-title {
-        font-size: 18px;
-        margin-bottom: 6px;
-        letter-spacing: 0.01em;
-    }
-
-    #terms-modified {
-        font-size: 11px;
-        letter-spacing: 0.04em;
-        margin-bottom: 20px;
-    }
-
-    #terms-content :global(h2) {
-        font-size: 13px;
-        color: var(--dim1);
-        letter-spacing: 0.02em;
-        margin: 28px 0 12px;
-        padding-left: 14px;
-        border-left: 2px solid var(--dim1);
-    }
-
-    #terms-content :global(h3) {
-        font-size: 11px;
-        color: var(--text-dim);
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin: 16px 0 6px;
-        padding-left: 16px;
-    }
-
-    #terms-content :global(h4) {
-        font-size: 11px;
-        margin: 8px 0 4px;
-        padding-left: 26px;
-    }
-
-    #terms-content :global(p) {
-        font-size: 12px;
-        line-height: 1.8;
-        color: var(--text);
-        margin: 0 0 10px;
-        padding-left: 16px;
-    }
-
-    #terms-content :global(p.contact) {
-        font-size: 12px;
-        color: var(--comment);
-        padding-left: 0;
-        line-height: 1.9;
-    }
-
-    #terms-content :global(a) {
-        color: var(--accent);
-        text-decoration: none;
-    }
-
-    #terms-content :global(a:hover) {
-        text-decoration: underline;
-    }
-
-    #terms-content :global(h2:not(:first-child)) {
-        margin-top: 32px;
+        justify-content: center;
     }
 </style>

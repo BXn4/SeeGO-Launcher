@@ -1,0 +1,46 @@
+#splash {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+#splash-logo {
+    width: 120px;
+    height: auto;
+}
+
+.text.splash-title {
+    font-size: 28px;
+    margin: 0;
+}
+
+.loader {
+    transform: rotateZ(45deg);
+    perspective: 1000px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: var(--dim1);
+}
+
+.loader:before,
+.loader:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: inherit;
+    border-radius: 50%;
+    transform: rotateX(70deg);
+    animation: 1s spin linear infinite;
+}
+
+.loader:after {
+    color: var(--dim2);
+    transform: rotateY(70deg);
+    animation-delay: .4s;
+}
