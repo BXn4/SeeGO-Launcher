@@ -249,7 +249,7 @@ func main() {
 			},
 			5*time.Second,
 		) {
-			//
+			// will notify if the cache was not successed
 			app.Quit()
 		}
 
