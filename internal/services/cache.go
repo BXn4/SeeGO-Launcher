@@ -18,7 +18,7 @@ func (s *CacheService) GetCachedTerms() (error, string) {
 		return err, ""
 	}
 
-	termsFile := filepath.Join(cacheDir, cache.TermsFile)
+	termsFile := filepath.Join(cacheDir, cache.TermsFileName)
 	termsData, err := os.ReadFile(termsFile)
 
 	return nil, string(termsData)
