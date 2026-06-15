@@ -128,21 +128,21 @@ func WriteTerms(v string) error {
 	return nil
 }
 
-func LoadCache() {
+func LoadCache() bool {
 	if err := checkCacheDir(); err != nil {
 		log.Errorf("Error creating cache directory: %v", err)
-		return
+		return false
 	}
 
 	if err := checkNewsCacheDir(); err != nil {
 		log.Errorf("Error creating news cache directory: %v", err)
-		return
+		return false
 	}
 
 	cacheDir, err := GetCachePath()
 	if err != nil {
 		log.Errorf("Error getting cache path: %v", err)
-		return
+		return false
 	}
 
 	termsDatePath := filepath.Join(cacheDir, TermsDate)
@@ -156,7 +156,7 @@ func LoadCache() {
 			WriteTermsDate(termsDateresponse)
 		} else {
 			log.Errorf("Failed to read %s: %v", TermsDate, err)
-			return
+			return false
 		}
 	}
 
@@ -168,7 +168,7 @@ func LoadCache() {
 			WriteTerms(termsDataResponse)
 		} else {
 			log.Errorf("Failed to read %s: %v", TermsFile, err)
-			return
+			return false
 		}
 	}
 
@@ -178,4 +178,6 @@ func LoadCache() {
 		response, _ := RequestTerms()
 		WriteTerms(response)
 	}
+
+	return true
 }

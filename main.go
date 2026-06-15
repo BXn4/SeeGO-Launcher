@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"os"
+	"seegolauncher/internal/cache"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
@@ -67,8 +68,6 @@ func main() {
 	config := services.ConfigService()
 
 	a := &App{appState: Show, dialog: nil}
-
-	// cache.LoadCache()
 
 	app := application.New(application.Options{
 		Name:        "seego-launcher",
@@ -242,7 +241,17 @@ func main() {
 	// https://youtu.be/xXKqODp94VA
 
 	go func() {
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
+		if WaitUntil(
+			func() bool {
+				success := cache.LoadCache()
+				return success == true
+			},
+			5*time.Second,
+		) {
+			//
+			app.Quit()
+		}
 
 		//after splash
 		window.SetAlwaysOnTop(false)
@@ -270,4 +279,15 @@ func main() {
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func WaitUntil(condition func() bool, timeout time.Duration) bool {
+	startTime := time.Now()
+	for !condition() {
+		if time.Since(startTime) >= timeout {
+			return true
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	return false
 }
