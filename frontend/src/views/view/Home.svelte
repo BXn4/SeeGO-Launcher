@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { getCategories, getItems } from "../../lib/api";
-    import { Browser } from "@wailsio/runtime";
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
     import {
         Config,
@@ -364,7 +363,7 @@
                 <div class="social-links-grid">
                     <button
                         onclick={() =>
-                            Browser.OpenURL(
+                            window._openURL(
                                 "https://discord.com/invite/seerpg",
                             )}
                         class="socials"
@@ -373,7 +372,7 @@
                     </button>
                     <button
                         onclick={() =>
-                            Browser.OpenURL(
+                            window._openURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
                         class="socials"
@@ -382,7 +381,7 @@
                     </button>
                     <button
                         onclick={() =>
-                            Browser.OpenURL(
+                            window._openURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
                         class="socials"
@@ -391,7 +390,7 @@
                     </button>
                     <button
                         onclick={() =>
-                            Browser.OpenURL(
+                            window._openURL(
                                 "https://www.youtube.com/@seerpgofficial",
                             )}
                         class="socials"

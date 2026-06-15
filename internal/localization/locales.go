@@ -5,9 +5,10 @@ const (
 	LauncherMinimized = "notification-launcher-minimized"
 
 	// splash
-	SplashLoading       = "splash-loading"
-	SplashLoadingNews   = "splash-loading-news"
-	SplashLoadingSerial = "splash-loading-serial"
+	SplashLoading         = "splash-loading"
+	SplashLoadingNews     = "splash-loading-news"
+	SplashLoadingSerial   = "splash-loading-serial"
+	OpenedInBrowserWindow = "opened-browser-window"
 
 	// dialog
 	TermsDeclinedTitle   = "terms-declined-dialog-title"

@@ -6,10 +6,29 @@
     import Titlebar from "./views/partials/Titlebar.svelte";
     import Navbar from "./views/partials/Navbar.svelte";
     let view = $state("splash");
+    let oldView = "splash";
+
+    (window as any)._openURL = async (url: string) => {
+        oldView = view;
+        navigate("splash");
+        Browser.OpenURL(url);
+
+        Events.Emit("splash:setCurrentProgress", "opened-browser-window");
+
+        await sleep(5000);
+        navigate(oldView);
+    };
     Events.On("app:navigate", (e) => {
-        (window as any)._openURL = (url: string) => Browser.OpenURL(url);
-        view = e.data;
+        navigate(e.data);
     });
+
+    function navigate(value: string) {
+        view = value;
+    }
+
+    async function sleep(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
 </script>
 
 {#if view === "splash"}

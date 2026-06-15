@@ -1,11 +1,24 @@
 <script lang="ts">
+    import { Events } from "@wailsio/runtime";
     import logo from "../public/images/seego_nobg.svg";
+    import {
+        Config,
+        Localization,
+    } from "../../bindings/seegolauncher/internal/services";
+    Events.On("splash:setCurrentProgress", async (e) => {
+        const splashAlt = document.getElementById("splash-alt");
+        if (splashAlt) {
+            let lang = await Config.GetLanguage();
+            splashAlt.textContent = await Localization.Get(e.data, lang);
+        }
+    });
 </script>
 
 <main>
     <div id="splash">
         <img id="splash-logo" src={logo} alt="SeeGO Launcher logo" />
         <h1 class="text splash-title">SeeGO Launcher</h1>
+        <p id="splash-alt" class="comment splash-alt"></p>
         <span class="loader"></span>
     </div>
 </main>

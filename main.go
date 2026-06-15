@@ -242,7 +242,7 @@ func main() {
 	// https://youtu.be/xXKqODp94VA
 
 	go func() {
-		time.Sleep(2 * time.Second)
+		time.Sleep(5 * time.Second)
 
 		//after splash
 		window.SetAlwaysOnTop(false)

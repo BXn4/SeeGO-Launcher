@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Browser, Events } from "@wailsio/runtime";
+    import { Events } from "@wailsio/runtime";
 
     import {
         Config,
@@ -70,7 +70,12 @@
                 {@html Icons.Navbar.News}
                 <span class="indicator"></span>
             </button>
-            <button class="navbar-button" id="forum" title={forum}>
+            <button
+                class="navbar-button"
+                id="forum"
+                title={forum}
+                on:click={() => window._openURL("https://forum.see-rpg.com/")}
+            >
                 {@html Icons.Navbar.Forum}
                 <span class="indicator"></span>
             </button>
@@ -78,7 +83,7 @@
                 class="navbar-button"
                 id="ucp"
                 title={ucp}
-                on:click={() => Browser.OpenURL("https://ucp.see-rpg.com/")}
+                on:click={() => window._openURL("https://ucp.see-rpg.com/")}
             >
                 {@html Icons.Navbar.UCP}
                 <span class="indicator"></span>
