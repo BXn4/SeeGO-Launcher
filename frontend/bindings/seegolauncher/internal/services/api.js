@@ -11,36 +11,13 @@ import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Cr
 import * as $models from "./models.js";
 
 /**
- * @returns {$CancellablePromise<$models.Category[]>}
- */
-export function GetCategories() {
-    return $Call.ByID(4064844339).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType1($result);
-    }));
-}
-
-/**
- * @param {number} categoryID
- * @returns {$CancellablePromise<$models.Item[]>}
- */
-export function GetItems(categoryID) {
-    return $Call.ByID(564989009, categoryID).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType3($result);
-    }));
-}
-
-/**
  * @returns {$CancellablePromise<$models.ServerDetail>}
  */
 export function GetServerPlayers() {
     return $Call.ByID(2408052814).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType4($result);
+        return $$createType0($result);
     }));
 }
 
 // Private type creation functions
-const $$createType0 = $models.Category.createFrom;
-const $$createType1 = $Create.Array($$createType0);
-const $$createType2 = $models.Item.createFrom;
-const $$createType3 = $Create.Array($$createType2);
-const $$createType4 = $models.ServerDetail.createFrom;
+const $$createType0 = $models.ServerDetail.createFrom;

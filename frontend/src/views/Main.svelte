@@ -2,13 +2,14 @@
     import { Events } from "@wailsio/runtime";
     import Home from "./view/Home.svelte";
     import News from "./view/News.svelte";
-    let view = $state("home");
+
+    let view = $state(localStorage.getItem("view") ?? "home");
+
     Events.On("main:navigate", (e) => {
         if (view != e.data) {
             view = e.data;
-            return;
+            localStorage.setItem("view", view);
         }
-        return;
     });
 </script>
 

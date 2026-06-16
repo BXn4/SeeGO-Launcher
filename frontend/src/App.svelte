@@ -15,7 +15,7 @@
 
         Events.Emit("splash:setCurrentProgress", "opened-browser-window");
 
-        await sleep(5000);
+        await sleep(3000);
         navigate(oldView);
     };
     Events.On("app:navigate", (e) => {

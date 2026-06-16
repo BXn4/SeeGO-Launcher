@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"os"
-	"seegolauncher/internal/cache"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
@@ -235,10 +234,10 @@ func main() {
 	// https://youtu.be/xXKqODp94VA
 
 	go func() {
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 		if WaitUntil(
 			func() bool {
-				success := cache.LoadCache()
+				success := services.LoadCache()
 				return success == true
 			},
 			5*time.Second,

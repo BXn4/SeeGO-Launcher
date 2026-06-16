@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getCategories, getItems } from "../../lib/api";
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
     import {
         Config,
@@ -16,27 +15,6 @@
     let serverSlotsNow = -1;
     let serverAdminsNow = -1;
     let serverQueueNow = -1;
-
-    interface Category {
-        id: number;
-        name: string;
-        slug: string;
-    }
-
-    interface Item {
-        id: number;
-        name: string;
-        description: string;
-        image: string;
-        total_price: number;
-        currency: string;
-        created_at: string;
-    }
-
-    let categories: Category[] = [];
-    let items: Item[] = [];
-    let membershipItems: Item[] = [];
-    let membershipCategory: Category | null = null;
 
     let latest: string = "";
     let read: string = "";
@@ -63,7 +41,6 @@
 
     onMount(async () => {
         await setLocales();
-        await fetchItems();
         await fetchServerStatus();
 
         setInterval(fetchServerStatus, 60 * 1000);
@@ -103,33 +80,6 @@
             Localization.Get("launcher-ready", lang),
             Localization.Get("launcher-connect", lang),
         ]);
-    }
-
-    async function fetchItems() {
-        categories = (await getCategories()) as Category[];
-        membershipCategory =
-            categories.find((c) => c.slug === "seerpg-club-tagság-a") ?? null;
-
-        const allItems = await Promise.all(
-            categories.map((c) => getItems(c.id) as Promise<Item[]>),
-        );
-        items = allItems.flat();
-
-        if (membershipCategory) {
-            membershipItems = (await getItems(membershipCategory.id)) as Item[];
-        }
-    }
-
-    function showItemDialog(id: number) {
-        let selectedItem = items.find((item) => item.id === id) ?? null;
-        if (selectedItem) {
-            itemDialogName = selectedItem.name;
-            itemDialogDesc = selectedItem.description;
-            itemDialogImage = selectedItem.image;
-            itemDialogPrice = selectedItem.total_price.toString();
-            itemDialogCurrency = selectedItem.currency;
-            showDialog = true;
-        }
     }
 
     function closeItemDialog() {
@@ -300,7 +250,7 @@
             <div class="home-items">
                 <h3 class="text items-title">SeeRPG Club {membership}</h3>
                 <div id="items-container">
-                    {#each membershipItems as item}
+                    <!-->{#each membershipItems as item}
                         <div class="item-square-card">
                             <div class="item-header">
                                 <span class="text item-tag">7 {day}</span>
@@ -318,7 +268,7 @@
                                 {@html Icons.Launcher.Cart}
                             </button>
                         </div>
-                    {/each}
+                    {/each} <-->
                 </div>
             </div>
         </div>
