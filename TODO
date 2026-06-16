@@ -8,3 +8,14 @@ cache all store items at startup, use md5 to compare the local -> remote due to 
 and get the store items again on only purchase.
 
 better error handling
+
+
+fix the damn concurrent map writes
+goroutine 414 [running]:
+internal/runtime/maps.fatal({0xbb938b?, 0xae19a0?})
+	/usr/lib/go/src/runtime/panic.go:1181 +0x18
+seegolauncher/internal/services.(*Localization).load(0x1232100, {0x3ce0e1d00134, 0x2})
+	/home/b/gits/seego-launcher/internal/services/localization.go:39 +0x17f
+seegolauncher/internal/services.(*Localization).Get(0x3ce0e1e80180?, {0x3ce0e1d261b0, 0x14}, {0x3ce0e1d00134?, 0x1?})
+	/home/b/gits/seego-launcher/internal/services/localization.go:44 +0x28
+reflect.Value.call({0xad1580?, 0x1232100?, 0x3ce0e1ba4de0?}, {0xba8a1f, 0x4}, {0x3ce0e1eaf418, 0x2, 0xa8aa40?})
