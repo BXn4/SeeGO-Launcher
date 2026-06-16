@@ -1,7 +1,7 @@
 # SeeGO Launcher
 
 <img src="https://i.imgur.com/77sR4yP.png" align="right"
-     alt="SeeGO Launcher logo by Fodor Bence" width="120" height="178">
+     alt="SeeGO Launcher logo by Fodor Bence" width="120" height="120">
 
 Egy alternatív nyílt forráskódú (open source) launcher a SeeRPG szerverhez, ami electron helyett webviewet használ.
 A launcher Go nyelven, a Wails framework felhasználásával készült.
