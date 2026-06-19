@@ -1,10 +1,28 @@
-# SeeGO Launcher
 
-<img src="https://i.imgur.com/77sR4yP.png" align="right"
-     alt="SeeGO Launcher logo by Fodor Bence" width="120" height="120">
+g<div align="center">
+    <img src="https://i.imgur.com/xqcd4sK.png" alt="logo" width="120" height="120"/>
+<h1>SeeGO Launcher</h1>
+<p>
+An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.
+The launcher was developed in Go using the Wails framework.
+</p>
 
-Egy alternatív nyílt forráskódú (open source) launcher a SeeRPG szerverhez, ami electron helyett webviewet használ.
-A launcher Go nyelven, a Wails framework felhasználásával készült.
+# Contents
+- [Information](#information)
+- [Development](#development)
+  * [Running at locally](#running-at-locally)
+
+<div align="center">
+  <img src="https://i.imgur.com/Iim5Dk9.png" alt="screenshot" />
+</div>
+
+## Information
+<p>
+This project was created as an independent development and does not use the source code of the official SeeRPG launcher.
+This software is not a modified version of the official launcher, but rather a standalone implementation designed exclusively for compatibility with SeeRPG's services.</p>
+<p>This project is unofficial. It is not affiliated with SEE-ONLINE Kft. or the operators of SeeRPG, and does not have their support, approval, or partnership.
+This project does not include, distribute, or use the source code of SeeRPG's official client, launcher, or other software.</p>
+<p>The purpose of this project is to ensure compatibility and improve the user experience for the SeeRPG community. Since the launcher was originally created for anti-cheat purposes, I decided to add several useful features to it, to make it more usefull.</p>
 
 Key differences from Electron:
 | Aspect   |      Wails      |  Electron |
@@ -16,21 +34,49 @@ Key differences from Electron:
 | Memory | ~10MB | ~100MB+ |
 | Startup | <0.5s | 2-3s |
 
-A SeeGO jelenleg a háttérben 8mb memóriát kér. Ezen még lehet karcsúsítani ;), illetve az egész app csupán ~13mb, de ezen is lehet még karcsúsítani ;)
 
-Hogyan működik?
-Minden egyes indításnál ellenőrzi, hogy a helyi (local) filek frissek-e (md5 hashel validálás) a távoli (remote helyről). Ha eltér, vagy nem létezik, akkor lekéri (reuqest-eli) a távoli helyről.
+### Development
+**Depends on:**:
+- [Go](https://go.dev/dl/) `>= 1.26`
+- [Node.js](https://nodejs.org/) `>= 26.2`
+- [Wails](https://v3.wails.io/quick-start/installation/) `v3`
+```bash
+go install github.com/wailsapp/wails/v3/cmd/wails@latest
+```
 
-Mivel egy két funkciót nem tehettem be az appba, ezért a fórum, illetve a(z) UCP csak a böngészőböl érhető el.
-De minden más a launcherben megtalálható. MÉG A BOLT IS!!
+**Operating System:**
 
-A projekt független fejlesztésként jött létre, és nem használja fel a SeeRPG hivatalos kliensének forráskódját.
-A szoftver nem módosított változata a hivatalos launchernek, hanem egy önálló implementáció, amely kizárólag a SeeRPG szolgáltatásaival való kompatibilitást célozza.
-
-Ez a projekt nem hivatalos. Nem áll kapcsolatban a SEE-ONLINE Kft.-vel vagy a SeeRPG üzemeltetőivel, és nem rendelkezik azok támogatásával, jóváhagyásával vagy hivatalos partnerségével.
-A projekt nem tartalmazza, nem terjeszti és nem használja fel a SeeRPG hivatalos kliensének, launcherének vagy egyéb szoftvereinek forráskódját.
-
-A projekt célja kizárólag a kompatibilitás biztosítása és a felhasználói élmény javítása a SeeRPG közösség számára, mivel a launcher csak az anti-cheat miatt készült el, így gondoltam, hogy a launcherbe több hasznos funkciót teszek be.
+| OS | WebView |
+|--|--|--|
+| Windows 10/11 | WebView2 (Edge) |
+| macOS 12+ | WKWebView (Safari) |
+| Linux (GTK) | WebKitGTK |
 
 
-<img src="https://i.imgur.com/Iim5Dk9.png">
+### Running at locally
+**1. Clone this repo*
+
+```bash
+git clone https://gitea.com/bxn4/seego-launcher.git
+cd seego-launcher
+```
+
+**2. Install dependencies**
+
+```bash
+go install
+```
+
+**3. Running it**
+
+```bash
+wails3 dev
+```
+
+**4. Building**
+Before you build it, please place the Tebex account in the .env OA varible. You can get this from the website store request.
+```bash
+./build.sh // only for WINDOWS!
+```
+
+The compiled binary is in the `./bin/` folder.
