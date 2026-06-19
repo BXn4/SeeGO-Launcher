@@ -1,7 +1,8 @@
 
-g<div align="center">
+<div align="center">
     <img src="https://i.imgur.com/xqcd4sK.png" alt="logo" width="120" height="120"/>
 <h1>SeeGO Launcher</h1>
+</div>
 <p>
 An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.
 The launcher was developed in Go using the Wails framework.
@@ -54,7 +55,7 @@ go install github.com/wailsapp/wails/v3/cmd/wails@latest
 
 
 ### Running at locally
-**1. Clone this repo*
+**1. Clone this repo**
 
 ```bash
 git clone https://gitea.com/bxn4/seego-launcher.git
