@@ -19,7 +19,7 @@ The launcher was developed in Go using the Wails framework.
 
 ## Information
 <p>
-This project was created as an independent development and does not use the source code of the official SeeRPG launcher.
+This project was created as an independent development and does not use the source code, modify, distribute, decompile, reverse enginner, or include any source from the official SeeRPG launcher.
 This software is not a modified version of the official launcher, but rather a standalone implementation designed exclusively for compatibility with SeeRPG's services.</p>
 <p>This project is unofficial. It is not affiliated with SEE-ONLINE Kft. or the operators of SeeRPG, and does not have their support, approval, or partnership.
 This project does not include, distribute, or use the source code of SeeRPG's official client, launcher, or other software.</p>

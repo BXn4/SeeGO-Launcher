@@ -9,7 +9,6 @@ import (
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
-	"strings"
 	"sync"
 	"time"
 
@@ -21,6 +20,9 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
+
+//go:embed all:frontend/src/public/styles
+var themes embed.FS
 
 //go:embed frontend/src/public/images/seego_icon.png
 var icon []byte
@@ -93,10 +95,12 @@ func main() {
 	a := &App{appState: Show, dialog: nil}
 	a.config = services.ConfigService()
 
-	frontendFS, err := fs.Sub(assets, "frontend")
-	if err != nil {
-		log.Fatal(err)
-	}
+	distFS, _ := fs.Sub(assets, "frontend/dist")
+	themesFS, _ := fs.Sub(themes, "frontend/src/public/styles")
+
+	handler := http.NewServeMux()
+	handler.Handle("/src/public/styles/", http.StripPrefix("/src/public/styles/", http.FileServer(http.FS(themesFS))))
+	handler.Handle("/", http.FileServer(http.FS(distFS)))
 
 	a.app = application.New(application.Options{
 		Name:        "seego-launcher",
@@ -123,15 +127,7 @@ func main() {
 			application.NewService(&services.API{}),
 		},
 		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(frontendFS),
-			Middleware: func(next http.Handler) http.Handler {
-				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					if strings.HasSuffix(r.URL.Path, ".css") {
-						w.Header().Set("Content-Type", "text/css; charset=utf-8")
-					}
-					next.ServeHTTP(w, r)
-				})
-			},
+			Handler: handler,
 		},
 	})
 
