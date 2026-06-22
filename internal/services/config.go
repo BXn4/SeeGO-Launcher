@@ -40,6 +40,10 @@ func (s *Config) GetLanguage() string {
 	return s.data.Language
 }
 
+func (s *Config) GetLanguages() []string {
+	return validLanguages
+}
+
 func (s *Config) GetTermsAccepted() bool {
 	return s.data.TermsAccepted
 }
@@ -143,12 +147,22 @@ func LoadConfig() (*ConfigData, error) {
 		}
 	}
 
+	if !isValidTheme(config.Theme) {
+		log.Warnf("Invalid theme '%s', using default '%s'", config.Theme, DefaultConfig.Theme)
+		config.Theme = DefaultConfig.Theme
+		if err := saveConfig(&config); err != nil {
+			log.Warn("Failed to save config", "err", err)
+		}
+	}
+
 	log.Info("Config loaded", "language", config.Language)
+	log.Info("Config loaded", "terms", config.TermsAccepted)
+	log.Info("Config loaded", "theme", config.Theme)
 	return &config, nil
 }
 
 func createDefaultConfig() (*ConfigData, error) {
-	config := &ConfigData{Language: DefaultConfig.Language}
+	config := &ConfigData{Language: DefaultConfig.Language, TermsAccepted: DefaultConfig.TermsAccepted, Theme: DefaultConfig.Theme}
 	if err := saveConfig(config); err != nil {
 		return nil, fmt.Errorf("Failed to create default config: %w", err)
 	}
@@ -172,5 +186,7 @@ func saveConfig(config *ConfigData) error {
 		return fmt.Errorf("Failed to write config file: %w", err)
 	}
 	log.Info("Config saved", "language", config.Language)
+	log.Info("Config saved", "terms", config.TermsAccepted)
+	log.Info("Config saved", "theme", config.Theme)
 	return nil
 }

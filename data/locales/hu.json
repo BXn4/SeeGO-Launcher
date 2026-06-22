@@ -1,7 +1,7 @@
 {
   "lang": "hu",
-  "language_name": "Hungarian",
-  "language_native": "Magyar",
+  "language_en": "Angol",
+  "language_hu": "Magyar",
   "splash-loading": "Betöltés",
   "splash-loading-news": "Hírek betöltése",
   "splash-loading-serial": "Serial lekérdezése",
@@ -44,5 +44,21 @@
   "seego-info2": "Ez a szoftver nem hivatalos. Nem áll kapcsolatban a SEE-ONLINE Kft.-vel vagy a SeeRPG üzemeltetőivel, és nem rendelkezik azok támogatásával, jóváhagyásával vagy partnerségével.",
   "seego-info3": "!!! A szoftver használata saját felelősségre történik. Nem vállalok felelősséget a szoftver használatából eredő fiókkorlátozásokért, tiltásokért vagy egyéb következményekért.",
   "seego-info4": "A projekt nem tartalmazza, nem terjeszti és nem használja fel a SeeRPG hivatalos kliensének, launcherének vagy egyéb szoftvereinek forráskódját.",
-  "opened-browser-window": "A böngészőben megnyitva!"
+  "opened-browser-window": "A böngészőben megnyitva!",
+  "settings-general": "Általános",
+  "setting-language": "Nyelv",
+  "setting-language-desc": "Alkalmazás nyelve",
+  "setting-launch-ready": "Indítás, amint kész",
+  "setting-launch-ready-desc": "Automatikusan csatlakozik, amint az alkalmazás készen áll",
+  "settings-appearance": "Megjelenítés",
+  "setting-theme": "Téma",
+  "setting-theme-desc": "Színséma",
+  "theme-dark": "Sötét",
+  "theme-light": "Világos",
+  "colors": "színek",
+  "settings-information": "Információ",
+  "setting-version": "Verzió",
+  "setting-sg-account": "SG azonosító kulcs",
+  "setting-sg-account-desc": "A hardveres azonosító kulcs",
+  "copy": "Másolás"
 }

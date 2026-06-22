@@ -69,3 +69,8 @@ main {
     background: var(--accept-hover-color);
     border-color: var(--accept-hover-border);
 }
+
+.button.active {
+    background: var(--accept-hover-color);
+    border-color: var(--accept-hover-border);
+}

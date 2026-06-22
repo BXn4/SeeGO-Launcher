@@ -31,6 +31,12 @@
         }
     });
 
+    Events.On("app:updateLanguage", async (e) => {
+        if (e.data != (await Config.GetLanguage())) {
+            Config.SetLanguage(e.data);
+        }
+    });
+
     function navigate(value: string) {
         view = value;
     }

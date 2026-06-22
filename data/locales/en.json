@@ -1,7 +1,7 @@
 {
   "lang": "en",
-  "language_name": "English",
-  "language_native": "English",
+  "language_en": "English",
+  "language_hu": "Hungarian",
   "splash-loading": "Loading",
   "splash-loading-news": "Loading news",
   "splash-loading-serial": "Getting Serial",
@@ -44,5 +44,21 @@
   "seego-info2": "This software is unofficial. It is not affiliated with SEE-ONLINE Kft. or the operators of SeeRPG, and does not have their support, approval, or partnership.",
   "seego-info3": "!!! Use at your own risk. I assume no responsibility for any account restrictions, bans, or other consequences resulting from the use of this software.",
   "seego-info4": "This project does not include, distribute, or use the source code of the official SeeRPG client, launcher, or other software from SEE-ONLINE Kft.",
-  "opened-browser-window": "Opened in the browser window!"
+  "opened-browser-window": "Opened in the browser window!",
+  "settings-general": "General",
+  "setting-language": "Language",
+  "setting-language-desc": "Interface language",
+  "setting-launch-ready": "Launch on ready",
+  "setting-launch-ready-desc": "Launch and connects automatically when the client is ready",
+  "settings-appearance": "Appearance",
+  "setting-theme": "Theme",
+  "setting-theme-desc": "Color scheme preference",
+  "theme-dark": "Dark",
+  "theme-light": "Light",
+  "colors": "colors",
+  "settings-information": "Information",
+  "setting-version": "Version",
+  "setting-sg-account": "SG Account key",
+  "setting-sg-account-desc": "Account hardware key",
+  "copy": "Copy"
 }

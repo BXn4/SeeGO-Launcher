@@ -28,6 +28,15 @@ export function GetLanguage() {
 }
 
 /**
+ * @returns {$CancellablePromise<string[]>}
+ */
+export function GetLanguages() {
+    return $Call.ByID(2114410022).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType1($result);
+    }));
+}
+
+/**
  * @returns {$CancellablePromise<boolean>}
  */
 export function GetTermsAccepted() {
@@ -67,3 +76,4 @@ export function SetTheme(theme) {
 
 // Private type creation functions
 const $$createType0 = $models.ConfigData.createFrom;
+const $$createType1 = $Create.Array($Create.Any);
