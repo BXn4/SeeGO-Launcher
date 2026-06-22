@@ -233,10 +233,10 @@
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
                     <span class="badge">{latest}</span>
-                    <p class="text news-title">
+                    <p class="news-title">
                         Kényelmesebb játékélmény és hasznos javítások érkeztek!
                     </p>
-                    <p class="comment news-comment">
+                    <p class="news-comment">
                         Frissítés érkezett a szerverre! A legújabb frissítésben
                         több fontos kényelmi fejlesztés, hibajavítás és tartalmi
                         bővítés is bekerült a szerverre.

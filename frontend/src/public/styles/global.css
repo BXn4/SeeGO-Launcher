@@ -18,6 +18,15 @@ main {
     color: var(--text);
 }
 
+.news-title {
+    color: var(--news-title);
+}
+
+.news-comment {
+    color: var(--news-comment);
+}
+
+
 .comment {
     color: var(--comment);
 }
