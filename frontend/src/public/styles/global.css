@@ -1,5 +1,10 @@
+:root {
+    --height: 40px;
+    --width: 52px;
+}
+
 main {
-    background: linear-gradient(-30deg, #1b2636, #1b2534, #1a2433, #1a2331, #1a222f, #1a212e, #19202c, #191f2a, #191e29, #181e27, #181d25, #171c24, #171b22, #161a21, #16191f);
+    background: var(--background-gradient);
     overflow: hidden;
     -webkit-user-select: none;
     -moz-user-select: none;

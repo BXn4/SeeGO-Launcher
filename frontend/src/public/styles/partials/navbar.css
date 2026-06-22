@@ -59,7 +59,7 @@
 
  .navbar-button.active {
      color: var(--accent);
-     background: var(--navbar-icon-active);
+     background: var(--active-bg);
  }
 
  .navbar-button .indicator {

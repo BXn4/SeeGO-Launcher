@@ -5,6 +5,8 @@
     import Main from "./views/Main.svelte";
     import Titlebar from "./views/partials/Titlebar.svelte";
     import Navbar from "./views/partials/Navbar.svelte";
+    import { Config } from "../bindings/seegolauncher/internal/services";
+    import { onMount } from "svelte";
     let view = $state("splash");
     let oldView = "splash";
 
@@ -22,6 +24,13 @@
         navigate(e.data);
     });
 
+    Events.On("app:updateTheme", async (e) => {
+        if (e.data != (await Config.GetTheme())) {
+            setTheme(e.data);
+            Config.SetTheme(e.data);
+        }
+    });
+
     function navigate(value: string) {
         view = value;
     }
@@ -29,6 +38,17 @@
     async function sleep(ms: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
+
+    function setTheme(theme: string) {
+        let stylesheet = document.getElementById(
+            "theme",
+        ) as HTMLLinkElement | null;
+        stylesheet!.href = `src/public/styles/themes/${theme}.css`;
+    }
+
+    onMount(async () => {
+        setTheme(await Config.GetTheme());
+    });
 </script>
 
 {#if view === "splash"}

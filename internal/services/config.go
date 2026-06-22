@@ -19,14 +19,17 @@ var (
 type ConfigData struct {
 	Language      string `json:"language"`
 	TermsAccepted bool   `json:"terms_accepted"`
+	Theme         string `json:"theme"`
 }
 
 var DefaultConfig = ConfigData{
 	Language:      "hu",
 	TermsAccepted: false,
+	Theme:         "dark",
 }
 
 var validLanguages = []string{"en", "hu"}
+var validThemes = []string{"dark", "light"}
 
 type Config struct {
 	data *ConfigData
@@ -45,12 +48,28 @@ func (s *Config) GetConfig() ConfigData {
 	return *s.data
 }
 
+func (s *Config) GetTheme() string {
+	return s.data.Theme
+}
+
 // setters
 func (s *Config) SetLanguage(lang string) error {
 	if !isValidLanguage(lang) {
-		return fmt.Errorf("Invalid language: %s", lang)
+		s.data.Language = "hu"
+		saveConfig(s.data)
+		return fmt.Errorf("Invalid language: %s, saved default", lang)
 	}
 	s.data.Language = lang
+	return saveConfig(s.data)
+}
+
+func (s *Config) SetTheme(theme string) error {
+	if !isValidTheme(theme) {
+		s.data.Theme = "dark"
+		saveConfig(s.data)
+		return fmt.Errorf("Invalid theme: %s, saved default", theme)
+	}
+	s.data.Theme = theme
 	return saveConfig(s.data)
 }
 
@@ -74,6 +93,13 @@ func ConfigService() *Config {
 
 func isValidLanguage(lang string) bool {
 	if slices.Contains(validLanguages, lang) {
+		return true
+	}
+	return false
+}
+
+func isValidTheme(theme string) bool {
+	if slices.Contains(validThemes, theme) {
 		return true
 	}
 	return false

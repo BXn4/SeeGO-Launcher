@@ -2,13 +2,13 @@
     import { Events } from "@wailsio/runtime";
     import Home from "./view/Home.svelte";
     import News from "./view/News.svelte";
+    import Settings from "./view/Settings.svelte";
 
-    let view = $state(localStorage.getItem("view") ?? "home");
+    let view = $state("home");
 
     Events.On("main:navigate", (e) => {
         if (view != e.data) {
             view = e.data;
-            localStorage.setItem("view", view);
         }
     });
 </script>
@@ -17,4 +17,6 @@
     <Home />
 {:else if view === "news"}
     <News />
+{:else if view === "settings"}
+    <Settings />
 {/if}

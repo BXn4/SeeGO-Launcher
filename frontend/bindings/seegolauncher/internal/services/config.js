@@ -35,6 +35,13 @@ export function GetTermsAccepted() {
 }
 
 /**
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetTheme() {
+    return $Call.ByID(973083744);
+}
+
+/**
  * setters
  * @param {string} lang
  * @returns {$CancellablePromise<void>}
@@ -48,6 +55,14 @@ export function SetLanguage(lang) {
  */
 export function SetTermsAccepted() {
     return $Call.ByID(1432659951);
+}
+
+/**
+ * @param {string} theme
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetTheme(theme) {
+    return $Call.ByID(3251668900, theme);
 }
 
 // Private type creation functions

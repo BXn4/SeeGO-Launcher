@@ -3,10 +3,13 @@ package main
 import (
 	"embed"
 	"fmt"
+	"io/fs"
+	"net/http"
 	"os"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
+	"strings"
 	"sync"
 	"time"
 
@@ -90,6 +93,11 @@ func main() {
 	a := &App{appState: Show, dialog: nil}
 	a.config = services.ConfigService()
 
+	frontendFS, err := fs.Sub(assets, "frontend")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	a.app = application.New(application.Options{
 		Name:        "seego-launcher",
 		Description: "Opensource alternative launcher for SeeRPG server",
@@ -115,7 +123,15 @@ func main() {
 			application.NewService(&services.API{}),
 		},
 		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(assets),
+			Handler: application.AssetFileServerFS(frontendFS),
+			Middleware: func(next http.Handler) http.Handler {
+				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					if strings.HasSuffix(r.URL.Path, ".css") {
+						w.Header().Set("Content-Type", "text/css; charset=utf-8")
+					}
+					next.ServeHTTP(w, r)
+				})
+			},
 		},
 	})
 

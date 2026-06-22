@@ -26,6 +26,13 @@ export class ConfigData {
              */
             this["terms_accepted"] = false;
         }
+        if (!("theme" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["theme"] = "";
+        }
 
         Object.assign(this, $$source);
     }
