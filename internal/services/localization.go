@@ -41,6 +41,8 @@ func (s *Localization) load(lang string) (map[string]string, error) {
 }
 
 func (s *Localization) Get(key string, lang string) string {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 	data, err := s.load(lang)
 	if err != nil {
 		return key

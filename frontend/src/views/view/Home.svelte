@@ -39,11 +39,17 @@
 
     let showDialog: Boolean = false;
 
-    onMount(async () => {
-        await setLocales();
-        await fetchServerStatus();
+    onMount(() => {
+        const interval = setInterval(fetchServerStatus, 60 * 1000);
 
-        setInterval(fetchServerStatus, 60 * 1000);
+        void (async () => {
+            await setLocales();
+            await fetchServerStatus();
+        })();
+
+        return () => {
+            clearInterval(interval);
+        };
     });
 
     async function setLocales() {
