@@ -178,7 +178,7 @@
                     <span class="setting-name">{settingSGAccount}</span>
                     <span class="setting-desc">{settingSGAccountDesc}</span>
                 </div>
-                <span class="comment setting-text">{copy}</span>
+                <button class="button setting-text">{copy}</button>
             </div>
         </section>
     </div>

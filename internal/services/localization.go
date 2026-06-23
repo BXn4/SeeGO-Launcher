@@ -21,34 +21,42 @@ func LocalizationService() *Localization {
 
 func (s *Localization) load(lang string) (map[string]string, error) {
 	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 	if v, ok := s.cache[lang]; ok {
+		s.mutex.RUnlock()
 		return v, nil
 	}
+	s.mutex.RUnlock()
 
-	data, err := data.Locales.ReadFile("locales/" + lang + ".json")
+	fileData, err := data.Locales.ReadFile("locales/" + lang + ".json")
 	if err != nil {
 		return nil, err
 	}
-
 	var m map[string]string
-	if err := json.Unmarshal(data, &m); err != nil {
+	if err := json.Unmarshal(fileData, &m); err != nil {
 		return nil, err
 	}
 
+	s.mutex.Lock()
+	if v, ok := s.cache[lang]; ok {
+		s.mutex.Unlock()
+		return v, nil
+	}
 	s.cache[lang] = m
+	s.mutex.Unlock()
+
 	return m, nil
 }
 
 func (s *Localization) Get(key string, lang string) string {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 	data, err := s.load(lang)
 	if err != nil {
 		return key
 	}
 
-	if val, ok := data[key]; ok {
+	s.mutex.RLock()
+	val, ok := data[key]
+	s.mutex.RUnlock()
+	if ok {
 		return val
 	}
 
