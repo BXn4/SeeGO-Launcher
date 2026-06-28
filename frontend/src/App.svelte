@@ -46,10 +46,8 @@
     }
 
     function setTheme(theme: string) {
-        let stylesheet = document.getElementById(
-            "theme",
-        ) as HTMLLinkElement | null;
-        stylesheet!.href = `src/public/styles/themes/${theme}.css`;
+        document.documentElement.classList.remove("dark", "light");
+        document.documentElement.classList.add(theme);
     }
 
     onMount(async () => {
