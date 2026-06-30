@@ -202,7 +202,7 @@ func (a *App) CreateSysTray(icon []byte) {
 }
 
 func (a *App) RegisterListeners() {
-	a.app.Event.On(AppReady, func(event *application.CustomEvent) {
+	a.app.Event.On(AppReady, func(e *application.CustomEvent) {
 		log.Info("App is ready to show!")
 		a.OnReady()
 	})
@@ -233,4 +233,17 @@ func (a *App) RegisterListeners() {
 
 		a.dialog.Show()
 	})
+
+	a.app.Event.On(FeedbackEvent, func(e *application.CustomEvent) {
+		log.Info(e.Data)
+	})
+
+	a.app.Event.On(AppMinimize, func(e *application.CustomEvent) {
+		a.Minimize()
+	})
+
+	a.app.Event.On(AppClose, func(e *application.CustomEvent) {
+		a.ToTray()
+	})
+
 }

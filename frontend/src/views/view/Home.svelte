@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { Events } from "@wailsio/runtime";
+
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
     import {
         Config,
@@ -176,6 +178,8 @@
                 serverStatus.style.color = "var(--green)";
                 serverFill.style.background = "var(--green)";
             }
+
+            await Events.Emit("feedback", "Fetched server status");
         }
 
         // without prio

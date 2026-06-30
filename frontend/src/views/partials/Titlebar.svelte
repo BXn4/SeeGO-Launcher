@@ -7,10 +7,10 @@
     import { onMount } from "svelte";
 
     async function closeWindow() {
-        await Events.Emit("close", null);
+        await Events.Emit("app:close", null);
     }
     async function minimizeWindow() {
-        await Events.Emit("minimize", null);
+        await Events.Emit("app:minimize", null);
     }
     async function toggleMaximize() {
         // await Events.Emit("toggle-maximize", null);
