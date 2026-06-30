@@ -38,7 +38,6 @@
      border: none;
      background: transparent;
      color: var(--navbar-icon);
-     cursor: pointer;
  }
 
  .navbar-button svg {

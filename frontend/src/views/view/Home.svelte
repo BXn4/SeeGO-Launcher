@@ -247,8 +247,9 @@
                         több fontos kényelmi fejlesztés, hibajavítás és tartalmi
                         bővítés is bekerült a szerverre.
                     </p>
-                    <button class="button news-read" id="hero-news-read-latest"
-                        >{read}</button
+                    <button
+                        class="button news-read interactive"
+                        id="hero-news-read-latest">{read}</button
                     >
                 </div>
             </header>
@@ -322,7 +323,7 @@
                             window._openURL(
                                 "https://discord.com/invite/seerpg",
                             )}
-                        class="socials"
+                        class="socials interactive"
                         title="Discord"
                         >{@html Icons.Community.Discord}
                     </button>
@@ -331,7 +332,7 @@
                             window._openURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
-                        class="socials"
+                        class="socials interactive"
                         title="Facebook"
                         >{@html Icons.Community.FaceBook}
                     </button>
@@ -340,7 +341,7 @@
                             window._openURL(
                                 "https://www.facebook.com/seerpgofficial",
                             )}
-                        class="socials"
+                        class="socials interactive"
                         title="TikTok"
                         >{@html Icons.Community.TikTok}
                     </button>
@@ -349,7 +350,7 @@
                             window._openURL(
                                 "https://www.youtube.com/@seerpgofficial",
                             )}
-                        class="socials"
+                        class="socials interactive"
                         title="YouTube"
                         >{@html Icons.Community.YouTube}
                     </button>
@@ -357,7 +358,9 @@
             </div>
             <div class="widget">
                 <h3 class="text widget-title">{launcherStatus}</h3>
-                <button id="connect-button" class="text button connect"
+                <button
+                    id="connect-button"
+                    class="text button connect interactive"
                     ><!-->{@html Icons.Launcher.Play}<--->{launcherConnect}</button
                 >
             </div>

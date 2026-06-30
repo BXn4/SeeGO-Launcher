@@ -77,3 +77,16 @@
         transform: translateY(0);
     }
 }
+
+
+.button {
+    transition: transform 0.2s ease-in-out;
+}
+
+.item-image img {
+    transition: transform 0.2s;
+}
+
+.socials {
+    transition: transform 0.2s ease-in-out;
+}

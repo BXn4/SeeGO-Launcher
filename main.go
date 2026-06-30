@@ -3,8 +3,6 @@ package main
 import (
 	"embed"
 	"fmt"
-	"io/fs"
-	"net/http"
 	"os"
 	"seegolauncher/internal/localization"
 	"seegolauncher/internal/services"
@@ -20,9 +18,6 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
-
-//go:embed all:frontend/src/public/styles
-var themes embed.FS
 
 //go:embed frontend/src/public/images/seego_icon.png
 var icon []byte
@@ -95,13 +90,6 @@ func main() {
 	a := &App{appState: Show, dialog: nil}
 	a.config = services.ConfigService()
 
-	distFS, _ := fs.Sub(assets, "frontend/dist")
-	themesFS, _ := fs.Sub(themes, "frontend/src/public/styles")
-
-	handler := http.NewServeMux()
-	handler.Handle("/src/public/styles/", http.StripPrefix("/src/public/styles/", http.FileServer(http.FS(themesFS))))
-	handler.Handle("/", http.FileServer(http.FS(distFS)))
-
 	a.app = application.New(application.Options{
 		Name:        "seego-launcher",
 		Description: "Opensource alternative launcher for SeeRPG server",
@@ -127,7 +115,7 @@ func main() {
 			application.NewService(&services.API{}),
 		},
 		Assets: application.AssetOptions{
-			Handler: handler,
+			Handler: application.AssetFileServerFS(assets),
 		},
 	})
 
@@ -172,7 +160,7 @@ func main() {
 		DisableResize:              true,
 		BackgroundColour:           application.NewRGB(52, 58, 64),
 		URL:                        "/",
-		Hidden:                     false,
+		Hidden:                     true,
 		DevToolsEnabled:            false,
 		DefaultContextMenuDisabled: true,
 	})
@@ -244,38 +232,40 @@ func main() {
 	})
 
 	// https://youtu.be/xXKqODp94VA
+	//
+	a.app.Event.On("app:ready", func(event *application.CustomEvent) {
+		a.window.Show()
+		go func() {
+			if WaitUntil(
+				func() bool {
+					success := services.LoadCache()
+					return success == true
+				},
+				5*time.Second,
+			) {
+				// will notify if the cache was not successed
+				a.app.Quit()
+			}
 
-	go func() {
-		time.Sleep(2 * time.Second)
-		if WaitUntil(
-			func() bool {
-				success := services.LoadCache()
-				return success == true
-			},
-			5*time.Second,
-		) {
-			// will notify if the cache was not successed
-			a.app.Quit()
-		}
+			//after splash
+			window.SetAlwaysOnTop(false)
 
-		//after splash
-		window.SetAlwaysOnTop(false)
+			if !a.config.GetTermsAccepted() {
+				seeGOInfo1 := services.LocalizationService().Get(localization.SeeGOInfo1, a.config.GetLanguage())
+				seeGOInfo2 := services.LocalizationService().Get(localization.SeeGOInfo2, a.config.GetLanguage())
+				seeGOInfo3 := services.LocalizationService().Get(localization.SeeGOInfo3, a.config.GetLanguage())
+				seeGOInfo4 := services.LocalizationService().Get(localization.SeeGOInfo4, a.config.GetLanguage())
+				a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
+				log.Info("Terms is not accepted, showing the terms window")
 
-		if !a.config.GetTermsAccepted() {
-			seeGOInfo1 := services.LocalizationService().Get(localization.SeeGOInfo1, a.config.GetLanguage())
-			seeGOInfo2 := services.LocalizationService().Get(localization.SeeGOInfo2, a.config.GetLanguage())
-			seeGOInfo3 := services.LocalizationService().Get(localization.SeeGOInfo3, a.config.GetLanguage())
-			seeGOInfo4 := services.LocalizationService().Get(localization.SeeGOInfo4, a.config.GetLanguage())
-			a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
-			log.Info("Terms is not accepted, showing the terms window")
-
-			a.setView(620, 480, "app:navigate", "terms")
+				a.setView(620, 480, "app:navigate", "terms")
+				window.Center()
+				return
+			}
+			a.setView(1200, int(1200/(16.0/9.0)), "app:navigate", "main")
 			window.Center()
-			return
-		}
-		a.setView(1200, int(1200/(16.0/9.0)), "app:navigate", "main")
-		window.Center()
-	}()
+		}()
+	})
 
 	if err := a.app.Run(); err != nil {
 		log.Fatal(err)

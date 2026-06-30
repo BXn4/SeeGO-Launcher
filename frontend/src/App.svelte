@@ -52,6 +52,8 @@
 
     onMount(async () => {
         setTheme(await Config.GetTheme());
+
+        Events.Emit("app:ready");
     });
 </script>
 

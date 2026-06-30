@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sync"
 	"time"
 
@@ -14,6 +13,7 @@ import (
 
 	"seegolauncher/internal/endpoints"
 	"seegolauncher/internal/net"
+	"seegolauncher/internal/paths"
 
 	"github.com/charmbracelet/log"
 )
@@ -50,13 +50,12 @@ const (
 )
 
 func (s *CacheService) GetCachedTerms() (string, error) {
-	cacheDir, err := GetCachePath()
+	dir, err := paths.GetCachePath()
 	if err != nil {
-		log.Errorf("Error getting cache path: %v", err)
-		return "", err
+		return "Error getting cache path", err
 	}
 
-	termsFile := filepath.Join(cacheDir, TermsFileName)
+	termsFile := filepath.Join(dir, TermsFileName)
 	termsData, err := os.ReadFile(termsFile)
 
 	return string(termsData), nil
@@ -88,67 +87,8 @@ func RequestItems(categoryID int) (string, error) {
 	return "", nil
 }
 
-func GetCachePath() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", fmt.Errorf("Could not get home directory: %w", err)
-	}
-
-	if runtime.GOOS == "windows" {
-		return filepath.Join(home, "ProgramData", "seego-launcher", "cache"), nil
-	}
-	return filepath.Join(home, ".config", "seego-launcher", "cache"), nil
-}
-
-func getCachedFilePath(dir, name string) (string, error) {
-	path, err := GetCachePath()
-	if err != nil {
-		return "", fmt.Errorf("Could not get home directory: %w", err)
-	}
-	return filepath.Join(path, dir, name), nil
-}
-
-func checkCacheDir() error {
-	dir, err := GetCachePath()
-	if err != nil {
-		return err
-	}
-	return os.MkdirAll(dir, 0755)
-}
-
-func checkNewsDir() error {
-	dir, err := GetCachePath()
-	if err != nil {
-		return err
-	}
-	dir = filepath.Join(dir, "news")
-	return os.MkdirAll(dir, 0755)
-}
-
-func checkStoreDir() error {
-	dir, err := GetCachePath()
-	if err != nil {
-		return err
-	}
-	dir = filepath.Join(dir, "store")
-	return os.MkdirAll(dir, 0755)
-}
-
-func checkDirs() error {
-	if err := checkCacheDir(); err != nil {
-		return fmt.Errorf("Failed to check the cache dir: %s", err)
-	}
-	if err := checkNewsDir(); err != nil {
-		return fmt.Errorf("Failed to check the news dir: %s", err)
-	}
-	if err := checkStoreDir(); err != nil {
-		return fmt.Errorf("Failed to check the store dir: %s", err)
-	}
-	return nil
-}
-
 func writeCache(dir, filename, v string) error {
-	cacheDir, err := GetCachePath()
+	cacheDir, err := paths.GetCachePath()
 	if err != nil {
 		log.Errorf("Error getting cache path: %v", err)
 		return err
@@ -160,15 +100,6 @@ func writeCache(dir, filename, v string) error {
 		return err
 	}
 	return nil
-}
-
-func RequestTermsVersion() (string, error) {
-	response, err := net.Request(endpoints.TermsDate)
-	if err != nil {
-		log.Errorf("Failed to request terms date: %s", err)
-		return "", err
-	}
-	return response, err
 }
 
 func CompareHashes(remote, local string) bool {
@@ -189,7 +120,7 @@ func CheckRemoteLocalHash() (bool, error) {
 		log.Errorf("Failed to request remote hash: %s", err)
 		return false, err
 	}
-	termsVersionPath, err := getCachedFilePath("", TermsVersionFileName)
+	termsVersionPath, err := paths.GetCachedFilePath("", TermsVersionFileName)
 	termsDateLocal, err := os.ReadFile(termsVersionPath)
 	if err != nil {
 		log.Errorf("Failed to read %s: %v", TermsVersionFileName, err)
@@ -201,7 +132,7 @@ func CheckRemoteLocalHash() (bool, error) {
 		log.Errorf("Failed to request remote hash: %s", err)
 		return false, nil
 	}
-	termsDataPath, err := getCachedFilePath("", TermsFileName)
+	termsDataPath, err := paths.GetCachedFilePath("", TermsFileName)
 	termsDataLocal, err := os.ReadFile(termsDataPath)
 	if err != nil {
 		log.Errorf("Failed to read %s: %v", TermsFileName, err)
@@ -213,7 +144,7 @@ func CheckRemoteLocalHash() (bool, error) {
 		log.Errorf("Failed to request remote hash: %s", err)
 		return false, nil
 	}
-	categoriesPath, err := getCachedFilePath("store", CategoriesFileName)
+	categoriesPath, err := paths.GetCachedFilePath("store", CategoriesFileName)
 	categoriesLocal, err := os.ReadFile(categoriesPath)
 	if err != nil {
 		log.Errorf("Failed to read %s: %v", CategoriesFileName, err)
@@ -235,7 +166,7 @@ func CheckRemoteLocalHash() (bool, error) {
 }
 
 func LoadCache() bool {
-	if err := checkDirs(); err != nil {
+	if err := paths.CheckDirs(); err != nil {
 		log.Errorf("Failed to check cache directories: %v", err)
 		return false
 	}
@@ -272,17 +203,17 @@ func LoadCache() bool {
 }
 
 func refreshTerms() error {
-	remoteVersion, err := RequestTermsVersion()
+	remoteVersion, err := net.RequestTermsVersion()
 	if err != nil {
 		return fmt.Errorf("Failed to request terms version: %w", err)
 	}
 
-	versionPath, err := getCachedFilePath("", TermsVersionFileName)
+	versionPath, err := paths.GetCachedFilePath("", TermsVersionFileName)
 	if err != nil {
 		return err
 	}
 
-	termsPath, err := getCachedFilePath("", TermsFileName)
+	termsPath, err := paths.GetCachedFilePath("", TermsFileName)
 	if err != nil {
 		return err
 	}
@@ -321,7 +252,7 @@ func refreshTerms() error {
 }
 
 func refreshCategories() error {
-	path, err := getCachedFilePath("store", CategoriesFileName)
+	path, err := paths.GetCachedFilePath("store", CategoriesFileName)
 	if err != nil {
 		return err
 	}
@@ -344,7 +275,7 @@ func refreshCategories() error {
 }
 
 func refreshItems() error {
-	itemsPath, err := getCachedFilePath("store", ItemsFileName)
+	itemsPath, err := paths.GetCachedFilePath("store", ItemsFileName)
 	if err != nil {
 		return err
 	}
@@ -376,7 +307,7 @@ func refreshItems() error {
 }
 
 func loadCachedCategories() ([]Category, error) {
-	path, err := getCachedFilePath("store", CategoriesFileName)
+	path, err := paths.GetCachedFilePath("store", CategoriesFileName)
 	if err != nil {
 		return nil, err
 	}

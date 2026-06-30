@@ -55,7 +55,7 @@
             </div>
             <div id="window-controls">
                 <span
-                    class="window-control"
+                    class="window-control interactive"
                     id="min-button"
                     title=""
                     role="button"
@@ -66,7 +66,7 @@
                     <span>−</span>
                 </span>
                 <span
-                    class="window-control"
+                    class="window-control interactive"
                     id="close-button"
                     title=""
                     role="button"

@@ -45,7 +45,7 @@
     <div id="navbar">
         <div class="navbar-item top">
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "home"}
                 id="home"
                 title={home}
@@ -58,7 +58,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "news"}
                 id="news"
                 title={news}
@@ -71,7 +71,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 id="forum"
                 title={forum}
                 on:click={() => window._openURL("https://forum.see-rpg.com/")}
@@ -80,7 +80,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 id="ucp"
                 title={ucp}
                 on:click={() => window._openURL("https://ucp.see-rpg.com/")}
@@ -93,7 +93,7 @@
         <div class="navbar-item bottom">
             <div class="divider"></div>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "shop"}
                 id="shop"
                 title={shop}
@@ -106,7 +106,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "gallery"}
                 id="gallery"
                 title={gallery}
@@ -119,7 +119,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "players"}
                 id="players"
                 title={players}
@@ -132,7 +132,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "help"}
                 id="help"
                 title={help}
@@ -145,7 +145,7 @@
                 <span class="indicator"></span>
             </button>
             <button
-                class="navbar-button"
+                class="navbar-button interactive"
                 class:active={active === "settings"}
                 id="settings"
                 title={settings}

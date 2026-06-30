@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"seegolauncher/internal/paths"
 	"slices"
 	"sync"
 
@@ -110,11 +111,11 @@ func isValidTheme(theme string) bool {
 }
 
 func getConfigPath() (string, error) {
-	home, err := os.UserHomeDir()
+	home, err := paths.GetRootPath()
 	if err != nil {
-		return "", fmt.Errorf("Could not get home directory: %w", err)
+		return err.Error(), err
 	}
-	return filepath.Join(home, ".config", "seego-launcher", "config.json"), nil
+	return filepath.Join(home, "config.json"), nil
 }
 
 func LoadConfig() (*ConfigData, error) {

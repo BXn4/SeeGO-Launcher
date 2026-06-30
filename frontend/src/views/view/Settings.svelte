@@ -112,6 +112,7 @@
                 </div>
                 <select
                     id="setting-language"
+                    class="interactive"
                     bind:value={language}
                     onchange={() => updateLanguage()}
                 >
@@ -131,7 +132,7 @@
                 </div>
                 <label class="switch">
                     <input type="checkbox" />
-                    <span class="slider round"></span>
+                    <span class="slider round interactive"></span>
                 </label>
             </div>
         </section>
@@ -146,13 +147,13 @@
                 </div>
                 <div role="group" aria-label="Theme">
                     <button
-                        class="button"
+                        class="button interactive"
                         title="{themeDark} {colors}"
                         class:active={theme === "dark"}
                         onclick={() => updateTheme("dark")}>{themeDark}</button
                     >
                     <button
-                        class="button"
+                        class="button interactive"
                         title="{themeLight} {colors}"
                         class:active={theme === "light"}
                         onclick={() => updateTheme("light")}
@@ -178,7 +179,7 @@
                     <span class="setting-name">{settingSGAccount}</span>
                     <span class="setting-desc">{settingSGAccountDesc}</span>
                 </div>
-                <button class="button setting-text">{copy}</button>
+                <button class="button setting-text interactive">{copy}</button>
             </div>
         </section>
     </div>

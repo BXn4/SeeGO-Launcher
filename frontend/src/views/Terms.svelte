@@ -60,7 +60,7 @@
             } else {
                 const text = trimmed.replace(
                     /\[\[href\]\](.*?)\[\[href\]\]/g,
-                    '<a class="highlighted link" onclick="window._openURL(\'$1\')">$1</a>',
+                    '<a class="highlighted link interactive" onclick="window._openURL(\'$1\')">$1</a>',
                 );
                 parsed += `<p class="text terms-text">${text}</p>`;
             }
@@ -106,10 +106,13 @@
             {@html terms}
         </div>
         <div id="terms-actionbar">
-            <button class="button cancel" onclick={() => declineTerms()}>
+            <button
+                class="button cancel interactive"
+                onclick={() => declineTerms()}
+            >
                 {decline}
             </button>
-            <button class="button ok" onclick={() => acceptTerms()}>
+            <button class="button ok interactive" onclick={() => acceptTerms()}>
                 {accept}
             </button>
         </div>
