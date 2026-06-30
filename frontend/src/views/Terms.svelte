@@ -84,10 +84,10 @@
     }
 
     async function acceptTerms() {
-        await Events.Emit("terms-accepted", null);
+        await Events.Emit("terms:accept", null);
     }
     async function declineTerms() {
-        await Events.Emit("terms-declined", null);
+        await Events.Emit("terms:decline", null);
     }
 </script>
 
