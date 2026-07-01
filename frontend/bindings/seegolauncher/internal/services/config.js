@@ -20,6 +20,13 @@ export function GetConfig() {
 }
 
 /**
+ * @returns {$CancellablePromise<boolean>}
+ */
+export function GetEnableAnimations() {
+    return $Call.ByID(415560159);
+}
+
+/**
  * getters
  * @returns {$CancellablePromise<string>}
  */
@@ -48,6 +55,14 @@ export function GetTermsAccepted() {
  */
 export function GetTheme() {
     return $Call.ByID(973083744);
+}
+
+/**
+ * @param {boolean} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetEnableAnimations(value) {
+    return $Call.ByID(1069331283, value);
 }
 
 /**

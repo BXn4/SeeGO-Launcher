@@ -61,6 +61,16 @@ func checkStoreDir() error {
 	return os.MkdirAll(dir, 0755)
 }
 
+func checkSeeDir() error {
+	dir, err := GetRootPath()
+	if err != nil {
+		return err
+	}
+	dir = filepath.Join(dir, "see")
+	return os.MkdirAll(dir, 0755)
+} // see files will be stored here (SeeLenium, SeeRPGClient, srpg_logo)
+// the launcher will starts the seerpg client, and injects the payload, and creates a sub process between this app (later, this is important)
+
 func CheckDirs() error {
 	if err := checkCacheDir(); err != nil {
 		return fmt.Errorf("Failed to check the cache dir: %s", err)
@@ -70,6 +80,9 @@ func CheckDirs() error {
 	}
 	if err := checkStoreDir(); err != nil {
 		return fmt.Errorf("Failed to check the store dir: %s", err)
+	}
+	if err := checkSeeDir(); err != nil {
+		return fmt.Errorf("Failed to check the see dir: %s", err)
 	}
 	return nil
 }

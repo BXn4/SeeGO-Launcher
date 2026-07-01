@@ -91,6 +91,11 @@ func (a *App) CreateNewWindow(options application.WebviewWindowOptions) *applica
 		a.ToTray()
 	})
 
+	window.OnWindowEvent(events.Common.WindowRestore, func(e *application.WindowEvent) {
+		a.window.Show()
+		a.window.EmitEvent("app:active", nil)
+	})
+
 	return window
 }
 
@@ -108,11 +113,15 @@ func (a *App) RestoreFromTray() {
 	a.window.Show()
 	a.window.Focus()
 	a.appState = Show
+
+	a.window.EmitEvent("app:active", nil)
 }
 
 func (a *App) Minimize() {
 	a.window.Minimise()
 	a.appState = Minimized
+
+	a.window.EmitEvent("app:notActive", nil)
 }
 
 func (a *App) SetView(w, h int, n, v string) {

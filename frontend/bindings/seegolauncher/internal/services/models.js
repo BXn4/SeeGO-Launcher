@@ -33,6 +33,13 @@ export class ConfigData {
              */
             this["theme"] = "";
         }
+        if (!("enableAnimations" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["enableAnimations"] = false;
+        }
 
         Object.assign(this, $$source);
     }

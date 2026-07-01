@@ -7,6 +7,7 @@
     import Navbar from "./views/partials/Navbar.svelte";
     import { Config } from "../bindings/seegolauncher/internal/services";
     import { onMount } from "svelte";
+
     let view = $state("splash");
     let oldView = "splash";
 
@@ -24,17 +25,29 @@
         navigate(e.data);
     });
 
-    Events.On("app:updateTheme", async (e) => {
-        if (e.data != (await Config.GetTheme())) {
-            setTheme(e.data);
-            Config.SetTheme(e.data);
+    Events.On("app:updateSetting", async (e) => {
+        const [key, value] = e.data;
+        switch (key) {
+            case "theme":
+                setTheme(value);
+                Config.SetTheme(value);
+                return;
+            case "language":
+                Config.SetLanguage(value);
+                return;
+            case "anims":
+                setAnimations(value);
+                Config.SetEnableAnimations(value);
+                return;
         }
     });
 
-    Events.On("app:updateLanguage", async (e) => {
-        if (e.data != (await Config.GetLanguage())) {
-            Config.SetLanguage(e.data);
-        }
+    Events.On("app:notActive", async (e) => {
+        Events.Emit("home:stopInterval", null);
+    });
+
+    Events.On("app:active", async (e) => {
+        Events.Emit("home:startInterval", null);
     });
 
     function navigate(value: string) {
@@ -48,6 +61,11 @@
     function setTheme(theme: string) {
         document.documentElement.classList.remove("dark", "light");
         document.documentElement.classList.add(theme);
+    }
+
+    function setAnimations(value: boolean) {
+        const link = document.getElementById("anims") as HTMLLinkElement;
+        link.disabled = !value;
     }
 
     onMount(async () => {

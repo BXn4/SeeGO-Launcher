@@ -8,10 +8,14 @@
 
     async function closeWindow() {
         await Events.Emit("app:close", null);
+        await Events.Emit("app:notActive", null);
     }
+
     async function minimizeWindow() {
         await Events.Emit("app:minimize", null);
+        await Events.Emit("app:notActive", null);
     }
+
     async function toggleMaximize() {
         // await Events.Emit("toggle-maximize", null);
     }

@@ -29,7 +29,7 @@
   "club-membership-day": "day",
   "server-status-online": "Online",
   "server-status-offline": "Offline",
-  "server-status-restarting": "Restarting",
+  "server-status-restart": "Restarting",
   "server-status-maintenance": "Maintenance",
   "server-status-admins": "Admins",
   "server-status-queue": "Queue",
@@ -60,5 +60,7 @@
   "setting-version": "Version",
   "setting-sg-account": "SG Account key",
   "setting-sg-account-desc": "Account hardware key",
-  "copy": "Copy"
+  "copy": "Copy",
+  "enableAnimations": "Animations",
+  "enableAnimationsDesc": "Enables the animations"
 }

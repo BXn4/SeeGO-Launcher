@@ -6,4 +6,6 @@ const (
 	TermsDate = "https://rules.see-rpg.com/api/ver/aszf/"
 	Terms     = "https://rules.see-rpg.com/api/aszf/"
 	Store     = "https://headless.tebex.io/api/accounts"
+	FilesList = "https://client.seega.me/rpg/files.php?folder=client" // returns filenames with checksum and version
+	Files     = "https://client.seega.me/rpg/files/"                  // needed files
 )
