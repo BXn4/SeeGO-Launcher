@@ -47,7 +47,7 @@ func (a *App) OnReady() {
 		if utils.WaitUntil(
 			func() bool {
 				success := services.LoadCache()
-				return success == true
+				return success == nil
 			},
 			5*time.Second,
 		) {

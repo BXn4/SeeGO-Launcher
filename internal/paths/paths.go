@@ -60,15 +60,6 @@ func checkNewsDir() error {
 	return os.MkdirAll(dir, 0755)
 }
 
-func checkStoreDir() error {
-	dir, err := GetCachePath()
-	if err != nil {
-		return err
-	}
-	dir = filepath.Join(dir, "store")
-	return os.MkdirAll(dir, 0755)
-}
-
 func checkSeeDir() error {
 	dir, err := GetRootPath()
 	if err != nil {
@@ -85,9 +76,6 @@ func CheckDirs() error {
 	}
 	if err := checkNewsDir(); err != nil {
 		return fmt.Errorf("Failed to check the news dir: %s", err)
-	}
-	if err := checkStoreDir(); err != nil {
-		return fmt.Errorf("Failed to check the store dir: %s", err)
 	}
 	if err := checkSeeDir(); err != nil {
 		return fmt.Errorf("Failed to check the see dir: %s", err)
