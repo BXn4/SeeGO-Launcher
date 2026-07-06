@@ -61,6 +61,6 @@
   "setting-sg-account": "SG azonosító kulcs",
   "setting-sg-account-desc": "A hardveres azonosító kulcs",
   "copy": "Másolás",
-  "enableAnimations": "Animációk",
-  "enableAnimationsDesc": "Animációk engedélyezése"
+  "enable-animations": "Animációk",
+  "enable-animations-desc": "Animációk engedélyezése"
 }

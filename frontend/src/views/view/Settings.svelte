@@ -5,96 +5,40 @@
         Config,
         Localization,
     } from "../../../bindings/seegolauncher/internal/services";
-
-    let theme = "";
-    let language = "";
-    let settingsGeneral = "";
-    let settingLanguage = "";
-    let settingLanguageDesc = "";
-    let settingLaunchReady = "";
-    let settingLaunchReadyDesc = "";
-    let settingsApppearance = "";
-    let settingTheme = "";
-    let settingThemeDesc = "";
-    let themeDark = "";
-    let themeLight = "";
-    let colors = "";
-    let settingsInformation = "";
-    let settingVersion = "";
-    let settingSGAccount = "";
-    let settingSGAccountDesc = "";
-    let copy = "";
-    let enableAnimations = "";
-    let enableAnimationsDesc = "";
-
-    let enableAnimationsValue = false;
+    import {
+        initLocalization,
+        locales,
+        localization,
+    } from "../../managers/localization";
 
     let languages: { value: string; label: string }[] = [];
 
-    async function setLocales() {
-        let lang = language;
-        [
-            settingsGeneral,
-            settingLanguage,
-            settingLanguageDesc,
-            settingLaunchReady,
-            settingLaunchReadyDesc,
-            settingsApppearance,
-            settingTheme,
-            settingThemeDesc,
-            themeDark,
-            themeLight,
-            colors,
-            settingsInformation,
-            settingVersion,
-            settingSGAccount,
-            settingSGAccountDesc,
-            copy,
-            enableAnimations,
-            enableAnimationsDesc,
-        ] = await Promise.all([
-            Localization.Get("settings-general", lang),
-            Localization.Get("setting-language", lang),
-            Localization.Get("setting-language-desc", lang),
-            Localization.Get("setting-launch-ready", lang),
-            Localization.Get("setting-launch-ready-desc", lang),
-            Localization.Get("settings-appearance", lang),
-            Localization.Get("setting-theme", lang),
-            Localization.Get("setting-theme-desc", lang),
-            Localization.Get("theme-dark", lang),
-            Localization.Get("theme-light", lang),
-            Localization.Get("colors", lang),
-            Localization.Get("settings-information", lang),
-            Localization.Get("setting-version", lang),
-            Localization.Get("setting-sg-account", lang),
-            Localization.Get("setting-sg-account-desc", lang),
-            Localization.Get("copy", lang),
-            Localization.Get("enableAnimations", lang),
-            Localization.Get("enableAnimationsDesc", lang),
-        ]);
-    }
+    let theme = "";
+    let language = "";
+    let enableAnimationsValue = false;
 
     async function updateTheme(v: string) {
-        theme = v;
-        await Events.Emit("app:updateSetting", ["theme", v]);
+        if (theme != v) {
+            theme = v;
+            await Events.Emit("app:updateSetting", ["theme", v]);
+        }
     }
 
-    async function updateLanguage() {
-        await Events.Emit("app:updateSetting", ["language", language]);
+    async function updateLanguage(v: string) {
+        await Events.Emit("app:updateSetting", ["language", v]);
 
         const availableLanguages = await Config.GetLanguages();
         languages = await Promise.all(
             availableLanguages.map(async (value) => ({
                 value: value,
-                label: await Localization.Get(`language_${value}`, language),
+                label: await Localization.Get(`language_${value}`, v),
             })),
         );
 
-        setLocales();
+        initLocalization();
     }
 
     async function updateAnims(v: boolean) {
-        enableAnimationsValue = v;
         await Events.Emit("app:updateSetting", ["anims", v]);
     }
 
@@ -111,25 +55,31 @@
             })),
         );
 
-        setLocales();
+        initLocalization();
     });
 </script>
 
 <main>
     <div class="settings-view">
         <section class="settings-category">
-            <div class="settings-title">{settingsGeneral}</div>
+            <div class="settings-title">
+                {$locales[localization.settingsGeneral]}
+            </div>
 
             <div class="setting-item">
                 <div class="setting-info">
-                    <span class="setting-name">{settingLanguage}</span>
-                    <span class="setting-desc">{settingLanguageDesc}</span>
+                    <span class="setting-name"
+                        >{$locales[localization.settingLanguage]}</span
+                    >
+                    <span class="setting-desc"
+                        >{$locales[localization.settingLanguageDesc]}</span
+                    >
                 </div>
                 <select
                     id="setting-language"
                     class="interactive"
                     bind:value={language}
-                    onchange={() => updateLanguage()}
+                    onchange={() => updateLanguage(language)}
                 >
                     {#each languages as lang}
                         <option
@@ -142,8 +92,12 @@
 
             <div class="setting-item">
                 <div class="setting-info">
-                    <span class="setting-name">{settingLaunchReady}</span>
-                    <span class="setting-desc">{settingLaunchReadyDesc}</span>
+                    <span class="setting-name"
+                        >{$locales[localization.settingLaunchReady]}</span
+                    >
+                    <span class="setting-desc"
+                        >{$locales[localization.settingLaunchReadyDesc]}</span
+                    >
                 </div>
                 <label class="switch">
                     <input type="checkbox" />
@@ -152,8 +106,12 @@
             </div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <span class="setting-name">{enableAnimations}</span>
-                    <span class="setting-desc">{enableAnimationsDesc}</span>
+                    <span class="setting-name"
+                        >{$locales[localization.enableAnimations]}</span
+                    >
+                    <span class="setting-desc"
+                        >{$locales[localization.enableAnimationsDesc]}</span
+                    >
                 </div>
                 <label class="switch">
                     <input
@@ -167,37 +125,52 @@
         </section>
 
         <section class="settings-category">
-            <div class="settings-title">{settingsApppearance}</div>
+            <div class="settings-title">
+                {$locales[localization.settingsAppearance]}
+            </div>
 
             <div class="setting-item">
                 <div class="setting-info">
-                    <span class="setting-name">{settingTheme}</span>
-                    <span class="setting-desc">{settingThemeDesc}</span>
+                    <span class="setting-name"
+                        >{$locales[localization.settingTheme]}</span
+                    >
+                    <span class="setting-desc"
+                        >{$locales[localization.settingThemeDesc]}</span
+                    >
                 </div>
                 <div role="group" aria-label="Theme">
                     <button
                         class="button interactive"
-                        title="{themeDark} {colors}"
+                        title="{$locales[localization.themeDark]} {$locales[
+                            localization.colors
+                        ]}"
                         class:active={theme === "dark"}
-                        onclick={() => updateTheme("dark")}>{themeDark}</button
+                        onclick={() => updateTheme("dark")}
+                        >{$locales[localization.themeDark]}</button
                     >
                     <button
                         class="button interactive"
-                        title="{themeLight} {colors}"
+                        title="{$locales[localization.themeLight]} {$locales[
+                            localization.colors
+                        ]}"
                         class:active={theme === "light"}
                         onclick={() => updateTheme("light")}
-                        >{themeLight}</button
+                        >{$locales[localization.themeLight]}</button
                     >
                 </div>
             </div>
         </section>
 
         <section class="settings-category">
-            <div class="settings-title">{settingsInformation}</div>
+            <div class="settings-title">
+                {$locales[localization.settingsInformation]}
+            </div>
 
             <div class="setting-item">
                 <div class="setting-info">
-                    <span class="setting-name">{settingVersion}</span>
+                    <span class="setting-name"
+                        >{$locales[localization.settingVersion]}</span
+                    >
                     <span class="setting-desc">SeeGO Launcher</span>
                 </div>
                 <span class="comment setting-text">1.0.0</span>
@@ -205,10 +178,16 @@
 
             <div class="setting-item">
                 <div class="setting-info">
-                    <span class="setting-name">{settingSGAccount}</span>
-                    <span class="setting-desc">{settingSGAccountDesc}</span>
+                    <span class="setting-name"
+                        >{$locales[localization.settingSGAccount]}</span
+                    >
+                    <span class="setting-desc"
+                        >{$locales[localization.settingSGAccountDesc]}</span
+                    >
                 </div>
-                <button class="button setting-text interactive">{copy}</button>
+                <button class="button setting-text interactive"
+                    >{$locales[localization.copy]}</button
+                >
             </div>
         </section>
     </div>

@@ -7,21 +7,11 @@
         Config,
         Localization,
     } from "../../../bindings/seegolauncher/internal/services";
-    let latest: string = "";
-    let read: string = "";
+    import { initLocalization } from "../../managers/localization";
 
     onMount(async () => {
-        await setLocales();
+        initLocalization();
     });
-
-    async function setLocales() {
-        let lang = await Config.GetLanguage();
-
-        [latest, read] = await Promise.all([
-            Localization.Get("news-latest", lang),
-            Localization.Get("news-read", lang),
-        ]);
-    }
 </script>
 
 <main>

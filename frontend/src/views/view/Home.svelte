@@ -3,44 +3,25 @@
     import { Events } from "@wailsio/runtime";
 
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
-    import {
-        Config,
-        Localization,
-    } from "../../../bindings/seegolauncher/internal/services";
+    import { Config } from "../../../bindings/seegolauncher/internal/services";
     import { Icons } from "../../utils/icons";
-
-    let serverPlayersBefore = -1;
-    let serverSlotsBefore = -1;
-    let serverAdminsBefore = -1;
-    let serverQueueBefore = -1;
-    let serverPlayersNow = -1;
-    let serverSlotsNow = -1;
-    let serverAdminsNow = -1;
-    let serverQueueNow = -1;
-
-    let latest: string = "";
-    let read: string = "";
-    let membership: string = "";
-    let day: string = "";
-    let serverStatus: string = "";
-    let admins: string = "";
-    let queue: string = "";
-    let estimated: string = "";
-    let hours: string = "";
-    let minutes: string = "";
-    let seconds: string = "";
-    let community: string = "";
-    let launcherStatus: string = "";
-    let launcherConnect: string = "";
-
-    let itemDialogName: string = "";
-    let itemDialogDesc: string = "";
-    let itemDialogImage: string = "";
-    let itemDialogPrice: string = "";
-    let itemDialogCurrency: string = "";
+    import {
+        initLocalization,
+        locales,
+        localization,
+    } from "../../managers/localization";
 
     let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
+
+    let serverPlayersBefore = 0;
+    let serverSlotsBefore = 0;
+    let serverAdminsBefore = 0;
+    let serverQueueBefore = 0;
+    let serverPlayersNow = 0;
+    let serverSlotsNow = 0;
+    let serverAdminsNow = 0;
+    let serverQueueNow = 0;
 
     function start() {
         if (!interval) {
@@ -65,9 +46,10 @@
 
     onMount(() => {
         void (async () => {
-            await setLocales();
             await fetchServerStatus();
         })();
+
+        initLocalization();
 
         start();
 
@@ -76,55 +58,33 @@
         };
     });
 
-    async function setLocales() {
-        let lang = await Config.GetLanguage();
-
-        [
-            latest,
-            read,
-            membership,
-            day,
-            serverStatus,
-            admins,
-            queue,
-            estimated,
-            hours,
-            minutes,
-            seconds,
-            community,
-            launcherStatus,
-            launcherConnect,
-        ] = await Promise.all([
-            Localization.Get("news-latest", lang),
-            Localization.Get("news-read", lang),
-            Localization.Get("club-membership", lang),
-            Localization.Get("club-membership-day", lang),
-            Localization.Get("server-status-online", lang),
-            Localization.Get("server-status-admins", lang),
-            Localization.Get("server-status-queue", lang),
-            Localization.Get("server-status-estimated", lang),
-            Localization.Get("hours", lang),
-            Localization.Get("minutes", lang),
-            Localization.Get("seconds", lang),
-            Localization.Get("community", lang),
-            Localization.Get("launcher-ready", lang),
-            Localization.Get("launcher-connect", lang),
-        ]);
-    }
-
     function closeItemDialog() {
         showDialog = false;
     }
 
     async function fetchServerStatus() {
-        const server = await GetServerPlayers();
+        let server;
+        const serverStatus = document.getElementById("server-status");
+        const serverFill = document.getElementById("server-fill");
+        const estimatedConnection =
+            document.getElementById("estimated-connect");
+        let lang = await Config.GetLanguage();
+
+        try {
+            server = await GetServerPlayers();
+        } catch (err) {
+            serverStatus!.textContent =
+                $locales[localization.serverStatusOffline];
+            serverStatus!.style.color = "var(--gray)";
+            serverFill!.style.background = "";
+            return;
+        }
         serverPlayersNow = server.players;
         serverSlotsNow = server.slots;
         serverAdminsNow = server.admins;
         serverQueueNow = server.queue;
 
         let connectionIn = "";
-        let lang = await Config.GetLanguage();
 
         if (serverPlayersNow != serverPlayersBefore) {
             const element = document.getElementById("players-count");
@@ -162,41 +122,28 @@
             element?.classList.add("updated");
         }
 
-        const serverStatus = document.getElementById("server-status");
-        const serverFill = document.getElementById("server-fill");
-        const estimatedConnection =
-            document.getElementById("estimated-connect");
-
         if (serverStatus && serverFill) {
             if (serverPlayersNow <= 0 && serverQueueNow <= 0) {
-                serverStatus.textContent = await Localization.Get(
-                    "server-status-offline",
-                    lang,
-                );
+                serverStatus.textContent =
+                    $locales[localization.serverStatusOffline];
                 serverStatus.style.color = "var(--gray)";
                 serverFill.style.background = "";
             } else if (serverPlayersNow <= 0 && serverQueueNow > 0) {
-                serverStatus.textContent = await Localization.Get(
-                    "server-status-restart",
-                    lang,
-                );
+                serverStatus.textContent =
+                    $locales[localization.serverStatusRestart];
                 serverStatus.style.color = "var(--orange)";
                 serverFill.style.background = "var(--green)";
             } else if (
                 serverPlayersNow === serverAdminsNow &&
                 serverAdminsNow > 0
             ) {
-                serverStatus.textContent = await Localization.Get(
-                    "server-status-maintenance",
-                    lang,
-                );
+                serverStatus.textContent =
+                    $locales[localization.serverStatusMaintenance];
                 serverStatus.style.color = "var(--orange)";
                 serverFill.style.background = "var(--green)";
             } else {
-                serverStatus.textContent = await Localization.Get(
-                    "server-status-online",
-                    lang,
-                );
+                serverStatus.textContent =
+                    $locales[localization.serverStatusOnline];
                 serverStatus.style.color = "var(--green)";
                 serverFill.style.background = "var(--green)";
             }
@@ -222,11 +169,11 @@
                             Math.floor(serverQueueNow * 0.35) * 120;
                     }
                     if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${hours}`;
+                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${$locales[localization.hours]}`;
                     } else if (totalSeconds >= 60) {
-                        connectionIn = `${(totalSeconds / 60).toFixed()} ${minutes}`;
+                        connectionIn = `${(totalSeconds / 60).toFixed()} ${$locales[localization.minutes]}`;
                     } else {
-                        connectionIn = `${Math.round(totalSeconds)} ${seconds}`;
+                        connectionIn = `${Math.round(totalSeconds)} ${$locales[localization.seconds]}`;
                     }
                 }
             } else {
@@ -234,11 +181,11 @@
                     // about 2 seconds one player connects
                     const totalSeconds = serverQueueNow * 2;
                     if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${hours}`;
+                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${$locales[localization.hours]}`;
                     } else if (totalSeconds >= 60) {
-                        connectionIn = `${(totalSeconds / 60).toFixed()} ${minutes}`;
+                        connectionIn = `${(totalSeconds / 60).toFixed()} ${$locales[localization.minutes]}`;
                     } else {
-                        connectionIn = `${Math.round(totalSeconds)} ${seconds}`;
+                        connectionIn = `${Math.round(totalSeconds)} ${$locales[localization.seconds]}`;
                     }
                 } else {
                     estimatedConnection.textContent = "";
@@ -247,7 +194,8 @@
 
             if (serverQueueNow > 0) {
                 estimatedConnection.textContent =
-                    `${estimated}: ` + connectionIn;
+                    `${$locales[localization.serverStatusEstimated]}: ` +
+                    connectionIn;
             }
         }
 
@@ -264,7 +212,9 @@
             <header class="hero-card">
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
-                    <span class="badge">{latest}</span>
+                    <span class="badge"
+                        >{$locales[localization.newsLatest]}</span
+                    >
                     <p class="news-title">
                         Kényelmesebb játékélmény és hasznos javítások érkeztek!
                     </p>
@@ -275,13 +225,16 @@
                     </p>
                     <button
                         class="button news-read interactive"
-                        id="hero-news-read-latest">{read}</button
+                        id="hero-news-read-latest"
+                        >{$locales[localization.newsRead]}</button
                     >
                 </div>
             </header>
 
             <div class="home-items">
-                <h3 class="text items-title">SeeRPG Club {membership}</h3>
+                <h3 class="text items-title">
+                    SeeRPG Club {$locales[localization.clubMembership]}
+                </h3>
                 <div id="items-container">
                     <!-->{#each membershipItems as item}
                         <div class="item-square-card">
@@ -327,13 +280,17 @@
 
                 <div class="stats">
                     <div class="stat-box">
-                        <span class="text stat-title">{admins}</span>
+                        <span class="text stat-title"
+                            >{$locales[localization.serverStatusAdmins]}</span
+                        >
                         <span id="admins-count" class="stat-value"
                             >{serverAdminsNow}</span
                         >
                     </div>
                     <div class="stat-box">
-                        <span class="text stat-title">{queue}</span>
+                        <span class="text stat-title"
+                            >{$locales[localization.serverStatusQueue]}</span
+                        >
                         <span id="queue-count" class="stat-value"
                             >{serverQueueNow}</span
                         >
@@ -342,7 +299,9 @@
                 <p id="estimated-connect" class="comment estimated-connect"></p>
             </div>
             <div class="widget">
-                <h3 class="text widget-title">{community}</h3>
+                <h3 class="text widget-title">
+                    {$locales[localization.community]}
+                </h3>
                 <div class="social-links-grid">
                     <button
                         onclick={() =>
@@ -383,38 +342,19 @@
                 </div>
             </div>
             <div class="widget">
-                <h3 class="text widget-title">{launcherStatus}</h3>
+                <h3 class="text widget-title">
+                    {$locales[localization.launcherReady]}
+                </h3>
                 <button
                     id="connect-button"
                     class="text button connect interactive"
-                    ><!-->{@html Icons.Launcher.Play}<--->{launcherConnect}</button
+                    ><!-->{@html Icons.Launcher.Play}<--->{$locales[
+                        localization.launcherConnect
+                    ]}</button
                 >
             </div>
         </aside>
     </div>
-    {#if showDialog}
-        <div
-            class="dialog-backdrop"
-            role="button"
-            tabindex="0"
-            onclick={closeItemDialog}
-            onkeydown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    closeItemDialog();
-                }
-            }}
-        >
-            <div class="dialog">
-                <img src={itemDialogImage} alt={itemDialogName} />
-                <h2>{itemDialogName}</h2>
-                {@html itemDialogDesc}
-                <span class="item-price">
-                    {itemDialogPrice}
-                    {itemDialogCurrency}
-                </span>
-            </div>
-        </div>
-    {/if}
 </main>
 
 <style>

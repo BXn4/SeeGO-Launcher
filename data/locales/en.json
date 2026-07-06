@@ -61,6 +61,6 @@
   "setting-sg-account": "SG Account key",
   "setting-sg-account-desc": "Account hardware key",
   "copy": "Copy",
-  "enableAnimations": "Animations",
-  "enableAnimationsDesc": "Enables the animations"
+  "enable-animations": "Animations",
+  "enable-animations-desc": "Enables the animations"
 }

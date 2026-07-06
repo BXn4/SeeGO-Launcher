@@ -7,14 +7,15 @@
         Config,
         Localization,
     } from "../../bindings/seegolauncher/internal/services";
+    import {
+        initLocalization,
+        locales,
+        localization,
+    } from "../managers/localization";
 
     let title = "";
     let modified = "";
     let terms = "";
-
-    let accept: string = "";
-    let decline: string = "";
-    let lang: string = "";
 
     function parse(raw: string): string {
         const lines = raw.split("\n");
@@ -71,17 +72,8 @@
         const raw = await GetCachedTerms();
         terms = parse(raw);
 
-        setLocales();
+        initLocalization();
     });
-
-    async function setLocales() {
-        lang = await Config.GetLanguage();
-
-        [accept, decline] = await Promise.all([
-            Localization.Get("accept", lang),
-            Localization.Get("decline", lang),
-        ]);
-    }
 
     async function acceptTerms() {
         await Events.Emit("terms:accept", null);
@@ -110,10 +102,10 @@
                 class="button cancel interactive"
                 onclick={() => declineTerms()}
             >
-                {decline}
+                {$locales[localization.decline]}
             </button>
             <button class="button ok interactive" onclick={() => acceptTerms()}>
-                {accept}
+                {$locales[localization.accept]}
             </button>
         </div>
     </div>
