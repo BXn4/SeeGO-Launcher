@@ -39,7 +39,7 @@
 
 .setting-name {
     font-size: 14px;
-    color: var(--text);
+    color: var(--foreground);
 }
 
 .setting-desc {
@@ -76,15 +76,15 @@
     width: 26px;
     left: 4px;
     bottom: 4px;
-    background-color: var(--white);
+    background-color: var(--foreground);
 }
 
 input:checked+.slider {
-    background-color: var(--blue);
+    background-color: var(--purple);
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px var(--blue)
+    box-shadow: 0 0 1px var(--cyan)
 }
 
 input:checked+.slider:before {

@@ -33,7 +33,7 @@ var DefaultConfig = ConfigData{
 }
 
 var validLanguages = []string{"en", "hu"}
-var validThemes = []string{"dark", "light"}
+var validThemes = []string{"dark", "light", "dracula"}
 
 type Config struct {
 	data *ConfigData

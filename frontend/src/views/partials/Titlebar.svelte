@@ -119,9 +119,7 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        color: var(--text);
+        font-size: 12px;
     }
 
     #window-title .dim1 {
@@ -147,13 +145,13 @@
         align-items: center;
         justify-content: center;
         font-size: 15px;
-        color: var(--text);
+        color: var(--foreground);
         cursor: pointer;
     }
 
     .window-control:hover {
-        color: var(--text);
-        background: var(--window-icon-hover);
+        color: var(--foreground);
+        background: var(--border);
     }
 
     #close-button:hover {

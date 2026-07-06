@@ -150,6 +150,12 @@
                     >
                     <button
                         class="button interactive"
+                        title="Dracula"
+                        class:active={theme === "dracula"}
+                        onclick={() => updateTheme("dracula")}>Dracula</button
+                    >
+                    <button
+                        class="button interactive"
                         title="{$locales[localization.themeLight]} {$locales[
                             localization.colors
                         ]}"

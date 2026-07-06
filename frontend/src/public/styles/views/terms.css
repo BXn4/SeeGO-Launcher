@@ -40,14 +40,14 @@
     font-size: 16px;
     margin: 28px 0 12px;
     padding-left: 14px;
-    border-left: 2px solid var(--dim1);
+    border-left: 2px solid var(--orange);
     font-weight: bold;
 }
 
 .terms-category-sub {
     font-size: 14px;
     display: inline-block;
-    border-bottom: 1px solid var(--dim1);
+    border-bottom: 1px solid var(--orange);
 }
 
 .terms-text {

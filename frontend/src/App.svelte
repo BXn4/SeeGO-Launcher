@@ -59,7 +59,7 @@
     }
 
     function setTheme(theme: string) {
-        document.documentElement.classList.remove("dark", "light");
+        document.documentElement.classList.remove("dark", "dracula", "light");
         document.documentElement.classList.add(theme);
     }
 
