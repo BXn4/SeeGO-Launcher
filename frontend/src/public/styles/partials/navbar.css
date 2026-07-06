@@ -49,7 +49,6 @@
  .navbar-button:hover {
      color: var(--navbar-icon-hover);
      background: var(--navbar-icon-hover-bg);
-     transform: translateY(-1px);
  }
 
  .navbar-button:active {

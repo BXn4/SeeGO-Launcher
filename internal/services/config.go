@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"seegolauncher/internal/paths"
+	"seegolauncher/internal/utils"
 	"slices"
 	"sync"
 
@@ -18,15 +19,17 @@ var (
 )
 
 type ConfigData struct {
-	Language      string `json:"language"`
-	TermsAccepted bool   `json:"terms_accepted"`
-	Theme         string `json:"theme"`
+	Language         string `json:"language"`
+	TermsAccepted    bool   `json:"terms_accepted"`
+	Theme            string `json:"theme"`
+	EnableAnimations bool   `json:"enableAnimations"`
 }
 
 var DefaultConfig = ConfigData{
-	Language:      "hu",
-	TermsAccepted: false,
-	Theme:         "dark",
+	Language:         "hu",
+	TermsAccepted:    false,
+	Theme:            "dark",
+	EnableAnimations: true,
 }
 
 var validLanguages = []string{"en", "hu"}
@@ -47,6 +50,10 @@ func (s *Config) GetLanguages() []string {
 
 func (s *Config) GetTermsAccepted() bool {
 	return s.data.TermsAccepted
+}
+
+func (s *Config) GetEnableAnimations() bool {
+	return s.data.EnableAnimations
 }
 
 func (s *Config) GetConfig() ConfigData {
@@ -75,6 +82,16 @@ func (s *Config) SetTheme(theme string) error {
 		return fmt.Errorf("Invalid theme: %s, saved default", theme)
 	}
 	s.data.Theme = theme
+	return saveConfig(s.data)
+}
+
+func (s *Config) SetEnableAnimations(value bool) error {
+	if !utils.IsBool(value) {
+		s.data.EnableAnimations = true
+		saveConfig(s.data)
+		return fmt.Errorf("Invalid boolean value to enable anims: %t, saved default", value)
+	}
+	s.data.EnableAnimations = value
 	return saveConfig(s.data)
 }
 
@@ -156,14 +173,19 @@ func LoadConfig() (*ConfigData, error) {
 		}
 	}
 
-	log.Info("Config loaded", "language", config.Language)
-	log.Info("Config loaded", "terms", config.TermsAccepted)
-	log.Info("Config loaded", "theme", config.Theme)
+	if !utils.IsBool(config.EnableAnimations) {
+		log.Warnf("Invalid value to boolean '%t', using default '%t'", config.EnableAnimations, DefaultConfig.EnableAnimations)
+		config.EnableAnimations = DefaultConfig.EnableAnimations
+		if err := saveConfig(&config); err != nil {
+			log.Warn("Failed to save config", "err", err)
+		}
+	}
+
 	return &config, nil
 }
 
 func createDefaultConfig() (*ConfigData, error) {
-	config := &ConfigData{Language: DefaultConfig.Language, TermsAccepted: DefaultConfig.TermsAccepted, Theme: DefaultConfig.Theme}
+	config := &ConfigData{Language: DefaultConfig.Language, TermsAccepted: DefaultConfig.TermsAccepted, Theme: DefaultConfig.Theme, EnableAnimations: DefaultConfig.EnableAnimations}
 	if err := saveConfig(config); err != nil {
 		return nil, fmt.Errorf("Failed to create default config: %w", err)
 	}

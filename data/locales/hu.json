@@ -29,7 +29,7 @@
   "club-membership-day": "nap",
   "server-status-online": "Elérhető",
   "server-status-offline": "Elérhetetlen",
-  "server-status-restarting": "Újraindítás",
+  "server-status-restart": "Újraindítás",
   "server-status-maintenance": "Karbantartás",
   "server-status-admins": "Adminok",
   "server-status-queue": "Várólistán",
@@ -60,5 +60,7 @@
   "setting-version": "Verzió",
   "setting-sg-account": "SG azonosító kulcs",
   "setting-sg-account-desc": "A hardveres azonosító kulcs",
-  "copy": "Másolás"
+  "copy": "Másolás",
+  "enableAnimations": "Animációk",
+  "enableAnimationsDesc": "Animációk engedélyezése"
 }

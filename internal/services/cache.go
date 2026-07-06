@@ -87,6 +87,16 @@ func RequestItems(categoryID int) (string, error) {
 	return "", nil
 }
 
+func RequestSeeFileList() (string, error) {
+	url := endpoints.FilesList
+	response, err := net.Request(url)
+	if err != nil {
+		log.Errorf("Failed to request file list: %s", err)
+		return "", err
+	}
+	return response, err
+}
+
 func writeCache(dir, filename, v string) error {
 	cacheDir, err := paths.GetCachePath()
 	if err != nil {

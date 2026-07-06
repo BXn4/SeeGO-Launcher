@@ -225,10 +225,6 @@
      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
  }
 
- .item-image img:hover {
-     transform: scale(1.2);
- }
-
  .item-name {
      display: flex;
      flex-direction: column;
@@ -285,7 +281,6 @@
 
  .socials:hover {
      color: var(--dim1);
-     transform: scale(1.05);
  }
 
  .button.connect {

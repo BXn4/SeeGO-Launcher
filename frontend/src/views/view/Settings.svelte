@@ -24,6 +24,10 @@
     let settingSGAccount = "";
     let settingSGAccountDesc = "";
     let copy = "";
+    let enableAnimations = "";
+    let enableAnimationsDesc = "";
+
+    let enableAnimationsValue = false;
 
     let languages: { value: string; label: string }[] = [];
 
@@ -46,6 +50,8 @@
             settingSGAccount,
             settingSGAccountDesc,
             copy,
+            enableAnimations,
+            enableAnimationsDesc,
         ] = await Promise.all([
             Localization.Get("settings-general", lang),
             Localization.Get("setting-language", lang),
@@ -63,16 +69,18 @@
             Localization.Get("setting-sg-account", lang),
             Localization.Get("setting-sg-account-desc", lang),
             Localization.Get("copy", lang),
+            Localization.Get("enableAnimations", lang),
+            Localization.Get("enableAnimationsDesc", lang),
         ]);
     }
 
     async function updateTheme(v: string) {
         theme = v;
-        await Events.Emit("app:updateTheme", v);
+        await Events.Emit("app:updateSetting", ["theme", v]);
     }
 
     async function updateLanguage() {
-        await Events.Emit("app:updateLanguage", language);
+        await Events.Emit("app:updateSetting", ["language", language]);
 
         const availableLanguages = await Config.GetLanguages();
         languages = await Promise.all(
@@ -85,9 +93,16 @@
         setLocales();
     }
 
+    async function updateAnims(v: boolean) {
+        enableAnimationsValue = v;
+        await Events.Emit("app:updateSetting", ["anims", v]);
+    }
+
     onMount(async () => {
         theme = await Config.GetTheme();
         language = await Config.GetLanguage();
+        enableAnimationsValue = await Config.GetEnableAnimations();
+
         const availableLanguages = await Config.GetLanguages();
         languages = await Promise.all(
             availableLanguages.map(async (value) => ({
@@ -132,6 +147,20 @@
                 </div>
                 <label class="switch">
                     <input type="checkbox" />
+                    <span class="slider round interactive"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <span class="setting-name">{enableAnimations}</span>
+                    <span class="setting-desc">{enableAnimationsDesc}</span>
+                </div>
+                <label class="switch">
+                    <input
+                        type="checkbox"
+                        bind:checked={enableAnimationsValue}
+                        onchange={() => updateAnims(enableAnimationsValue)}
+                    />
                     <span class="slider round interactive"></span>
                 </label>
             </div>

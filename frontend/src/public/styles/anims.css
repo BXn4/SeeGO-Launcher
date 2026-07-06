@@ -90,3 +90,29 @@
 .socials {
     transition: transform 0.2s ease-in-out;
 }
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.item-image img:hover {
+    transform: scale(1.2);
+}
+
+.socials:hover {
+    transform: scale(1.05);
+}
+
+.slider {
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.navbar-button:hover {
+    transform: translateY(-1px);
+}

@@ -40,17 +40,39 @@
     let itemDialogCurrency: string = "";
 
     let showDialog: Boolean = false;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    function start() {
+        if (!interval) {
+            interval = setInterval(fetchServerStatus, 60 * 1000);
+        }
+    }
+
+    function stop() {
+        if (interval) {
+            clearInterval(interval);
+            interval = undefined;
+        }
+    }
+
+    Events.On("home:startInterval", async (e) => {
+        start();
+    });
+
+    Events.On("home:stopInterval", async (e) => {
+        stop();
+    });
 
     onMount(() => {
-        const interval = setInterval(fetchServerStatus, 60 * 1000);
-
         void (async () => {
             await setLocales();
             await fetchServerStatus();
         })();
 
+        start();
+
         return () => {
-            clearInterval(interval);
+            stop();
         };
     });
 

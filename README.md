@@ -5,13 +5,13 @@
 </div>
 <p>
 An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.
-The launcher was developed in Go using the Wails framework.
+The launcher was developed in Go using the [Wails](https://v3.wails.io/) framework.
 </p>
 
 # Contents
 - [Information](#information)
 - [Development](#development)
-  * [Running at locally](#running-at-locally)
+  * [Running locally](#running-locally)
 
 <div align="center">
   <img src="https://i.imgur.com/Iim5Dk9.png" alt="screenshot" />
@@ -48,17 +48,17 @@ go install github.com/wailsapp/wails/v3/cmd/wails@latest
 **Operating System:**
 
 | OS | WebView |
-|--|--|--|
+|--|--|
 | Windows 10/11 | WebView2 (Edge) |
 | macOS 12+ | WKWebView (Safari) |
 | Linux (GTK) | WebKitGTK |
 
 
-### Running at locally
+### Running locally
 **1. Clone this repo**
 
 ```bash
-git clone https://gitea.com/bxn4/seego-launcher.git
+git clone https://github.com/bxn4/seego-launcher.git
 cd seego-launcher
 ```
 
@@ -77,7 +77,7 @@ wails3 dev
 **4. Building**
 Before you build it, please place the Tebex account in the .env OA varible. You can get this from the website store request.
 ```bash
-./build.sh // only for WINDOWS!
+./build.sh
 ```
 
 The compiled binary is in the `./bin/` folder.
