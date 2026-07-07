@@ -8,15 +8,15 @@ import (
 )
 
 func GetRootPath() (string, error) {
-	home, err := os.UserHomeDir()
+	path, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
 
 	if runtime.GOOS == "windows" {
-		return filepath.Join(home, "../", "ProgramData", "seego-launcher"), nil
+		return filepath.Join(path, "seego-launcher"), nil
 	}
-	return filepath.Join(home, ".config", "seego-launcher"), nil
+	return filepath.Join(path, "seego-launcher"), nil
 }
 
 func GetCachePath() (string, error) {
