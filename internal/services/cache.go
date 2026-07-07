@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,14 +9,24 @@ import (
 	"seegolauncher/internal/net"
 	"seegolauncher/internal/paths"
 	"seegolauncher/internal/utils"
+	"time"
 
 	"github.com/charmbracelet/log"
 )
 
 type CacheService struct{}
 
+type NewsItem struct {
+	Title     string
+	Date      string
+	Content   string
+	ImageName string
+	Image     []byte
+}
+
 const (
 	TermsFileName = "terms.chc"
+	NewsFileName  = "news.chc"
 )
 
 func writeCache(dir, filename, v string) error {
@@ -46,20 +57,111 @@ func (s *CacheService) GetCachedTerms() (string, error) {
 	return string(termsData), nil
 }
 
+func (s *CacheService) GetLatestNew() (*NewsItem, error) {
+	return getLatestNew()
+}
+
+func getLatestNew() (*NewsItem, error) {
+	newsPath, err := paths.GetCachedFilePath("news", NewsFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := os.ReadFile(newsPath)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read %s: %w", NewsFileName, err)
+	}
+
+	var items []json.RawMessage
+	if err := json.Unmarshal(data, &items); err != nil {
+		return nil, fmt.Errorf("Failed to parse %s: %w", NewsFileName, err)
+	}
+	if len(items) == 0 {
+		return nil, fmt.Errorf("No news found")
+	}
+
+	var entry []string
+	if err := json.Unmarshal(items[0], &entry); err != nil {
+		return nil, fmt.Errorf("Failed to parse latest news entry: %w", err)
+	}
+	if len(entry) < 5 {
+		return nil, fmt.Errorf("Corrupted news")
+	}
+
+	news := &NewsItem{
+		Title:     entry[0],
+		Date:      entry[1],
+		Content:   entry[2],
+		ImageName: entry[3],
+	}
+
+	if news.ImageName != "" {
+		imagePath, err := paths.GetCachedFilePath("news", news.ImageName)
+		if err != nil {
+			return nil, err
+		}
+		image, err := os.ReadFile(imagePath)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to read news image %s: %w", news.ImageName, err)
+		}
+		news.Image = image
+	}
+
+	return news, nil
+}
+
 func CheckHashes() error {
 	termsRemote, err := net.Request(endpoints.Terms)
 	if err != nil {
 		return err
 	}
 	termsLocalPath, err := paths.GetCachedFilePath("", TermsFileName)
+	if err != nil {
+		return err
+	}
 	termsLocal, err := os.ReadFile(termsLocalPath)
 	if err != nil {
 		return err
 	}
-
 	if !utils.CompareHashes(termsRemote, string(termsLocal)) {
 		return fmt.Errorf("The hashes different!")
 	}
+
+	latestNewsRemote, err := net.RequestNewsFeed("feed", 1, 0)
+	if err != nil {
+		return err
+	}
+
+	var remoteItems []json.RawMessage
+	if err := json.Unmarshal([]byte(latestNewsRemote), &remoteItems); err != nil {
+		return fmt.Errorf("Failed to parse remote news: %w", err)
+	}
+	if len(remoteItems) == 0 {
+		return fmt.Errorf("No remote news found")
+	}
+
+	var remoteEntry []string
+	if err := json.Unmarshal(remoteItems[0], &remoteEntry); err != nil {
+		return fmt.Errorf("Failed to parse remote news: %w", err)
+	}
+	if len(remoteEntry) < 2 {
+		return fmt.Errorf("Corrupted remote news")
+	}
+	remoteDate := remoteEntry[1]
+
+	latestNew, err := getLatestNew()
+	if err != nil {
+		return err
+	}
+
+	log.Debug(remoteDate)
+	log.Debug(latestNew.Date)
+
+	if remoteDate != latestNew.Date {
+		return fmt.Errorf("The news date is different!")
+	}
+
+	log.Info("Hashes okay!")
 
 	return nil
 }
@@ -74,6 +176,12 @@ func LoadCache() error {
 
 		if err := refreshTerms(); err != nil {
 			log.Errorf("Failed to refresh terms: %v", err)
+			return err
+		}
+
+		// only need to refresh, if the cached latest new different from the remote
+		if err := refreshNews(); err != nil {
+			log.Errorf("Failed to refresh news: %v", err)
 			return err
 		}
 		return err
@@ -105,5 +213,73 @@ func refreshTerms() error {
 		}
 	}
 
+	return nil
+}
+
+func refreshNews() error {
+	// 1/0 latest <- 0 always latest
+	// each news have ["next"]
+	// fetch until theres no ["next"] in it.
+	// 1/i until no ["next"]
+	page := 0
+	count := 1
+	var allNews []json.RawMessage
+	for {
+		body, err := net.RequestNewsFeed("feed", count, page)
+		if err != nil {
+			return fmt.Errorf("Failed to fetch news content: %w", err)
+		}
+		var items []json.RawMessage
+		if err := json.Unmarshal([]byte(body), &items); err != nil {
+			return fmt.Errorf("Failed to parse news content: %w", err)
+		}
+		continueFetch := false
+		for _, raw := range items {
+			var marker []string
+			if err := json.Unmarshal(raw, &marker); err == nil && len(marker) == 1 && marker[0] == "next" {
+				continueFetch = true
+				continue
+			}
+
+			var entry []string
+			if err := json.Unmarshal(raw, &entry); err == nil && len(entry) >= 4 && entry[3] != "" {
+				if err := downloadNewsImage(entry[3]); err != nil {
+					return fmt.Errorf("Failed to download news image %s: %w", entry[3], err)
+				}
+			}
+			allNews = append(allNews, raw)
+		}
+		if !continueFetch {
+			break
+		}
+		page++
+		time.Sleep(250 * time.Millisecond)
+	}
+	joined, err := json.Marshal(allNews)
+	if err != nil {
+		return fmt.Errorf("Failed to marshal news content: %w", err)
+	}
+	if err := writeCache("news", NewsFileName, string(joined)); err != nil {
+		return fmt.Errorf("Failed to write news: %w", err)
+	}
+	return nil
+}
+
+func downloadNewsImage(name string) error {
+	imagesPath, err := paths.GetCachedFilePath("news", name)
+	if err != nil {
+		return err
+	}
+	if _, err := os.Stat(imagesPath); err == nil {
+		return nil
+	}
+
+	image, err := net.Request("https://news.see-rpg.com/img/" + name)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(imagesPath, []byte(image), 0644); err != nil {
+		return err
+	}
 	return nil
 }

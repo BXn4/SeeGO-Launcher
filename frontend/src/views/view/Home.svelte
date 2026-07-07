@@ -10,6 +10,7 @@
         locales,
         localization,
     } from "../../managers/localization";
+    import { GetLatestNew } from "../../../bindings/seegolauncher/internal/services/cacheservice";
 
     let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -22,6 +23,10 @@
     let serverSlotsNow = 0;
     let serverAdminsNow = 0;
     let serverQueueNow = 0;
+
+    let latestNewsTitle = "";
+    let latestNewsContent = "";
+    let latestNewsImgSrc = "";
 
     function start() {
         if (!interval) {
@@ -50,7 +55,7 @@
         })();
 
         initLocalization();
-
+        setLatestNew();
         start();
 
         return () => {
@@ -204,25 +209,58 @@
         serverAdminsBefore = serverAdminsNow;
         serverQueueBefore = serverQueueNow;
     }
+
+    function stripNewsMarkup(raw: string): string {
+        return raw
+            .replace(/\[\[href\]\].*?\[\[href\]\]/gs, "")
+            .replace(/\[\[.*?\]\]/g, "")
+            .replace(/#+/g, "")
+            .replace(/\r?\n+/g, " ")
+            .trim();
+    }
+
+    async function setLatestNew() {
+        const heroTitle = document.getElementById("hero-news-title");
+        const heroComment = document.getElementById("hero-news-comment");
+        const heroCard = document.getElementById("hero-card");
+
+        try {
+            const news = await GetLatestNew();
+
+            latestNewsTitle = news!.Title;
+            latestNewsContent = stripNewsMarkup(news!.Content);
+
+            heroTitle!.textContent = latestNewsTitle;
+
+            heroComment!.textContent =
+                latestNewsContent.length > 120
+                    ? latestNewsContent.slice(0, 120) + "…"
+                    : latestNewsContent;
+
+            if (news?.Image) {
+                latestNewsImgSrc = `data:image/png;base64,${news!.Image}`;
+                heroCard!.style.backgroundImage = `url(${latestNewsImgSrc})`;
+                heroCard!.style.backgroundSize = "cover";
+                heroCard!.style.backgroundPosition = "center";
+            }
+        } catch (err) {
+            heroTitle!.textContent = "MISSING";
+            heroComment!.textContent = "MISSING";
+        }
+    }
 </script>
 
 <main>
     <div id="home-view">
         <div class="feed-layout">
-            <header class="hero-card">
+            <header id="hero-card" class="hero-card">
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
                     <span class="badge"
                         >{$locales[localization.newsLatest]}</span
                     >
-                    <p class="news-title">
-                        Kényelmesebb játékélmény és hasznos javítások érkeztek!
-                    </p>
-                    <p class="news-comment">
-                        Frissítés érkezett a szerverre! A legújabb frissítésben
-                        több fontos kényelmi fejlesztés, hibajavítás és tartalmi
-                        bővítés is bekerült a szerverre.
-                    </p>
+                    <p id="hero-news-title" class="news-title"></p>
+                    <p id="hero-news-comment" class="news-comment"></p>
                     <button
                         class="button news-read interactive"
                         id="hero-news-read-latest"

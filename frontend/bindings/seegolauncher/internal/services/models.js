@@ -55,6 +55,66 @@ export class ConfigData {
     }
 }
 
+export class NewsItem {
+    /**
+     * Creates a new NewsItem instance.
+     * @param {Partial<NewsItem>} [$$source = {}] - The source object to create the NewsItem.
+     */
+    constructor($$source = {}) {
+        if (!("Title" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["Title"] = "";
+        }
+        if (!("Date" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["Date"] = "";
+        }
+        if (!("Content" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["Content"] = "";
+        }
+        if (!("ImageName" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["ImageName"] = "";
+        }
+        if (!("Image" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["Image"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new NewsItem instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {NewsItem}
+     */
+    static createFrom($$source = {}) {
+        const $$createField4_0 = $Create.ByteSlice;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Image" in $$parsedSource) {
+            $$parsedSource["Image"] = $$createField4_0($$parsedSource["Image"]);
+        }
+        return new NewsItem(/** @type {Partial<NewsItem>} */($$parsedSource));
+    }
+}
+
 export class ServerDetail {
     /**
      * Creates a new ServerDetail instance.

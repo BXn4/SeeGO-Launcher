@@ -15,5 +15,6 @@ export {
 
 export {
     ConfigData,
+    NewsItem,
     ServerDetail
 } from "./models.js";

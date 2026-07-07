@@ -6,9 +6,26 @@
 // @ts-ignore: Unused imports
 import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as $models from "./models.js";
+
 /**
  * @returns {$CancellablePromise<string>}
  */
 export function GetCachedTerms() {
     return $Call.ByID(3941573025);
 }
+
+/**
+ * @returns {$CancellablePromise<$models.NewsItem | null>}
+ */
+export function GetLatestNew() {
+    return $Call.ByID(1506172643).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType1($result);
+    }));
+}
+
+// Private type creation functions
+const $$createType0 = $models.NewsItem.createFrom;
+const $$createType1 = $Create.Nullable($$createType0);

@@ -3,9 +3,8 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"seegolauncher/internal/endpoints"
-	"time"
+	"seegolauncher/internal/net"
 )
 
 type API struct{}
@@ -20,25 +19,13 @@ type ServerDetail struct {
 }
 
 func (a *API) GetServerPlayers() (ServerDetail, error) {
-	client := &http.Client{Timeout: 5 * time.Second}
-
-	req, err := http.NewRequest(http.MethodGet, endpoints.Players, nil)
-	if err != nil {
-		return ServerDetail{}, fmt.Errorf("Failed to build request: %w", err)
-	}
-
-	response, err := client.Do(req)
+	response, err := net.Request(endpoints.Players)
 	if err != nil {
 		return ServerDetail{}, fmt.Errorf("Failed to fetch players: %w", err)
 	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		return ServerDetail{}, fmt.Errorf("Unexpected status code: %d", response.StatusCode)
-	}
 
 	var result ServerDetail
-	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+	if err := json.Unmarshal([]byte(response), &result); err != nil {
 		return ServerDetail{}, fmt.Errorf("Failed to decode response: %w", err)
 	}
 

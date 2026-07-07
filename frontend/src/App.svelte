@@ -70,6 +70,7 @@
 
     onMount(async () => {
         setTheme(await Config.GetTheme());
+        setAnimations(await Config.GetEnableAnimations());
 
         Events.Emit("app:ready");
     });
