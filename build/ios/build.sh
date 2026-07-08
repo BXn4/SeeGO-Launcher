@@ -2,10 +2,10 @@
 set -e
 
 # Build configuration
-APP_NAME="seego-launcher"
-BUNDLE_ID="com.bxn4.seegolaunhcer"
-VERSION="0.0.1"
-BUILD_NUMBER="0.0.1"
+APP_NAME=""
+BUNDLE_ID=""
+VERSION="0.1.0"
+BUILD_NUMBER="0.1.0"
 BUILD_DIR="build/ios"
 TARGET="simulator"
 

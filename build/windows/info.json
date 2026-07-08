@@ -1,15 +1,15 @@
 {
 	"fixed": {
-		"file_version": "0.0.1"
+		"file_version": "0.1.0"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "0.0.1",
-			"CompanyName": "BXn4",
-			"FileDescription": "Egy alternatív opensource launcher a SeeRPG szerverhez.",
-			"LegalCopyright": "(c) 2026, Fodor Bence",
-			"ProductName": "SeeGO Launcher",
-			"Comments": "Some Product Comments"
+			"ProductVersion": "0.1.0",
+			"CompanyName": "My Company",
+			"FileDescription": "My Product Description",
+			"LegalCopyright": "© now, My Company",
+			"ProductName": "My Product",
+			"Comments": "This is a comment"
 		}
 	}
 }

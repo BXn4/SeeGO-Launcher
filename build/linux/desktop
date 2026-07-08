@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
-Name=SeeGO Launcher
-Comment=Egy alternatív opensource launcher a SeeRPG szerverhez.
+Name=My Product
+Comment=My Product Description
 # The Exec line includes %u to pass the URL to the application
-Exec=/usr/local/bin/seego-launcher %u
+Exec=/usr/local/bin/ %u
 Terminal=false
 Type=Application
-Icon=seego-launcher
+Icon=
 Categories=Utility;
-StartupWMClass=seego-launcher
+StartupWMClass=
 
  
