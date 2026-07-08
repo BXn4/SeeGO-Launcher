@@ -64,8 +64,7 @@
     }
 
     function setAnimations(value: boolean) {
-        const link = document.getElementById("anims") as HTMLLinkElement;
-        link.disabled = !value;
+        document.documentElement.classList.toggle("disable-animations", !value);
     }
 
     onMount(async () => {

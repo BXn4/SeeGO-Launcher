@@ -1,3 +1,17 @@
+html.disable-animations *:not(.loader):not(.loader *),
+html.disable-animations *:not(.loader):not(.loader *)::before,
+html.disable-animations *:not(.loader):not(.loader *)::after {
+    animation: none !important;
+    transition: none !important;
+}
+
+html.disable-animations .button:hover,
+html.disable-animations .item-image img:hover,
+html.disable-animations .socials:hover,
+html.disable-animations .navbar-button:hover {
+    transform: none !important;
+}
+
 @keyframes rotate {
     0% {
         transform: translate(-50%, -50%) rotateZ(0deg);
