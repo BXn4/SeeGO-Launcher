@@ -5,12 +5,17 @@
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
     import { Config } from "../../../bindings/seegolauncher/internal/services";
     import { Icons } from "../../utils/icons";
+    import { base64ToBlob } from "../../utils/helper";
+    import { stripMarkup } from "../../utils/string";
     import {
         initLocalization,
         locales,
         localization,
     } from "../../managers/localization";
-    import { GetLatestNew } from "../../../bindings/seegolauncher/internal/services/cacheservice";
+    import {
+        GetLatestNew,
+        GetNewsImage,
+    } from "../../../bindings/seegolauncher/internal/services/cacheservice";
 
     let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -210,42 +215,22 @@
         serverQueueBefore = serverQueueNow;
     }
 
-    function stripNewsMarkup(raw: string): string {
-        return raw
-            .replace(/\[\[href\]\].*?\[\[href\]\]/gs, "")
-            .replace(/\[\[.*?\]\]/g, "")
-            .replace(/#+/g, "")
-            .replace(/\r?\n+/g, " ")
-            .trim();
-    }
-
     async function setLatestNew() {
-        const heroTitle = document.getElementById("hero-news-title");
-        const heroComment = document.getElementById("hero-news-comment");
-        const heroCard = document.getElementById("hero-card");
-
         try {
             const news = await GetLatestNew();
 
             latestNewsTitle = news!.Title;
-            latestNewsContent = stripNewsMarkup(news!.Content);
+            latestNewsContent = stripMarkup(news!.Content);
 
-            heroTitle!.textContent = latestNewsTitle;
+            if (news?.ImageName) {
+                const imageData = await GetNewsImage(news.ImageName);
 
-            heroComment!.textContent =
-                latestNewsContent.length > 120
-                    ? latestNewsContent.slice(0, 120) + "…"
-                    : latestNewsContent;
+                const blob = base64ToBlob(imageData);
 
-            if (news?.Image) {
-                latestNewsImgSrc = `data:image/png;base64,${news!.Image}`;
-                heroCard!.style.backgroundImage = `url(${latestNewsImgSrc})`;
-                heroCard!.style.backgroundSize = "cover";
-                heroCard!.style.backgroundPosition = "center";
+                latestNewsImgSrc = blob;
             }
         } catch (err) {
-            heroTitle!.textContent = "MISSING";
-            heroComment!.textContent = "MISSING";
+            Events.Emit("feedback", `Failed to load latest new: ${err}`);
         }
     }
 </script>
@@ -253,21 +238,29 @@
 <main>
     <div id="home-view">
         <div class="feed-layout">
-            <header id="hero-card" class="hero-card">
+            <div
+                id="hero-card"
+                class="hero-card"
+                style="background-image: url('{latestNewsImgSrc}')"
+            >
                 <span class="hero-overlay"></span>
                 <div class="hero-content">
-                    <span class="badge"
+                    <span class="news-badge"
                         >{$locales[localization.newsLatest]}</span
                     >
-                    <p id="hero-news-title" class="news-title"></p>
-                    <p id="hero-news-comment" class="news-comment"></p>
+                    <p id="hero-news-title" class="news-title">
+                        {latestNewsTitle}
+                    </p>
+                    <p id="hero-news-comment" class="news-comment">
+                        {latestNewsContent}
+                    </p>
                     <button
                         class="button news-read interactive"
                         id="hero-news-read-latest"
                         >{$locales[localization.newsRead]}</button
                     >
                 </div>
-            </header>
+            </div>
 
             <div class="home-items">
                 <h3 class="text items-title">

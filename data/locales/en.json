@@ -62,5 +62,8 @@
   "setting-sg-account-desc": "Account hardware key",
   "copy": "Copy",
   "enable-animations": "Animations",
-  "enable-animations-desc": "Enables the animations"
+  "enable-animations-desc": "Enables the animations",
+  "news-load-failed": "Failed to load news",
+  "news-load-failed-desc": "Something went wrong while loading the news. Please try again later.",
+  "retry": "Retry"
 }

@@ -11,6 +11,15 @@ import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Cr
 import * as $models from "./models.js";
 
 /**
+ * @returns {$CancellablePromise<($models.NewsItem | null)[]>}
+ */
+export function GetAllNews() {
+    return $Call.ByID(2030732456).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType2($result);
+    }));
+}
+
+/**
  * @returns {$CancellablePromise<string>}
  */
 export function GetCachedTerms() {
@@ -26,6 +35,24 @@ export function GetLatestNew() {
     }));
 }
 
+/**
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetLatestNewDate() {
+    return $Call.ByID(2475695287);
+}
+
+/**
+ * @param {string} name
+ * @returns {$CancellablePromise<string>}
+ */
+export function GetNewsImage(name) {
+    return $Call.ByID(1520796292, name).then(/** @type {($result: any) => any} */(($result) => {
+        return $Create.ByteSlice($result);
+    }));
+}
+
 // Private type creation functions
 const $$createType0 = $models.NewsItem.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
+const $$createType2 = $Create.Array($$createType1);

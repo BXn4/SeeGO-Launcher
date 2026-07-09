@@ -89,13 +89,6 @@ export class NewsItem {
              */
             this["ImageName"] = "";
         }
-        if (!("Image" in $$source)) {
-            /**
-             * @member
-             * @type {string}
-             */
-            this["Image"] = "";
-        }
 
         Object.assign(this, $$source);
     }
@@ -106,11 +99,7 @@ export class NewsItem {
      * @returns {NewsItem}
      */
     static createFrom($$source = {}) {
-        const $$createField4_0 = $Create.ByteSlice;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("Image" in $$parsedSource) {
-            $$parsedSource["Image"] = $$createField4_0($$parsedSource["Image"]);
-        }
         return new NewsItem(/** @type {Partial<NewsItem>} */($$parsedSource));
     }
 }

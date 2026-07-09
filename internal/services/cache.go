@@ -21,7 +21,6 @@ type NewsItem struct {
 	Date      string
 	Content   string
 	ImageName string
-	Image     []byte
 }
 
 const (
@@ -61,6 +60,92 @@ func (s *CacheService) GetLatestNew() (*NewsItem, error) {
 	return getLatestNew()
 }
 
+func (s *CacheService) GetAllNews() ([]*NewsItem, error) {
+	return getAllNews()
+}
+
+func (s *CacheService) GetLatestNewDate() string {
+	new, err := getLatestNew()
+	if err != nil {
+		return ""
+	}
+
+	return new.Date
+}
+
+func (s *CacheService) GetNewsImage(name string) []byte {
+	image, err := getNewsImage(name)
+	if err != nil {
+		return nil
+	}
+
+	return image
+}
+
+func getNewsImage(name string) ([]byte, error) {
+	dir, err := paths.GetCachePath()
+	if err != nil {
+		return nil, err
+	}
+
+	path := filepath.Join(dir, "news", name)
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Infof("Loaded image %s", path)
+
+	return data, nil
+}
+
+func getAllNews() ([]*NewsItem, error) {
+	newsPath, err := paths.GetCachedFilePath("news", NewsFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := os.ReadFile(newsPath)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read %s: %w", NewsFileName, err)
+	}
+
+	var items []json.RawMessage
+	if err := json.Unmarshal(data, &items); err != nil {
+		return nil, fmt.Errorf("Failed to parse %s: %w", NewsFileName, err)
+	}
+	if len(items) == 0 {
+		return nil, fmt.Errorf("No news found")
+	}
+
+	allNews := make([]*NewsItem, 0, len(items))
+
+	for _, item := range items {
+		var entry []string
+		if err := json.Unmarshal(item, &entry); err != nil {
+			return nil, fmt.Errorf("Failed to parse news entry: %w", err)
+		}
+		if len(entry) < 5 {
+			return nil, fmt.Errorf("Corrupted news")
+		}
+		news := &NewsItem{
+			Title:     entry[0],
+			Date:      entry[1],
+			Content:   entry[2],
+			ImageName: entry[3],
+		}
+		if news.ImageName != "" {
+			_, err := paths.GetCachedFilePath("news", news.ImageName)
+			if err != nil {
+				return nil, err
+			}
+		}
+		allNews = append(allNews, news)
+	}
+	return allNews, nil
+}
+
 func getLatestNew() (*NewsItem, error) {
 	newsPath, err := paths.GetCachedFilePath("news", NewsFileName)
 	if err != nil {
@@ -96,15 +181,10 @@ func getLatestNew() (*NewsItem, error) {
 	}
 
 	if news.ImageName != "" {
-		imagePath, err := paths.GetCachedFilePath("news", news.ImageName)
+		_, err := paths.GetCachedFilePath("news", news.ImageName)
 		if err != nil {
 			return nil, err
 		}
-		image, err := os.ReadFile(imagePath)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to read news image %s: %w", news.ImageName, err)
-		}
-		news.Image = image
 	}
 
 	return news, nil

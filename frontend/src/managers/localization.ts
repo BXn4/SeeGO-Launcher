@@ -82,6 +82,10 @@ export const localization = {
 
   enableAnimations: "enable-animations",
   enableAnimationsDesc: "enable-animations-desc",
+
+  NewsLoadFailed: "news-load-failed",
+  NewsLoadFailedDesc: "news-load-failed-desc",
+  Retry: "retry"
 } as const;
 
 export const locales = writable<Record<string, string>>({});

@@ -62,5 +62,8 @@
   "setting-sg-account-desc": "A hardveres azonosító kulcs",
   "copy": "Másolás",
   "enable-animations": "Animációk",
-  "enable-animations-desc": "Animációk engedélyezése"
+  "enable-animations-desc": "Animációk engedélyezése",
+  "news-load-failed": "Nem sikerült betölteni a híreket",
+  "news-load-failed-desc": "A hírek betöltése során probléma merült fel. Kérlek próbáld meg újra később.",
+  "retry": "Újra"
 }

@@ -43,6 +43,8 @@ func (a *App) Quit() {
 func (a *App) OnReady() {
 	a.window.Show()
 
+	a.EmitEvent("splash:setCurrentProgress", "splash-loading")
+
 	go func() {
 		if utils.WaitUntil(
 			func() bool {
@@ -93,7 +95,7 @@ func (a *App) CreateNewWindow(options application.WebviewWindowOptions) *applica
 
 	window.OnWindowEvent(events.Common.WindowRestore, func(e *application.WindowEvent) {
 		a.window.Show()
-		a.window.EmitEvent("app:active", nil)
+		a.EmitEvent("app:active", nil)
 	})
 
 	return window
@@ -114,14 +116,14 @@ func (a *App) RestoreFromTray() {
 	a.window.Focus()
 	a.appState = Show
 
-	a.window.EmitEvent("app:active", nil)
+	a.EmitEvent("app:active", nil)
 }
 
 func (a *App) Minimize() {
 	a.window.Minimise()
 	a.appState = Minimized
 
-	a.window.EmitEvent("app:notActive", nil)
+	a.EmitEvent("app:notActive", nil)
 }
 
 func (a *App) SetView(w, h int, n, v string) {
@@ -188,6 +190,15 @@ func (a *App) CreateSysTray(icon []byte) {
 	systray := a.app.SystemTray.New()
 	systray.SetLabel("SeeGO Launcher")
 	systray.SetIcon(icon)
+	systray.OnDoubleClick(func() {
+		switch a.appState {
+		case Tray:
+			a.RestoreFromTray()
+		default:
+			a.window.Focus()
+			a.window.Flash(true)
+		}
+	})
 
 	menu := a.app.NewMenu()
 	menu.Add("SeeGO Launcher")
@@ -255,4 +266,8 @@ func (a *App) RegisterListeners() {
 		a.ToTray()
 	})
 
+}
+
+func (a *App) EmitEvent(name string, data any) {
+	a.window.EmitEvent(name, data)
 }
