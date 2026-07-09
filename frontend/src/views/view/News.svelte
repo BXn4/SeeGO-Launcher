@@ -53,7 +53,7 @@
         }
     }
 
-    const style = ["big", "medium"];
+    const style = ["big", "medium", "medium"];
     function GetStyle(i: number) {
         return style[i % style.length];
     }
