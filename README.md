@@ -1,12 +1,16 @@
-
 <div align="center">
     <img src="https://i.imgur.com/xqcd4sK.png" alt="logo" width="120" height="120"/>
-<h1>SeeGO Launcher</h1>
+    <h1>SeeGO Launcher</h1>
+    <p>An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.</p>
+    <p>
+        <a href="https://go.dev">
+            <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=Go&logoColor=white" alt="Golang"/>
+        </a>
+        <a href="https://v3.wails.io/">
+            <img src="https://img.shields.io/badge/Wails-DF0000?style=for-the-badge&logo=Wails&logoColor=white" alt="Wails"/>
+        </a>
+    </p>
 </div>
-<p>
-An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.
-The launcher was developed in Go using the [Wails](https://v3.wails.io/) framework.
-</p>
 
 # Contents
 - [Information](#information)
@@ -16,6 +20,11 @@ The launcher was developed in Go using the [Wails](https://v3.wails.io/) framewo
 <div align="center">
   <img src="https://i.imgur.com/Iim5Dk9.png" alt="screenshot" />
 </div>
+
+<div align="center">
+  <img src="https://i.imgur.com/1UGOknM.png" alt="screenshot" />
+</div>
+
 
 ## Information
 <p>
