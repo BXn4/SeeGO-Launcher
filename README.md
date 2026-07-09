@@ -18,7 +18,7 @@
   * [Running locally](#running-locally)
 
 <div align="center">
-  <img src="https://i.imgur.com/Iim5Dk9.png" alt="screenshot" />
+  <img src="https://i.imgur.com/rRcbSy9.png" alt="screenshot" />
 </div>
 
 <div align="center">
