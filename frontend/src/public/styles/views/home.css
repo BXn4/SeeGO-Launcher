@@ -228,8 +228,9 @@ add-to-card svg {
 }
 
 .socials {
+    position: relative;
     aspect-ratio: 1;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--surface1);
     border: 1px solid var(--border);
     border-radius: 12px;
     display: flex;

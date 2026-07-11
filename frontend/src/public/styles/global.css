@@ -107,3 +107,16 @@ main {
     margin: 0 0 20px;
     font-size: 16px;
 }
+
+.alt-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 12px;
+    height: 12px;
+}
+
+.alt-icon svg {
+    width: 100% !important;
+    height: 100% !important;
+}

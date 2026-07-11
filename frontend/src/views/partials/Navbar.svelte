@@ -77,6 +77,7 @@
                 onclick={() => window._openURL("https://forum.see-rpg.com/")}
             >
                 {@html Icons.Navbar.Forum}
+                <span class="alt-icon">{@html Icons.UI.External}</span>
                 <span class="indicator"></span>
             </button>
             <button
@@ -86,6 +87,7 @@
                 onclick={() => window._openURL("https://ucp.see-rpg.com/")}
             >
                 {@html Icons.Navbar.UCP}
+                <span class="alt-icon">{@html Icons.UI.External}</span>
                 <span class="indicator"></span>
             </button>
             <div class="divider"></div>

@@ -329,6 +329,7 @@
                         class="socials interactive"
                         title="Discord"
                         >{@html Icons.Community.Discord}
+                        <span class="alt-icon">{@html Icons.UI.External}</span>
                     </button>
                     <button
                         onclick={() =>
@@ -338,6 +339,7 @@
                         class="socials interactive"
                         title="Facebook"
                         >{@html Icons.Community.FaceBook}
+                        <span class="alt-icon">{@html Icons.UI.External}</span>
                     </button>
                     <button
                         onclick={() =>
@@ -347,6 +349,7 @@
                         class="socials interactive"
                         title="TikTok"
                         >{@html Icons.Community.TikTok}
+                        <span class="alt-icon">{@html Icons.UI.External}</span>
                     </button>
                     <button
                         onclick={() =>
@@ -356,6 +359,7 @@
                         class="socials interactive"
                         title="YouTube"
                         >{@html Icons.Community.YouTube}
+                        <span class="alt-icon">{@html Icons.UI.External}</span>
                     </button>
                 </div>
             </div>
