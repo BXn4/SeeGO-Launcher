@@ -5,7 +5,7 @@
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
     import { NewsItem } from "../../../bindings/seegolauncher/internal/services/models";
     import { Icons } from "../../utils/icons";
-    import { getLatestNew } from "../../managers/news";
+    import { getLatestNew, getLatestNewDate } from "../../managers/news";
     import {
         initLocalization,
         locales,
@@ -14,6 +14,7 @@
 
     let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
+    let loadingSuccess: boolean = true;
 
     let serverPlayersBefore = 0;
     let serverSlotsBefore = 0;
@@ -24,7 +25,7 @@
     let serverAdminsNow = 0;
     let serverQueueNow = 0;
 
-    let latestNew: NewsItem;
+    let latestNew: NewsItem[] = [];
 
     function start() {
         if (!interval) {
@@ -211,9 +212,10 @@
         try {
             let news = (await getLatestNew()) as NewsItem;
             if (news == undefined) {
+                loadingSuccess = false;
                 return;
             }
-            latestNew = news;
+            latestNew = [news];
         } catch (err) {
             Events.Emit("feedback", `Failed to load latest new: ${err}`);
         }
@@ -223,57 +225,32 @@
 <main>
     <div id="home-view">
         <div class="feed-layout">
-            {#if latestNew != undefined}
-                <div
-                    id="hero-card"
-                    class="hero-card"
-                    style="background-image: url('{latestNew.Image}')"
-                >
-                    <span class="hero-overlay"></span>
-                    <div class="hero-content">
-                        <span class="news-badge"
-                            >{$locales[localization.newsLatest]}</span
-                        >
-                        <p id="hero-news-title" class="news-title">
-                            {latestNew.Title}
-                        </p>
-                        <p id="hero-news-comment" class="news-comment">
-                            {latestNew.Content}
-                        </p>
-                        <button
-                            class="button news-read interactive"
-                            id="hero-news-read-latest"
-                            >{$locales[localization.newsRead]}</button
-                        >
-                    </div>
-
-                    <div class="home-items">
-                        <h3 class="text items-title">
-                            SeeRPG Club {$locales[localization.clubMembership]}
-                        </h3>
-                        <div id="items-container">
-                            <!-->{#each membershipItems as item}
-                            <div class="item-square-card">
-                                <div class="item-header">
-                                    <span class="text item-tag">7 {day}</span>
-                                </div>
-                                <div class="item-image">
-                                    <img src={item.image} alt={item.name} />
-                                </div>
-                                <div class="item-name">
-                                    <h4 class="text">{item.name.split(" ")[0]}</h4>
-                                    <span class="item-price"
-                                        >{item.total_price} {item.currency}</span
-                                    >
-                                </div>
-                                <button class="button add-to-card">
-                                    {@html Icons.Launcher.Cart}
-                                </button>
-                            </div>
-                        {/each} <-->
+            {#if loadingSuccess && latestNew}
+                {#each latestNew as item}
+                    <div
+                        id="hero-card"
+                        class="hero-card"
+                        style="background-image: url('{item.Image}')"
+                    >
+                        <span class="hero-overlay"></span>
+                        <div class="hero-content">
+                            <span class="news-badge"
+                                >{$locales[localization.newsLatest]}</span
+                            >
+                            <p id="hero-news-title" class="news-title">
+                                {item.Title}
+                            </p>
+                            <p id="hero-news-comment" class="news-comment">
+                                {item.Content}
+                            </p>
+                            <button
+                                class="button news-read interactive"
+                                id="hero-news-read-latest"
+                                >{$locales[localization.newsRead]}</button
+                            >
                         </div>
                     </div>
-                </div>
+                {/each}
             {:else}
                 <div id="hero-card" class="hero-card">
                     <div class="error-view">
@@ -293,6 +270,12 @@
                     </div>
                 </div>
             {/if}
+            <div class="home-items">
+                <h3 class="text items-title">
+                    SeeRPG Club {$locales[localization.clubMembership]}
+                </h3>
+                <div id="items-container"></div>
+            </div>
         </div>
         <aside class="sidebar">
             <div class="widget">
