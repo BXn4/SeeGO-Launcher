@@ -4,73 +4,19 @@
     import { Events } from "@wailsio/runtime";
     import Titlebar from "./partials/Titlebar.svelte";
     import {
-        Config,
-        Localization,
-    } from "../../bindings/seegolauncher/internal/services";
-    import {
         initLocalization,
         locales,
         localization,
     } from "../managers/localization";
+    import { parseTerms } from "../utils/string";
 
+    let terms = "";
     let title = "";
     let modified = "";
-    let terms = "";
 
-    function parse(raw: string): string {
-        const lines = raw.split("\n");
-        let parsed = "";
-        let headerParsed = false;
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (!headerParsed) {
-                if (trimmed === "ind#") {
-                    headerParsed = true;
-                    continue;
-                }
-                if (!title && trimmed) {
-                    title = trimmed;
-                    continue;
-                }
-                if (!modified && trimmed) {
-                    modified = trimmed;
-                    continue;
-                }
-                continue;
-            }
-            if (!trimmed) continue;
-            if (trimmed.startsWith("ncl# ###") || trimmed.startsWith("###")) {
-                const heading = trimmed.replace(/^ncl# ###|^###/, "").trim();
-                parsed += `
-    <p class="highlighted terms-category-sub">${heading}</p>`;
-            } else if (
-                trimmed.startsWith("ncl# ##") ||
-                trimmed.startsWith("##")
-            ) {
-                const heading = trimmed.replace(/^ncl# ##|^##/, "").trim();
-                parsed += `
-	<p class="highlighted terms-category-sub">${heading}</p>`;
-            } else if (trimmed.startsWith("#")) {
-                const heading = trimmed.replace(/^#/, "").trim();
-                parsed += `
-	<p class="highlighted terms-category">${heading}<p>`;
-            } else if (trimmed.startsWith("c#")) {
-                const text = trimmed.replace(/^c#/, "").trim();
-                parsed += `
-	<p class="comment terms-contact">${text}</p>`;
-            } else {
-                const text = trimmed.replace(
-                    /\[\[href\]\](.*?)\[\[href\]\]/g,
-                    '<a class="highlighted link interactive" onclick="window._openURL(\'$1\')">$1</a>',
-                );
-                parsed += `<p class="text terms-text">${text}</p>`;
-            }
-        }
-        return parsed;
-    }
     onMount(async () => {
         const raw = await GetCachedTerms();
-        terms = parse(raw);
+        [terms, title, modified] = parseTerms(raw);
 
         initLocalization();
     });

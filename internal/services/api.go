@@ -9,7 +9,7 @@ import (
 
 type API struct{}
 
-var OA string
+var OA string = ""
 
 type ServerDetail struct {
 	Players int `json:"players"`
