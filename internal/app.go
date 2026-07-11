@@ -22,6 +22,7 @@ const (
 
 type App struct {
 	app          *application.App
+	icon         []byte
 	tray         *application.SystemTray
 	config       *services.Config
 	appState     int
@@ -43,7 +44,7 @@ func (a *App) Quit() {
 func (a *App) OnReady() {
 	a.window.Show()
 
-	a.EmitEvent("splash:setCurrentProgress", "splash-loading")
+	a.EmitEvent(SplashSetProgress, "splash-loading")
 
 	go func() {
 		if utils.WaitUntil(
@@ -95,7 +96,7 @@ func (a *App) CreateNewWindow(options application.WebviewWindowOptions) *applica
 
 	window.OnWindowEvent(events.Common.WindowRestore, func(e *application.WindowEvent) {
 		a.window.Show()
-		a.EmitEvent("app:active", nil)
+		a.EmitEvent(AppActive, nil)
 	})
 
 	return window
@@ -106,7 +107,7 @@ func (a *App) ToTray() {
 	a.appState = Tray
 	if !a.trayNotified {
 		a.trayNotified = true
-		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, a.config.GetLanguage()))
+		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, a.config.GetLanguage()), a.icon)
 	}
 }
 
@@ -116,14 +117,14 @@ func (a *App) RestoreFromTray() {
 	a.window.Focus()
 	a.appState = Show
 
-	a.EmitEvent("app:active", nil)
+	a.EmitEvent(AppActive, nil)
 }
 
 func (a *App) Minimize() {
 	a.window.Minimise()
 	a.appState = Minimized
 
-	a.EmitEvent("app:notActive", nil)
+	a.EmitEvent(AppNotActive, nil)
 }
 
 func (a *App) SetView(w, h int, n, v string) {
@@ -180,6 +181,8 @@ func CreateApp(assets embed.FS, icon []byte) App {
 		DevToolsEnabled:            false,
 		DefaultContextMenuDisabled: true,
 	})
+
+	app.icon = icon
 
 	app.CreateSysTray(icon)
 

@@ -3,19 +3,14 @@
     import { Events } from "@wailsio/runtime";
 
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
-    import { Config } from "../../../bindings/seegolauncher/internal/services";
+    import { NewsItem } from "../../../bindings/seegolauncher/internal/services/models";
     import { Icons } from "../../utils/icons";
-    import { base64ToBlob } from "../../utils/helper";
-    import { stripMarkup } from "../../utils/string";
+    import { getLatestNew } from "../../managers/news";
     import {
         initLocalization,
         locales,
         localization,
     } from "../../managers/localization";
-    import {
-        GetLatestNew,
-        GetNewsImage,
-    } from "../../../bindings/seegolauncher/internal/services/cacheservice";
 
     let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -29,9 +24,7 @@
     let serverAdminsNow = 0;
     let serverQueueNow = 0;
 
-    let latestNewsTitle = "";
-    let latestNewsContent = "";
-    let latestNewsImgSrc = "";
+    let latestNew: NewsItem;
 
     function start() {
         if (!interval) {
@@ -78,7 +71,6 @@
         const serverFill = document.getElementById("server-fill");
         const estimatedConnection =
             document.getElementById("estimated-connect");
-        let lang = await Config.GetLanguage();
 
         try {
             server = await GetServerPlayers();
@@ -217,18 +209,11 @@
 
     async function setLatestNew() {
         try {
-            const news = await GetLatestNew();
-
-            latestNewsTitle = news!.Title;
-            latestNewsContent = stripMarkup(news!.Content);
-
-            if (news?.ImageName) {
-                const imageData = await GetNewsImage(news.ImageName);
-
-                const blob = base64ToBlob(imageData);
-
-                latestNewsImgSrc = blob;
+            let news = (await getLatestNew()) as NewsItem;
+            if (news == undefined) {
+                return;
             }
+            latestNew = news;
         } catch (err) {
             Events.Emit("feedback", `Failed to load latest new: ${err}`);
         }
@@ -238,58 +223,77 @@
 <main>
     <div id="home-view">
         <div class="feed-layout">
-            <div
-                id="hero-card"
-                class="hero-card"
-                style="background-image: url('{latestNewsImgSrc}')"
-            >
-                <span class="hero-overlay"></span>
-                <div class="hero-content">
-                    <span class="news-badge"
-                        >{$locales[localization.newsLatest]}</span
-                    >
-                    <p id="hero-news-title" class="news-title">
-                        {latestNewsTitle}
-                    </p>
-                    <p id="hero-news-comment" class="news-comment">
-                        {latestNewsContent}
-                    </p>
-                    <button
-                        class="button news-read interactive"
-                        id="hero-news-read-latest"
-                        >{$locales[localization.newsRead]}</button
-                    >
-                </div>
-            </div>
+            {#if latestNew != undefined}
+                <div
+                    id="hero-card"
+                    class="hero-card"
+                    style="background-image: url('{latestNew.Image}')"
+                >
+                    <span class="hero-overlay"></span>
+                    <div class="hero-content">
+                        <span class="news-badge"
+                            >{$locales[localization.newsLatest]}</span
+                        >
+                        <p id="hero-news-title" class="news-title">
+                            {latestNew.Title}
+                        </p>
+                        <p id="hero-news-comment" class="news-comment">
+                            {latestNew.Content}
+                        </p>
+                        <button
+                            class="button news-read interactive"
+                            id="hero-news-read-latest"
+                            >{$locales[localization.newsRead]}</button
+                        >
+                    </div>
 
-            <div class="home-items">
-                <h3 class="text items-title">
-                    SeeRPG Club {$locales[localization.clubMembership]}
-                </h3>
-                <div id="items-container">
-                    <!-->{#each membershipItems as item}
-                        <div class="item-square-card">
-                            <div class="item-header">
-                                <span class="text item-tag">7 {day}</span>
+                    <div class="home-items">
+                        <h3 class="text items-title">
+                            SeeRPG Club {$locales[localization.clubMembership]}
+                        </h3>
+                        <div id="items-container">
+                            <!-->{#each membershipItems as item}
+                            <div class="item-square-card">
+                                <div class="item-header">
+                                    <span class="text item-tag">7 {day}</span>
+                                </div>
+                                <div class="item-image">
+                                    <img src={item.image} alt={item.name} />
+                                </div>
+                                <div class="item-name">
+                                    <h4 class="text">{item.name.split(" ")[0]}</h4>
+                                    <span class="item-price"
+                                        >{item.total_price} {item.currency}</span
+                                    >
+                                </div>
+                                <button class="button add-to-card">
+                                    {@html Icons.Launcher.Cart}
+                                </button>
                             </div>
-                            <div class="item-image">
-                                <img src={item.image} alt={item.name} />
-                            </div>
-                            <div class="item-name">
-                                <h4 class="text">{item.name.split(" ")[0]}</h4>
-                                <span class="item-price"
-                                    >{item.total_price} {item.currency}</span
-                                >
-                            </div>
-                            <button class="button add-to-card">
-                                {@html Icons.Launcher.Cart}
-                            </button>
+                        {/each} <-->
                         </div>
-                    {/each} <-->
+                    </div>
                 </div>
-            </div>
+            {:else}
+                <div id="hero-card" class="hero-card">
+                    <div class="error-view">
+                        {@html Icons.UI.Alert}
+                        <p class="error-title text">
+                            {$locales[localization.NewsLoadFailed]}
+                        </p>
+                        <p class="error-comment comment">
+                            {$locales[localization.NewsLoadFailedDesc]}
+                        </p>
+                        <button
+                            class="button interactive"
+                            onclick={() => setLatestNew()}
+                        >
+                            {$locales[localization.Retry]}
+                        </button>
+                    </div>
+                </div>
+            {/if}
         </div>
-
         <aside class="sidebar">
             <div class="widget">
                 <div class="status-container">

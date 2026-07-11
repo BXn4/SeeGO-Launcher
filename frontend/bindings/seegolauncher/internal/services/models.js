@@ -82,6 +82,13 @@ export class NewsItem {
              */
             this["Content"] = "";
         }
+        if (!("Image" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["Image"] = "";
+        }
         if (!("ImageName" in $$source)) {
             /**
              * @member

@@ -49,7 +49,7 @@
                 class:active={active === "home"}
                 id="home"
                 title={home}
-                on:click={() => {
+                onclick={() => {
                     active = "home";
                     Events.Emit("main:navigate", "home");
                 }}
@@ -62,7 +62,7 @@
                 class:active={active === "news"}
                 id="news"
                 title={news}
-                on:click={() => {
+                onclick={() => {
                     active = "news";
                     Events.Emit("main:navigate", "news");
                 }}
@@ -74,7 +74,7 @@
                 class="navbar-button interactive"
                 id="forum"
                 title={forum}
-                on:click={() => window._openURL("https://forum.see-rpg.com/")}
+                onclick={() => window._openURL("https://forum.see-rpg.com/")}
             >
                 {@html Icons.Navbar.Forum}
                 <span class="indicator"></span>
@@ -83,7 +83,7 @@
                 class="navbar-button interactive"
                 id="ucp"
                 title={ucp}
-                on:click={() => window._openURL("https://ucp.see-rpg.com/")}
+                onclick={() => window._openURL("https://ucp.see-rpg.com/")}
             >
                 {@html Icons.Navbar.UCP}
                 <span class="indicator"></span>
@@ -97,7 +97,7 @@
                 class:active={active === "shop"}
                 id="shop"
                 title={shop}
-                on:click={() => {
+                onclick={() => {
                     active = "shop";
                     Events.Emit("main:navigate", "shop");
                 }}
@@ -110,7 +110,7 @@
                 class:active={active === "gallery"}
                 id="gallery"
                 title={gallery}
-                on:click={() => {
+                onclick={() => {
                     active = "gallery";
                     Events.Emit("main:navigate", "gallery");
                 }}
@@ -123,7 +123,7 @@
                 class:active={active === "players"}
                 id="players"
                 title={players}
-                on:click={() => {
+                onclick={() => {
                     active = "players";
                     Events.Emit("main:navigate", "players");
                 }}
@@ -136,7 +136,7 @@
                 class:active={active === "help"}
                 id="help"
                 title={help}
-                on:click={() => {
+                onclick={() => {
                     active = "help";
                     Events.Emit("main:navigate", "help");
                 }}
@@ -149,7 +149,7 @@
                 class:active={active === "settings"}
                 id="settings"
                 title={settings}
-                on:click={() => {
+                onclick={() => {
                     active = "settings";
                     Events.Emit("main:navigate", "settings");
                 }}

@@ -20,6 +20,7 @@ type NewsItem struct {
 	Title     string
 	Date      string
 	Content   string
+	Image     string
 	ImageName string
 }
 
@@ -233,9 +234,6 @@ func CheckHashes() error {
 	if err != nil {
 		return err
 	}
-
-	log.Debug(remoteDate)
-	log.Debug(latestNew.Date)
 
 	if remoteDate != latestNew.Date {
 		return fmt.Errorf("The news date is different!")

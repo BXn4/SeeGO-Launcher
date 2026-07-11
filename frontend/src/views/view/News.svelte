@@ -6,22 +6,10 @@
         locales,
         localization,
     } from "../../managers/localization";
+    import { getAllNews, getLatestNewDate } from "../../managers/news";
     import { stripMarkup } from "../../utils/string";
-    import { base64ToBlob } from "../../utils/helper";
     import { Icons } from "../../utils/icons";
-    import {
-        GetAllNews,
-        GetLatestNewDate,
-        GetNewsImage,
-    } from "../../../bindings/seegolauncher/internal/services/cacheservice";
-
-    interface NewsItem {
-        Title: string;
-        Date: string;
-        Content: string;
-        ImageName: string;
-        Image: string;
-    }
+    import { NewsItem } from "../../../bindings/seegolauncher/internal/services/models";
 
     let news: NewsItem[] = [];
     let latestNewDate = "";
@@ -34,20 +22,13 @@
 
     async function setNews() {
         try {
-            let allNews = (await GetAllNews()) as NewsItem[];
+            let allNews = await getAllNews();
 
-            for (const item of allNews) {
-                const imageData = await GetNewsImage(item.ImageName);
-
-                const blob = base64ToBlob(imageData);
-                item.Image = blob;
-            }
-            news = allNews;
-
-            latestNewDate = await GetLatestNewDate();
+            latestNewDate = await getLatestNewDate();
             if (allNews.length === 0 || latestNewDate == "") {
                 loadingSuccess = false;
             }
+            news = allNews;
         } catch (err) {
             Events.Emit("feedback", `Failed to load news: ${err}`);
         }
@@ -102,7 +83,7 @@
             <p class="error-comment comment">
                 {$locales[localization.NewsLoadFailedDesc]}
             </p>
-            <button class="button interactive" on:click={() => setNews()}>
+            <button class="button interactive" onclick={() => setNews()}>
                 {$locales[localization.Retry]}
             </button>
         </div>

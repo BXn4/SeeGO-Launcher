@@ -76,7 +76,7 @@
     width: 26px;
     left: 4px;
     bottom: 4px;
-    background-color: var(--foreground);
+    background-color: var(--surface1);
 }
 
 input:checked+.slider {
