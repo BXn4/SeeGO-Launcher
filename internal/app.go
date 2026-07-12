@@ -13,6 +13,8 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
+// var Version = "1.0.0"
+
 const (
 	Tray int = iota
 	Show
@@ -35,6 +37,32 @@ type App struct {
 func (a *App) Run() error {
 	return a.app.Run()
 }
+
+/* func (a *App) InitUpdater() error {
+	gh, err := github.New(github.Config{
+		Repository: "bxn4/seego-launcher",
+		Prerelease: false,
+	})
+	if err != nil {
+		return err
+	}
+	return a.app.Updater.Init(updater.Config{
+		CurrentVersion: Version,
+		Providers:      []updater.Provider{gh},
+	})
+}
+
+func (a *App) CheckForLatestVersion() error {
+	info, err := a.app.Updater.Check(context.Background())
+	if err != nil {
+		log.Info("Update: %v", err)
+		return err
+	}
+	if info != nil {
+		log.Info("Update available: %+v", info)
+	}
+	return nil
+} */
 
 func (a *App) Quit() {
 	log.Info("App quit called, quiting")
@@ -185,6 +213,13 @@ func CreateApp(assets embed.FS, icon []byte) App {
 	app.icon = icon
 
 	app.CreateSysTray(icon)
+
+	/* err := app.InitUpdater()
+	if err != nil {
+		log.Error(err)
+	}
+
+	app.CheckForLatestVersion() */
 
 	return app
 }
