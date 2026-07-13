@@ -1,5 +1,7 @@
 
+
 <div align="center">
+  <img src="https://i.imgur.com/FPArktl.png" alt="logo" width="120" height="120" />
   <img src="https://i.imgur.com/xqcd4sK.png" alt="logo" width="120" height="120" />
   <h1>SeeGO Launcher</h1>
   <p>An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.</p>
