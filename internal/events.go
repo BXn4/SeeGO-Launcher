@@ -10,5 +10,6 @@ const (
 	TermsAccept       = "terms:accept"
 	TermsDecline      = "terms:decline"
 	SplashSetProgress = "splash:setCurrentProgress"
+	NewsFeedUpdated   = "newsFeedUpdated"
 	FeedbackEvent     = "feedback"
 )

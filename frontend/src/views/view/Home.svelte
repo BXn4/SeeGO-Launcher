@@ -48,6 +48,10 @@
         stop();
     });
 
+    Events.On("newsFeedUpdated", async (e) => {
+        setLatestNew();
+    });
+
     onMount(() => {
         void (async () => {
             await fetchServerStatus();

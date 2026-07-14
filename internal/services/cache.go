@@ -83,20 +83,20 @@ func (s *CacheService) GetNewsImage(name string) []byte {
 	return image
 }
 
-func RefreshNews() error {
+func RefreshNews() (bool, error) {
 	localLatestNew, err := getLatestNew()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	body, err := net.RequestNewsFeed("simplefeed", 1, 0)
 	if err != nil {
-		return fmt.Errorf("Failed to fetch news content: %w", err)
+		return false, fmt.Errorf("Failed to fetch news content: %w", err)
 	}
 
 	var items []json.RawMessage
 	if err := json.Unmarshal([]byte(body), &items); err != nil {
-		return fmt.Errorf("Failed to parse remote news: %w", err)
+		return false, fmt.Errorf("Failed to parse remote news: %w", err)
 	}
 
 	var remoteLatestNew *NewsItem
@@ -109,7 +109,7 @@ func RefreshNews() error {
 			continue
 		}
 		if len(entry) < 2 {
-			return fmt.Errorf("Corrupted remote news entry")
+			return false, fmt.Errorf("Corrupted remote news entry")
 		}
 		remoteLatestNew = &NewsItem{
 			Title: entry[0],
@@ -119,22 +119,20 @@ func RefreshNews() error {
 	}
 
 	if remoteLatestNew == nil {
-		return fmt.Errorf("No valid remote news entry found")
+		return false, fmt.Errorf("No valid remote news entry found")
 	}
 
 	if localLatestNew.Date != remoteLatestNew.Date {
 		log.Info("News was updated! Refreshing cache...")
 		if err := refreshNews(); err != nil {
-			return fmt.Errorf("Failed to refresh news: %w", err)
+			return false, fmt.Errorf("Failed to refresh news: %w", err)
 		}
 	} else {
 		log.Debug("Latest new")
+		return false, nil
 	}
 
-	log.Debugf("Local new date: %s", localLatestNew.Date)
-	log.Debugf("Remote new date: %s", remoteLatestNew.Date)
-
-	return nil
+	return true, nil
 }
 
 func getNewsImage(name string) ([]byte, error) {

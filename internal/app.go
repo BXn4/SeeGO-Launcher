@@ -23,15 +23,16 @@ const (
 )
 
 type App struct {
-	app          *application.App
-	icon         []byte
-	tray         *application.SystemTray
-	config       *services.Config
-	appState     int
-	window       *application.WebviewWindow
-	view         string
-	dialog       *application.MessageDialog
-	trayNotified bool
+	app               *application.App
+	icon              []byte
+	tray              *application.SystemTray
+	config            *services.Config
+	appState          int
+	window            *application.WebviewWindow
+	view              string
+	dialog            *application.MessageDialog
+	trayNotified      bool
+	listenRefreshNews chan struct{}
 }
 
 func (a *App) Run() error {
@@ -66,6 +67,7 @@ func (a *App) CheckForLatestVersion() error {
 
 func (a *App) Quit() {
 	log.Info("App quit called, quiting")
+	close(a.listenRefreshNews)
 	a.app.Quit()
 }
 
@@ -85,6 +87,23 @@ func (a *App) OnReady() {
 			// will notify, if the cache was not successed
 			a.Quit()
 		}
+
+		ticker := time.NewTicker(1 * time.Hour)
+		a.listenRefreshNews = make(chan struct{})
+		go func() {
+			for {
+				select {
+				case <-ticker.C:
+					hasNewsRefreshed, _ := services.RefreshNews()
+					if hasNewsRefreshed {
+						a.EmitEvent(NewsFeedUpdated, nil)
+					}
+				case <-a.listenRefreshNews:
+					ticker.Stop()
+					return
+				}
+			}
+		}()
 
 		// after splash
 		a.window.SetAlwaysOnTop(false)
@@ -131,6 +150,8 @@ func (a *App) CreateNewWindow(options application.WebviewWindowOptions) *applica
 }
 
 func (a *App) ToTray() {
+	// close(a.listenRefreshNews)
+
 	a.window.Hide()
 	a.appState = Tray
 	if !a.trayNotified {
@@ -140,6 +161,23 @@ func (a *App) ToTray() {
 }
 
 func (a *App) RestoreFromTray() {
+	/*ticker := time.NewTicker(1 * time.Hour)
+	a.listenRefreshNews = make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				hasNewsRefreshed, _ := services.RefreshNews()
+				if hasNewsRefreshed {
+					a.EmitEvent(NewsFeedUpdated, nil)
+				}
+			case <-a.listenRefreshNews:
+				ticker.Stop()
+				return
+			}
+		}
+	}() */
+
 	a.window.UnMinimise()
 	a.window.Show()
 	a.window.Focus()

@@ -20,6 +20,10 @@
         setNews();
     });
 
+    Events.On("newsFeedUpdated", async (e) => {
+        setNews();
+    });
+
     async function setNews() {
         try {
             let allNews = await getAllNews();
