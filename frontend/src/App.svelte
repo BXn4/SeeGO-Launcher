@@ -7,19 +7,18 @@
     import Navbar from "./views/partials/Navbar.svelte";
     import { Config } from "../bindings/seegolauncher/internal/services";
     import { onMount } from "svelte";
-
-    let view = $state("splash");
-    let oldView = "splash";
+    import { State } from "./utils/consts";
 
     (window as any)._openURL = async (url: string) => {
-        oldView = view;
         navigate("splash");
         Browser.OpenURL(url);
 
         Events.Emit("splash:setCurrentProgress", "opened-browser-window");
 
-        await sleep(3000);
-        navigate(oldView);
+        await sleep(2000);
+        navigate("main");
+
+        Events.Emit("main:navigate", State.currentMainView);
     };
     Events.On("app:navigate", (e) => {
         navigate(e.data);
@@ -50,8 +49,8 @@
         Events.Emit("home:startInterval", null);
     });
 
-    function navigate(value: string) {
-        view = value;
+    function navigate(view: string) {
+        State.currentAppView = view;
     }
 
     async function sleep(ms: number): Promise<void> {
@@ -75,11 +74,11 @@
     });
 </script>
 
-{#if view === "splash"}
+{#if State.currentAppView === "splash"}
     <Splash />
-{:else if view === "terms"}
+{:else if State.currentAppView === "terms"}
     <Terms />
-{:else if view === "main"}
+{:else if State.currentAppView === "main"}
     <Main />
     <Titlebar />
     <Navbar />

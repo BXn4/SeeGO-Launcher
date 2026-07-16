@@ -8,6 +8,7 @@
     } from "../../../bindings/seegolauncher/internal/services";
 
     import { Icons } from "../../utils/icons";
+    import { State } from "../../utils/consts";
     onMount(() => {
         setLocales();
     });
@@ -21,7 +22,6 @@
     let players: string = "";
     let help: string = "";
     let settings: string = "";
-    let active: string = "home";
 
     async function setLocales() {
         const lang = await Config.GetLanguage();
@@ -46,11 +46,11 @@
         <div class="navbar-item top">
             <button
                 class="navbar-button interactive"
-                class:active={active === "home"}
+                class:active={State.currentNavbarActive === "home"}
                 id="home"
                 title={home}
                 onclick={() => {
-                    active = "home";
+                    State.currentNavbarActive = "home";
                     Events.Emit("main:navigate", "home");
                 }}
             >
@@ -59,11 +59,11 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={active === "news"}
+                class:active={State.currentNavbarActive === "news"}
                 id="news"
                 title={news}
                 onclick={() => {
-                    active = "news";
+                    State.currentNavbarActive = "news";
                     Events.Emit("main:navigate", "news");
                 }}
             >
@@ -96,11 +96,11 @@
             <div class="divider"></div>
             <button
                 class="navbar-button interactive"
-                class:active={active === "shop"}
+                class:active={State.currentNavbarActive === "shop"}
                 id="shop"
                 title={shop}
                 onclick={() => {
-                    active = "shop";
+                    State.currentNavbarActive = "shop";
                     Events.Emit("main:navigate", "shop");
                 }}
             >
@@ -109,11 +109,11 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={active === "gallery"}
+                class:active={State.currentNavbarActive === "gallery"}
                 id="gallery"
                 title={gallery}
                 onclick={() => {
-                    active = "gallery";
+                    State.currentNavbarActive = "gallery";
                     Events.Emit("main:navigate", "gallery");
                 }}
             >
@@ -122,11 +122,11 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={active === "players"}
+                class:active={State.currentNavbarActive === "players"}
                 id="players"
                 title={players}
                 onclick={() => {
-                    active = "players";
+                    State.currentNavbarActive = "players";
                     Events.Emit("main:navigate", "players");
                 }}
             >
@@ -135,11 +135,11 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={active === "help"}
+                class:active={State.currentNavbarActive === "help"}
                 id="help"
                 title={help}
                 onclick={() => {
-                    active = "help";
+                    State.currentNavbarActive = "help";
                     Events.Emit("main:navigate", "help");
                 }}
             >
@@ -148,11 +148,11 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={active === "settings"}
+                class:active={State.currentNavbarActive === "settings"}
                 id="settings"
                 title={settings}
                 onclick={() => {
-                    active = "settings";
+                    State.currentNavbarActive = "settings";
                     Events.Emit("main:navigate", "settings");
                 }}
             >

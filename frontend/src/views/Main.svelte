@@ -1,22 +1,19 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
+    import { State } from "../utils/consts";
     import Home from "./view/Home.svelte";
     import News from "./view/News.svelte";
     import Settings from "./view/Settings.svelte";
 
-    let view = $state("home");
-
     Events.On("main:navigate", (e) => {
-        if (view != e.data) {
-            view = e.data;
-        }
+        State.currentMainView = e.data;
     });
 </script>
 
-{#if view === "home"}
+{#if State.currentMainView === "home"}
     <Home />
-{:else if view === "news"}
+{:else if State.currentMainView === "news"}
     <News />
-{:else if view === "settings"}
+{:else if State.currentMainView === "settings"}
     <Settings />
 {/if}
