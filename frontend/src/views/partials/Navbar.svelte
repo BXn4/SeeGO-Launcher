@@ -8,7 +8,7 @@
     } from "../../../bindings/seegolauncher/internal/services";
 
     import { Icons } from "../../utils/icons";
-    import { State } from "../../utils/consts";
+    import { State, Event, View } from "../../utils/consts";
     onMount(() => {
         setLocales();
     });
@@ -19,14 +19,13 @@
     let ucp: string = "";
     let shop: string = "";
     let gallery: string = "";
-    let players: string = "";
     let help: string = "";
     let settings: string = "";
 
     async function setLocales() {
         const lang = await Config.GetLanguage();
 
-        [home, news, forum, ucp, shop, gallery, players, help, settings] =
+        [home, news, forum, ucp, shop, gallery, help, settings] =
             await Promise.all([
                 Localization.Get("home-title", lang),
                 Localization.Get("news-title", lang),
@@ -34,7 +33,6 @@
                 Localization.Get("ucp-title", lang),
                 Localization.Get("shop-title", lang),
                 Localization.Get("gallery-title", lang),
-                Localization.Get("players-title", lang),
                 Localization.Get("help-title", lang),
                 Localization.Get("settings-title", lang),
             ]);
@@ -46,12 +44,12 @@
         <div class="navbar-item top">
             <button
                 class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "home"}
+                class:active={State.currentNavbarActive === View.home}
                 id="home"
                 title={home}
                 onclick={() => {
-                    State.currentNavbarActive = "home";
-                    Events.Emit("main:navigate", "home");
+                    State.currentNavbarActive = View.home;
+                    Events.Emit(Event.Main.navigate, View.home);
                 }}
             >
                 {@html Icons.Navbar.Home}
@@ -59,12 +57,12 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "news"}
+                class:active={State.currentNavbarActive === View.news}
                 id="news"
                 title={news}
                 onclick={() => {
-                    State.currentNavbarActive = "news";
-                    Events.Emit("main:navigate", "news");
+                    State.currentNavbarActive = View.news;
+                    Events.Emit(Event.Main.navigate, View.news);
                 }}
             >
                 {@html Icons.Navbar.News}
@@ -96,12 +94,12 @@
             <div class="divider"></div>
             <button
                 class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "shop"}
+                class:active={State.currentNavbarActive === View.shop}
                 id="shop"
                 title={shop}
                 onclick={() => {
-                    State.currentNavbarActive = "shop";
-                    Events.Emit("main:navigate", "shop");
+                    State.currentNavbarActive = View.shop;
+                    Events.Emit(Event.Main.navigate, View.shop);
                 }}
             >
                 {@html Icons.Navbar.Shop}
@@ -109,12 +107,12 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "gallery"}
+                class:active={State.currentNavbarActive === View.gallery}
                 id="gallery"
                 title={gallery}
                 onclick={() => {
-                    State.currentNavbarActive = "gallery";
-                    Events.Emit("main:navigate", "gallery");
+                    State.currentNavbarActive = View.gallery;
+                    Events.Emit(Event.Main.navigate, View.gallery);
                 }}
             >
                 {@html Icons.Navbar.Gallery}
@@ -122,25 +120,12 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "players"}
-                id="players"
-                title={players}
-                onclick={() => {
-                    State.currentNavbarActive = "players";
-                    Events.Emit("main:navigate", "players");
-                }}
-            >
-                {@html Icons.Navbar.ServerStatus}
-                <span class="indicator"></span>
-            </button>
-            <button
-                class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "help"}
+                class:active={State.currentNavbarActive === View.help}
                 id="help"
                 title={help}
                 onclick={() => {
-                    State.currentNavbarActive = "help";
-                    Events.Emit("main:navigate", "help");
+                    State.currentNavbarActive = View.help;
+                    Events.Emit(Event.Main.navigate, View.help);
                 }}
             >
                 {@html Icons.Navbar.Help}
@@ -148,12 +133,12 @@
             </button>
             <button
                 class="navbar-button interactive"
-                class:active={State.currentNavbarActive === "settings"}
+                class:active={State.currentNavbarActive === View.settings}
                 id="settings"
                 title={settings}
                 onclick={() => {
-                    State.currentNavbarActive = "settings";
-                    Events.Emit("main:navigate", "settings");
+                    State.currentNavbarActive = View.settings;
+                    Events.Emit(Event.Main.navigate, View.settings);
                 }}
             >
                 {@html Icons.Navbar.Settings}

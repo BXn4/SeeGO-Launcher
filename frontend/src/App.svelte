@@ -7,24 +7,27 @@
     import Navbar from "./views/partials/Navbar.svelte";
     import { Config } from "../bindings/seegolauncher/internal/services";
     import { onMount } from "svelte";
-    import { State } from "./utils/consts";
+    import { State, Event, View } from "./utils/consts";
 
     (window as any)._openURL = async (url: string) => {
-        navigate("splash");
+        navigate(View.splash);
         Browser.OpenURL(url);
 
-        Events.Emit("splash:setCurrentProgress", "opened-browser-window");
+        Events.Emit(
+            Event.Splash.setCurrentProgress,
+            Event.Splash.openedBrowserWindow,
+        );
 
         await sleep(2000);
-        navigate("main");
+        navigate(View.main);
 
-        Events.Emit("main:navigate", State.currentMainView);
+        Events.Emit(Event.Main.navigate, State.currentMainView);
     };
-    Events.On("app:navigate", (e) => {
+    Events.On(Event.App.navigate, (e) => {
         navigate(e.data);
     });
 
-    Events.On("app:updateSetting", async (e) => {
+    Events.On(Event.App.updateSetting, async (e) => {
         const [key, value] = e.data;
         switch (key) {
             case "theme":
@@ -41,12 +44,12 @@
         }
     });
 
-    Events.On("app:notActive", async (e) => {
-        Events.Emit("home:stopInterval", null);
+    Events.On(Event.App.notActive, async (e) => {
+        Events.Emit(Event.Global.stopInterval, null);
     });
 
-    Events.On("app:active", async (e) => {
-        Events.Emit("home:startInterval", null);
+    Events.On(Event.App.active, async (e) => {
+        Events.Emit(Event.Global.startInterval, null);
     });
 
     function navigate(view: string) {
@@ -70,15 +73,15 @@
         setTheme(await Config.GetTheme());
         setAnimations(await Config.GetEnableAnimations());
 
-        Events.Emit("app:ready");
+        Events.Emit(Event.App.ready);
     });
 </script>
 
-{#if State.currentAppView === "splash"}
+{#if State.currentAppView === View.splash}
     <Splash />
-{:else if State.currentAppView === "terms"}
+{:else if State.currentAppView === View.terms}
     <Terms />
-{:else if State.currentAppView === "main"}
+{:else if State.currentAppView === View.main}
     <Main />
     <Titlebar />
     <Navbar />

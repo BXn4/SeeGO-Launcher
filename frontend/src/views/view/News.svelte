@@ -10,6 +10,7 @@
     import { stripMarkup } from "../../utils/string";
     import { Icons } from "../../utils/icons";
     import { NewsItem } from "../../../bindings/seegolauncher/internal/services/models";
+    import { Event } from "../../utils/consts";
 
     let news: NewsItem[] = [];
     let latestNewDate = "";
@@ -20,7 +21,7 @@
         setNews();
     });
 
-    Events.On("newsFeedUpdated", async (e) => {
+    Events.On(Event.Global.newsFeedUpdated, async (e) => {
         setNews();
     });
 
@@ -34,7 +35,7 @@
             }
             news = allNews;
         } catch (err) {
-            Events.Emit("feedback", `Failed to load news: ${err}`);
+            Events.Emit(Event.Global.feedback, `Failed to load news: ${err}`);
         }
     }
 

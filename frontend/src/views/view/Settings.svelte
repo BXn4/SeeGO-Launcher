@@ -10,6 +10,7 @@
         locales,
         localization,
     } from "../../managers/localization";
+    import { Event } from "../../utils/consts";
 
     let languages: { value: string; label: string }[] = [];
 
@@ -20,12 +21,12 @@
     async function updateTheme(v: string) {
         if (theme != v) {
             theme = v;
-            await Events.Emit("app:updateSetting", ["theme", v]);
+            await Events.Emit(Event.App.updateSetting, ["theme", v]);
         }
     }
 
     async function updateLanguage(v: string) {
-        await Events.Emit("app:updateSetting", ["language", v]);
+        await Events.Emit(Event.App.updateSetting, ["language", v]);
 
         const availableLanguages = await Config.GetLanguages();
         languages = await Promise.all(
@@ -39,7 +40,7 @@
     }
 
     async function updateAnims(v: boolean) {
-        await Events.Emit("app:updateSetting", ["anims", v]);
+        await Events.Emit(Event.App.updateSetting, ["anims", v]);
     }
 
     onMount(async () => {

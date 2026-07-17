@@ -9,7 +9,7 @@
         localization,
     } from "../managers/localization";
     import { parseTerms } from "../utils/string";
-
+    import { Event } from "../utils/consts";
     let terms = "";
     let title = "";
     let modified = "";
@@ -22,10 +22,10 @@
     });
 
     async function acceptTerms() {
-        await Events.Emit("terms:accept", null);
+        await Events.Emit(Event.Terms.accept, null);
     }
     async function declineTerms() {
-        await Events.Emit("terms:decline", null);
+        await Events.Emit(Event.Terms.decline, null);
     }
 </script>
 

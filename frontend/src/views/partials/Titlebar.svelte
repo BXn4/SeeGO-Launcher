@@ -5,15 +5,16 @@
         Localization,
     } from "../../../bindings/seegolauncher/internal/services";
     import { onMount } from "svelte";
+    import { Event } from "../../utils/consts";
 
     async function closeWindow() {
-        await Events.Emit("app:close", null);
-        await Events.Emit("app:notActive", null);
+        await Events.Emit(Event.App.notActive, null);
+        await Events.Emit(Event.App.close, null);
     }
 
     async function minimizeWindow() {
-        await Events.Emit("app:minimize", null);
-        await Events.Emit("app:notActive", null);
+        await Events.Emit(Event.App.notActive, null);
+        await Events.Emit(Event.App.minimize, null);
     }
 
     async function toggleMaximize() {

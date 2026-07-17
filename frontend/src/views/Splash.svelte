@@ -1,11 +1,13 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
     import logo from "../public/images/seego_nobg.svg";
+    import { Event } from "../utils/consts";
     import {
         Config,
         Localization,
     } from "../../bindings/seegolauncher/internal/services";
-    Events.On("splash:setCurrentProgress", async (e) => {
+
+    Events.On(Event.Splash.setCurrentProgress, async (e) => {
         const splashAlt = document.getElementById("splash-alt");
         if (splashAlt) {
             let lang = await Config.GetLanguage();

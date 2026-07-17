@@ -11,6 +11,7 @@
         locales,
         localization,
     } from "../../managers/localization";
+    import { Event } from "../../utils/consts";
 
     let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -40,15 +41,15 @@
         }
     }
 
-    Events.On("home:startInterval", async (e) => {
+    Events.On(Event.Global.startInterval, async (e) => {
         start();
     });
 
-    Events.On("home:stopInterval", async (e) => {
+    Events.On(Event.Global.stopInterval, async (e) => {
         stop();
     });
 
-    Events.On("newsFeedUpdated", async (e) => {
+    Events.On(Event.Global.newsFeedUpdated, async (e) => {
         setLatestNew();
     });
 
@@ -155,7 +156,7 @@
                 serverFill.style.background = "var(--green)";
             }
 
-            await Events.Emit("feedback", "Fetched server status");
+            await Events.Emit(Event.Global.feedback, "Fetched server status");
         }
 
         // without prio
@@ -221,7 +222,10 @@
             }
             latestNew = [news];
         } catch (err) {
-            Events.Emit("feedback", `Failed to load latest new: ${err}`);
+            Events.Emit(
+                Event.Global.feedback,
+                `Failed to load latest new: ${err}`,
+            );
         }
     }
 </script>
