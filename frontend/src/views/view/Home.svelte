@@ -1,21 +1,18 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import { Events } from "@wailsio/runtime";
 
     import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
-    import { NewsItem } from "../../../bindings/seegolauncher/internal/services/models";
     import { Icons } from "../../utils/icons";
-    import { getLatestNew, getLatestNewDate } from "../../managers/news";
+    import { news, loadingSuccess } from "../../managers/news";
     import {
         initLocalization,
         locales,
         localization,
     } from "../../managers/localization";
-    import { Event } from "../../utils/consts";
+    import { Event, View } from "../../utils/consts";
 
-    let showDialog: Boolean = false;
     let interval: ReturnType<typeof setInterval> | undefined;
-    let loadingSuccess: boolean = true;
 
     let serverPlayersBefore = 0;
     let serverSlotsBefore = 0;
@@ -25,8 +22,6 @@
     let serverSlotsNow = 0;
     let serverAdminsNow = 0;
     let serverQueueNow = 0;
-
-    let latestNew: NewsItem[] = [];
 
     function start() {
         if (!interval) {
@@ -46,30 +41,36 @@
     });
 
     Events.On(Event.Global.stopInterval, async (e) => {
+        // Events.Emit(Event.Global.feedback, "stop");
         stop();
     });
 
-    Events.On(Event.Global.newsFeedUpdated, async (e) => {
-        setLatestNew();
-    });
-
+    initLocalization();
     onMount(() => {
         void (async () => {
             await fetchServerStatus();
         })();
 
         initLocalization();
-        setLatestNew();
         start();
+
+        const startInterval = Events.On(
+            Event.Global.startInterval,
+            async (e) => {
+                start();
+            },
+        );
+
+        const stopInterval = Events.On(Event.Global.stopInterval, async (e) => {
+            stop();
+        });
 
         return () => {
             stop();
+            startInterval();
+            stopInterval();
         };
     });
-
-    function closeItemDialog() {
-        showDialog = false;
-    }
 
     async function fetchServerStatus() {
         let server;
@@ -212,54 +213,12 @@
         serverAdminsBefore = serverAdminsNow;
         serverQueueBefore = serverQueueNow;
     }
-
-    async function setLatestNew() {
-        try {
-            let news = (await getLatestNew()) as NewsItem;
-            if (news == undefined) {
-                loadingSuccess = false;
-                return;
-            }
-            latestNew = [news];
-        } catch (err) {
-            Events.Emit(
-                Event.Global.feedback,
-                `Failed to load latest new: ${err}`,
-            );
-        }
-    }
 </script>
 
 <main>
     <div id="home-view">
         <div class="feed-layout">
-            {#if loadingSuccess && latestNew}
-                {#each latestNew as item}
-                    <div
-                        id="hero-card"
-                        class="hero-card"
-                        style="background-image: url('{item.Image}')"
-                    >
-                        <span class="hero-overlay"></span>
-                        <div class="hero-content">
-                            <span class="news-badge"
-                                >{$locales[localization.newsLatest]}</span
-                            >
-                            <p id="hero-news-title" class="news-title">
-                                {item.Title}
-                            </p>
-                            <p id="hero-news-comment" class="news-comment">
-                                {item.Content}
-                            </p>
-                            <button
-                                class="button news-read interactive"
-                                id="hero-news-read-latest"
-                                >{$locales[localization.newsRead]}</button
-                            >
-                        </div>
-                    </div>
-                {/each}
-            {:else}
+            {#if !loadingSuccess}
                 <div id="hero-card" class="hero-card">
                     <div class="error-view">
                         {@html Icons.UI.Alert}
@@ -271,10 +230,41 @@
                         </p>
                         <button
                             class="button interactive"
-                            onclick={() => setLatestNew()}
+                            onclick={() =>
+                                Events.Emit(Event.Global.newsFeedUpdated, null)}
                         >
                             {$locales[localization.Retry]}
                         </button>
+                    </div>
+                </div>
+            {:else}
+                {@const item = news[0]}
+                <div
+                    id="hero-card"
+                    class="hero-card"
+                    style="background-image: url('{item.Image}')"
+                >
+                    <span class="hero-overlay"></span>
+                    <div class="hero-content">
+                        <span class="news-badge"
+                            >{$locales[localization.newsLatest]}</span
+                        >
+                        <p id="hero-news-title" class="news-title">
+                            {item.Title}
+                        </p>
+                        <p id="hero-news-comment" class="news-comment">
+                            {item.Content}
+                        </p>
+                        <button
+                            class="button news-read interactive"
+                            id="hero-news-read-latest"
+                            onclick={() => {
+                                Events.Emit(
+                                    Event.Main.Navbar.switchNavTab,
+                                    View.news,
+                                );
+                            }}>{$locales[localization.newsRead]}</button
+                        >
                     </div>
                 </div>
             {/if}

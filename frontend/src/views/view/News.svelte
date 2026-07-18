@@ -6,38 +6,24 @@
         locales,
         localization,
     } from "../../managers/localization";
-    import { getAllNews, getLatestNewDate } from "../../managers/news";
+    import { loadingSuccess, news } from "../../managers/news";
     import { stripMarkup } from "../../utils/string";
     import { Icons } from "../../utils/icons";
-    import { NewsItem } from "../../../bindings/seegolauncher/internal/services/models";
-    import { Event } from "../../utils/consts";
+    import { Event, View } from "../../utils/consts";
 
-    let news: NewsItem[] = [];
     let latestNewDate = "";
-    let loadingSuccess: boolean = true;
 
-    onMount(async () => {
+    onMount(() => {
         initLocalization();
-        setNews();
+
+        const readLatest = Events.On(Event.Main.News.readLatest, async (e) => {
+            alert("a");
+        });
+
+        return () => {
+            readLatest();
+        };
     });
-
-    Events.On(Event.Global.newsFeedUpdated, async (e) => {
-        setNews();
-    });
-
-    async function setNews() {
-        try {
-            let allNews = await getAllNews();
-
-            latestNewDate = await getLatestNewDate();
-            if (allNews.length === 0 || latestNewDate == "") {
-                loadingSuccess = false;
-            }
-            news = allNews;
-        } catch (err) {
-            Events.Emit(Event.Global.feedback, `Failed to load news: ${err}`);
-        }
-    }
 
     const style = ["big", "medium", "medium"];
     function GetStyle(i: number) {
@@ -46,7 +32,23 @@
 </script>
 
 <main>
-    {#if loadingSuccess}
+    {#if !loadingSuccess}
+        <div class="error-view">
+            {@html Icons.UI.Alert}
+            <p class="error-title text">
+                {$locales[localization.NewsLoadFailed]}
+            </p>
+            <p class="error-comment comment">
+                {$locales[localization.NewsLoadFailedDesc]}
+            </p>
+            <button
+                class="button interactive"
+                onclick={() => Events.Emit(Event.Global.newsFeedUpdated, null)}
+            >
+                {$locales[localization.Retry]}
+            </button>
+        </div>
+    {:else}
         <div id="news-view">
             <div class="news-layout">
                 {#each news as newItem, i}
@@ -78,19 +80,6 @@
                     </div>
                 {/each}
             </div>
-        </div>
-    {:else}
-        <div class="error-view">
-            {@html Icons.UI.Alert}
-            <p class="error-title text">
-                {$locales[localization.NewsLoadFailed]}
-            </p>
-            <p class="error-comment comment">
-                {$locales[localization.NewsLoadFailedDesc]}
-            </p>
-            <button class="button interactive" onclick={() => setNews()}>
-                {$locales[localization.Retry]}
-            </button>
         </div>
     {/if}
 </main>

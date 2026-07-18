@@ -24,6 +24,12 @@ export const Event = {
   },
   Main: {
     navigate: "main:navigate",
+    Navbar: {
+      switchNavTab: "navbar:switchNavTab"
+    },
+    News: {
+      readLatest: "news:readLatest"
+    }
   },
   Global: {
     startInterval: "startInterval",

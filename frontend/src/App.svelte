@@ -8,6 +8,7 @@
     import { Config } from "../bindings/seegolauncher/internal/services";
     import { onMount } from "svelte";
     import { State, Event, View } from "./utils/consts";
+    import { initNews } from "./managers/news";
 
     (window as any)._openURL = async (url: string) => {
         navigate(View.splash);
@@ -18,7 +19,7 @@
             Event.Splash.openedBrowserWindow,
         );
 
-        await sleep(2000);
+        await sleep(1500);
         navigate(View.main);
 
         Events.Emit(Event.Main.navigate, State.currentMainView);
@@ -73,6 +74,7 @@
         setTheme(await Config.GetTheme());
         setAnimations(await Config.GetEnableAnimations());
 
+        initNews();
         Events.Emit(Event.App.ready);
     });
 </script>

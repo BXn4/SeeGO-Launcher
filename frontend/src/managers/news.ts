@@ -5,14 +5,27 @@ import {
   GetNewsImage,
 } from "../../bindings/seegolauncher/internal/services/cacheservice";
 import { NewsItem } from "../../bindings/seegolauncher/internal/services/models";
+import { Event } from "../utils/consts";
 import { base64ToBlob } from "../utils/helper";
 import { stripMarkup } from "../utils/string";
+import { Events } from "@wailsio/runtime";
 
-export async function getAllNews(): Promise<NewsItem[]> {
+export let news: NewsItem[] = []
+export let loadingSuccess: boolean = false;
+
+export async function initNews() {
+  loadingSuccess = await setAllNews()
+
+  Events.On(Event.Global.newsFeedUpdated, async (e) => {
+    loadingSuccess = await setAllNews()
+  })
+}
+
+export async function setAllNews() {
   const allNews = (await GetAllNews()) as NewsItem[];
 
   if (allNews.length === 0) {
-    return [];
+    return false;
   }
 
   for (const item of allNews) {
@@ -24,7 +37,8 @@ export async function getAllNews(): Promise<NewsItem[]> {
     item.Content = stripMarkup(item.Content)
   }
 
-  return allNews;
+  news = allNews
+  return true
 }
 
 export async function getLatestNew(): Promise<NewsItem | undefined> {
@@ -41,7 +55,6 @@ export async function getLatestNew(): Promise<NewsItem | undefined> {
   latestNew.Content = stripMarkup(latestNew.Content)
   return latestNew;
 }
-
 
 export async function getLatestNewDate(): Promise<string> {
   return await GetLatestNewDate();

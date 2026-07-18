@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { Events } from "@wailsio/runtime";
 
     import {
@@ -9,9 +9,6 @@
 
     import { Icons } from "../../utils/icons";
     import { State, Event, View } from "../../utils/consts";
-    onMount(() => {
-        setLocales();
-    });
 
     let home: string = "";
     let news: string = "";
@@ -21,6 +18,20 @@
     let gallery: string = "";
     let help: string = "";
     let settings: string = "";
+
+    onMount(() => {
+        setLocales();
+        const switchNavTabEvent = Events.On(
+            Event.Main.Navbar.switchNavTab,
+            async (e) => {
+                switchNavTab(e.data);
+            },
+        );
+
+        return () => {
+            switchNavTabEvent();
+        };
+    });
 
     async function setLocales() {
         const lang = await Config.GetLanguage();
@@ -37,6 +48,11 @@
                 Localization.Get("settings-title", lang),
             ]);
     }
+
+    async function switchNavTab(value: string) {
+        State.currentNavbarActive = value;
+        await Events.Emit(Event.Main.navigate, value);
+    }
 </script>
 
 <main>
@@ -47,10 +63,7 @@
                 class:active={State.currentNavbarActive === View.home}
                 id="home"
                 title={home}
-                onclick={() => {
-                    State.currentNavbarActive = View.home;
-                    Events.Emit(Event.Main.navigate, View.home);
-                }}
+                onclick={() => switchNavTab(View.home)}
             >
                 {@html Icons.Navbar.Home}
                 <span class="indicator"></span>
@@ -60,10 +73,7 @@
                 class:active={State.currentNavbarActive === View.news}
                 id="news"
                 title={news}
-                onclick={() => {
-                    State.currentNavbarActive = View.news;
-                    Events.Emit(Event.Main.navigate, View.news);
-                }}
+                onclick={() => switchNavTab(View.news)}
             >
                 {@html Icons.Navbar.News}
                 <span class="indicator"></span>
@@ -110,10 +120,7 @@
                 class:active={State.currentNavbarActive === View.gallery}
                 id="gallery"
                 title={gallery}
-                onclick={() => {
-                    State.currentNavbarActive = View.gallery;
-                    Events.Emit(Event.Main.navigate, View.gallery);
-                }}
+                onclick={() => switchNavTab(View.gallery)}
             >
                 {@html Icons.Navbar.Gallery}
                 <span class="indicator"></span>
@@ -123,10 +130,7 @@
                 class:active={State.currentNavbarActive === View.help}
                 id="help"
                 title={help}
-                onclick={() => {
-                    State.currentNavbarActive = View.help;
-                    Events.Emit(Event.Main.navigate, View.help);
-                }}
+                onclick={() => switchNavTab(View.help)}
             >
                 {@html Icons.Navbar.Help}
                 <span class="indicator"></span>
@@ -136,10 +140,7 @@
                 class:active={State.currentNavbarActive === View.settings}
                 id="settings"
                 title={settings}
-                onclick={() => {
-                    State.currentNavbarActive = View.settings;
-                    Events.Emit(Event.Main.navigate, View.settings);
-                }}
+                onclick={() => switchNavTab(View.settings)}
             >
                 {@html Icons.Navbar.Settings}
                 <span class="indicator"></span>
