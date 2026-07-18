@@ -51,7 +51,7 @@
     {:else}
         <div id="news-view">
             <div class="news-layout">
-                {#each news as newItem, i}
+                {#each $news as newItem, i}
                     <div
                         class="news-card {GetStyle(i)}"
                         style="background-image: url('{newItem.Image}')"

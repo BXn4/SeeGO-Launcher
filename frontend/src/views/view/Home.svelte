@@ -238,7 +238,7 @@
                     </div>
                 </div>
             {:else}
-                {@const item = news[0]}
+                {@const item = $news[0]}
                 <div
                     id="hero-card"
                     class="hero-card"

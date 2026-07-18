@@ -9,8 +9,9 @@ import { Event } from "../utils/consts";
 import { base64ToBlob } from "../utils/helper";
 import { stripMarkup } from "../utils/string";
 import { Events } from "@wailsio/runtime";
+import { writable } from "svelte/store";
 
-export let news: NewsItem[] = []
+export const news = writable<NewsItem[]>([]);
 export let loadingSuccess: boolean = false;
 
 export async function initNews() {
@@ -37,7 +38,7 @@ export async function setAllNews() {
     item.Content = stripMarkup(item.Content)
   }
 
-  news = allNews
+  news.set(allNews)
   return true
 }
 
