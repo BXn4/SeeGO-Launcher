@@ -27,22 +27,6 @@ export function GetCachedTerms() {
 }
 
 /**
- * @returns {$CancellablePromise<$models.NewsItem | null>}
- */
-export function GetLatestNew() {
-    return $Call.ByID(1506172643).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType1($result);
-    }));
-}
-
-/**
- * @returns {$CancellablePromise<string>}
- */
-export function GetLatestNewDate() {
-    return $Call.ByID(2475695287);
-}
-
-/**
  * @param {string} name
  * @returns {$CancellablePromise<string>}
  */

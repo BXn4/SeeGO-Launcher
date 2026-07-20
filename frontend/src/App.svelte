@@ -9,6 +9,7 @@
     import { onMount } from "svelte";
     import { State, Event, View } from "./utils/consts";
     import { initNews } from "./managers/news";
+    import { initServerStatus } from "./managers/server";
 
     (window as any)._openURL = async (url: string) => {
         navigate(View.splash);
@@ -53,6 +54,11 @@
         Events.Emit(Event.Global.startInterval, null);
     });
 
+    Events.On(Event.App.ready, async (e) => {
+        initServerStatus();
+        initNews();
+    });
+
     function navigate(view: string) {
         State.currentAppView = view;
     }
@@ -74,8 +80,7 @@
         setTheme(await Config.GetTheme());
         setAnimations(await Config.GetEnableAnimations());
 
-        initNews();
-        Events.Emit(Event.App.ready);
+        Events.Emit(Event.App.domReady);
     });
 </script>
 

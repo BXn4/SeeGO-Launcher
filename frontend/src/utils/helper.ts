@@ -10,3 +10,7 @@ export function base64ToBlob(base64: string, mime = "image/png") {
 
   return URL.createObjectURL(blob);
 }
+
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

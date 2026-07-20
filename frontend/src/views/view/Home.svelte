@@ -1,8 +1,6 @@
 <script lang="ts">
     import { onMount, tick } from "svelte";
     import { Events } from "@wailsio/runtime";
-
-    import { GetServerPlayers } from "../../../bindings/seegolauncher/internal/services/api";
     import { Icons } from "../../utils/icons";
     import { news, loadingSuccess } from "../../managers/news";
     import {
@@ -11,21 +9,22 @@
         localization,
     } from "../../managers/localization";
     import { Event, View } from "../../utils/consts";
+    import { sleep } from "../../utils/helper";
+    import {
+        initServerStatus,
+        serverPlayers,
+        serverQueue,
+        serverAdmins,
+        serverSlots,
+        serverOnline,
+        queueTime,
+    } from "../../managers/server";
 
     let interval: ReturnType<typeof setInterval> | undefined;
 
-    let serverPlayersBefore = 0;
-    let serverSlotsBefore = 0;
-    let serverAdminsBefore = 0;
-    let serverQueueBefore = 0;
-    let serverPlayersNow = 0;
-    let serverSlotsNow = 0;
-    let serverAdminsNow = 0;
-    let serverQueueNow = 0;
-
     function start() {
         if (!interval) {
-            interval = setInterval(fetchServerStatus, 60 * 1000);
+            interval = setInterval(setServerStatuts, 60 * 1000);
         }
     }
 
@@ -45,10 +44,13 @@
         stop();
     });
 
-    initLocalization();
+    async function setServerStatuts() {
+        initServerStatus();
+    }
+
     onMount(() => {
         void (async () => {
-            await fetchServerStatus();
+            await setServerStatuts();
         })();
 
         initLocalization();
@@ -71,154 +73,12 @@
             stopInterval();
         };
     });
-
-    async function fetchServerStatus() {
-        let server;
-        const serverStatus = document.getElementById("server-status");
-        const serverFill = document.getElementById("server-fill");
-        const estimatedConnection =
-            document.getElementById("estimated-connect");
-
-        try {
-            server = await GetServerPlayers();
-        } catch (err) {
-            serverStatus!.textContent =
-                $locales[localization.serverStatusOffline];
-            serverStatus!.style.color = "var(--gray)";
-            serverFill!.style.background = "";
-            return;
-        }
-        serverPlayersNow = server.players;
-        serverSlotsNow = server.slots;
-        serverAdminsNow = server.admins;
-        serverQueueNow = server.queue;
-
-        let connectionIn = "";
-
-        if (serverPlayersNow != serverPlayersBefore) {
-            const element = document.getElementById("players-count");
-            if (element?.classList.contains("updated")) {
-                element.classList.remove("updated");
-            }
-            void element?.offsetWidth;
-            element?.classList.add("updated");
-        }
-
-        if (serverSlotsNow != serverSlotsBefore) {
-            const element = document.getElementById("players-count");
-            if (element?.classList.contains("updated")) {
-                element.classList.remove("updated");
-            }
-            void element?.offsetWidth;
-            element?.classList.add("updated");
-        }
-
-        if (serverAdminsNow != serverAdminsBefore) {
-            const element = document.getElementById("admins-count");
-            if (element?.classList.contains("updated")) {
-                element.classList.remove("updated");
-            }
-            void element?.offsetWidth;
-            element?.classList.add("updated");
-        }
-
-        if (serverQueueNow != serverQueueBefore) {
-            const element = document.getElementById("queue-count");
-            if (element?.classList.contains("updated")) {
-                element.classList.remove("updated");
-            }
-            void element?.offsetWidth;
-            element?.classList.add("updated");
-        }
-
-        if (serverStatus && serverFill) {
-            if (serverPlayersNow <= 0 && serverQueueNow <= 0) {
-                serverStatus.textContent =
-                    $locales[localization.serverStatusOffline];
-                serverStatus.style.color = "var(--gray)";
-                serverFill.style.background = "";
-            } else if (serverPlayersNow <= 0 && serverQueueNow > 0) {
-                serverStatus.textContent =
-                    $locales[localization.serverStatusRestart];
-                serverStatus.style.color = "var(--orange)";
-                serverFill.style.background = "var(--green)";
-            } else if (
-                serverPlayersNow === serverAdminsNow &&
-                serverAdminsNow > 0
-            ) {
-                serverStatus.textContent =
-                    $locales[localization.serverStatusMaintenance];
-                serverStatus.style.color = "var(--orange)";
-                serverFill.style.background = "var(--green)";
-            } else {
-                serverStatus.textContent =
-                    $locales[localization.serverStatusOnline];
-                serverStatus.style.color = "var(--green)";
-                serverFill.style.background = "var(--green)";
-            }
-
-            await Events.Emit(Event.Global.feedback, "Fetched server status");
-        }
-
-        // without prio
-        // about 1-3 players enters from the queue to the server in every 1 mins
-        // update: i connected at 14:00 with 200 queue. After 2 hours, i was 150. My pos always changed between 140 and 160, so i will incrase the queue
-        if (estimatedConnection) {
-            if (serverPlayersNow >= serverSlotsNow) {
-                // about 30-35 seconds one player disconnects // update up (changed to 50)
-                // sometimes with the gold prio theres 100 queue, so without pro its like 30-35 seconds disconnect * 10
-                if (serverQueueNow > 0) {
-                    // base
-                    let totalSeconds = serverQueueNow * 50;
-                    if (serverQueueNow >= 100) {
-                        // queue * prio ratio (35%) and + 120 seconds extra
-                        // its quite close, because one member in discord waited 7 hours with 500 queue without prio
-                        totalSeconds =
-                            totalSeconds +
-                            Math.floor(serverQueueNow * 0.35) * 120;
-                    }
-                    if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${$locales[localization.hours]}`;
-                    } else if (totalSeconds >= 60) {
-                        connectionIn = `${(totalSeconds / 60).toFixed()} ${$locales[localization.minutes]}`;
-                    } else {
-                        connectionIn = `${Math.round(totalSeconds)} ${$locales[localization.seconds]}`;
-                    }
-                }
-            } else {
-                if (serverQueueNow > 0) {
-                    // about 2 seconds one player connects
-                    const totalSeconds = serverQueueNow * 2;
-                    if (totalSeconds >= 3600) {
-                        connectionIn = `${(totalSeconds / 3600).toFixed(1)} ${$locales[localization.hours]}`;
-                    } else if (totalSeconds >= 60) {
-                        connectionIn = `${(totalSeconds / 60).toFixed()} ${$locales[localization.minutes]}`;
-                    } else {
-                        connectionIn = `${Math.round(totalSeconds)} ${$locales[localization.seconds]}`;
-                    }
-                } else {
-                    estimatedConnection.textContent = "";
-                }
-            }
-
-            if (serverQueueNow > 0) {
-                estimatedConnection.textContent =
-                    `${$locales[localization.serverStatusEstimated]}: ` +
-                    connectionIn;
-            }
-        }
-
-        serverPlayersBefore = serverPlayersNow;
-        serverSlotsBefore = serverSlotsNow;
-        serverAdminsBefore = serverAdminsNow;
-        serverQueueBefore = serverQueueNow;
-    }
 </script>
 
 <main>
     <div id="home-view">
         <div class="feed-layout">
-            {#if !loadingSuccess}
+            {#if $loadingSuccess == false}
                 <div id="hero-card" class="hero-card">
                     <div class="error-view">
                         {@html Icons.UI.Alert}
@@ -237,7 +97,7 @@
                         </button>
                     </div>
                 </div>
-            {:else}
+            {:else if $loadingSuccess == true}
                 {@const item = $news[0]}
                 <div
                     id="hero-card"
@@ -258,11 +118,13 @@
                         <button
                             class="button news-read interactive"
                             id="hero-news-read-latest"
-                            onclick={() => {
+                            onclick={async () => {
                                 Events.Emit(
                                     Event.Main.Navbar.switchNavTab,
                                     View.news,
                                 );
+                                await sleep(100);
+                                Events.Emit(Event.Main.News.readLatest, null);
                             }}>{$locales[localization.newsRead]}</button
                         >
                     </div>
@@ -277,22 +139,47 @@
         </div>
         <aside class="sidebar">
             <div class="widget">
-                <div class="status-container">
-                    <div class="status-info">
-                        <span id="server-status" class="status-text"></span>
-                        <span id="players-count" class="text player-count"
-                            >{serverPlayersNow} / {serverSlotsNow}</span
-                        >
+                {#if $serverOnline == false}
+                    <div class="status-container">
+                        <div class="status-info">
+                            <span id="server-status" class="status-text offline"
+                                >{$locales[
+                                    localization.serverStatusOffline
+                                ]}</span
+                            >
+                            <span id="players-count" class="text player-count"
+                                >{$serverPlayers} / {$serverSlots}</span
+                            >
+                        </div>
                     </div>
-                </div>
-
-                <div id="server-fill" class="progress-bar">
-                    <div
-                        class="progress-bar-fill"
-                        style="width: {(serverPlayersNow / serverSlotsNow) *
-                            100}%"
-                    ></div>
-                </div>
+                    <div id="server-fill" class="progress-bar">
+                        <div
+                            class="progress-bar-fill offline"
+                            style="width: {($serverPlayers / $serverSlots) *
+                                100}%"
+                        ></div>
+                    </div>
+                {:else if $serverOnline == true}
+                    <div class="status-container">
+                        <div class="status-info">
+                            <span id="server-status" class="status-text online"
+                                >{$locales[
+                                    localization.serverStatusOnline
+                                ]}</span
+                            >
+                            <span id="players-count" class="text player-count"
+                                >{$serverPlayers} / {$serverSlots}</span
+                            >
+                        </div>
+                    </div>
+                    <div id="server-fill" class="progress-bar">
+                        <div
+                            class="progress-bar-fill online"
+                            style="width: {($serverPlayers / $serverSlots) *
+                                100}%"
+                        ></div>
+                    </div>
+                {/if}
 
                 <div class="stats">
                     <div class="stat-box">
@@ -300,7 +187,7 @@
                             >{$locales[localization.serverStatusAdmins]}</span
                         >
                         <span id="admins-count" class="stat-value"
-                            >{serverAdminsNow}</span
+                            >{$serverAdmins}</span
                         >
                     </div>
                     <div class="stat-box">
@@ -308,11 +195,25 @@
                             >{$locales[localization.serverStatusQueue]}</span
                         >
                         <span id="queue-count" class="stat-value"
-                            >{serverQueueNow}</span
+                            >{$serverQueue}</span
                         >
                     </div>
                 </div>
-                <p id="estimated-connect" class="comment estimated-connect"></p>
+                {#if $queueTime > 0}
+                    <p id="estimated-connect" class="comment estimated-connect">
+                        {$locales[localization.serverStatusEstimated]}:
+                        {#if $queueTime >= 3600}
+                            {($queueTime / 3600).toFixed(1)}
+                            {$locales[localization.hours]}
+                        {:else if $queueTime >= 60}
+                            {($queueTime / 60).toFixed()}
+                            {$locales[localization.minutes]}
+                        {:else}
+                            {Math.round($queueTime)}
+                            {$locales[localization.seconds]}
+                        {/if}
+                    </p>
+                {/if}
             </div>
             <div class="widget">
                 <h3 class="text widget-title">

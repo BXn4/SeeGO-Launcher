@@ -11,8 +11,6 @@
     import { Icons } from "../../utils/icons";
     import { Event, View } from "../../utils/consts";
 
-    let latestNewDate = "";
-
     onMount(() => {
         initLocalization();
 
@@ -32,7 +30,7 @@
 </script>
 
 <main>
-    {#if !loadingSuccess}
+    {#if $loadingSuccess == false}
         <div class="error-view">
             {@html Icons.UI.Alert}
             <p class="error-title text">
@@ -48,28 +46,26 @@
                 {$locales[localization.Retry]}
             </button>
         </div>
-    {:else}
+    {:else if $loadingSuccess == true}
         <div id="news-view">
             <div class="news-layout">
-                {#each $news as newItem, i}
+                {#each $news as item, i}
                     <div
                         class="news-card {GetStyle(i)}"
-                        style="background-image: url('{newItem.Image}')"
+                        style="background-image: url('{item.Image}')"
                     >
                         <span class="news-overlay"></span>
                         <div class="news-content">
-                            {#if latestNewDate == newItem.Date}
+                            {#if i === 0}
                                 <span class="news-badge"
                                     >{$locales[localization.newsLatest]}</span
                                 >
                             {:else}
-                                <span class="news-badge old"
-                                    >{newItem.Date}</span
-                                >
+                                <span class="news-badge old">{item.Date}</span>
                             {/if}
-                            <p class="news-title">{newItem.Title}</p>
+                            <p class="news-title">{item.Title}</p>
                             <p class="news-comment">
-                                {stripMarkup(newItem.Content)}
+                                {stripMarkup(item.Content)}
                             </p>
                             <button
                                 class="button news-read interactive"

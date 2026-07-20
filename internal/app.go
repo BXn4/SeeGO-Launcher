@@ -108,6 +108,8 @@ func (a *App) OnReady() {
 		// after splash
 		a.window.SetAlwaysOnTop(false)
 
+		a.EmitEvent(AppReady, nil)
+
 		if !a.config.GetTermsAccepted() {
 			seeGOInfo1 := services.LocalizationService().Get(localization.SeeGOInfo1, a.config.GetLanguage())
 			seeGOInfo2 := services.LocalizationService().Get(localization.SeeGOInfo2, a.config.GetLanguage())
@@ -298,8 +300,8 @@ func (a *App) CreateSysTray(icon []byte) {
 }
 
 func (a *App) RegisterListeners() {
-	a.app.Event.On(AppReady, func(e *application.CustomEvent) {
-		log.Info("App is ready to show!")
+	a.app.Event.On(DomReady, func(e *application.CustomEvent) {
+		log.Info("Dom is ready to show!")
 		a.OnReady()
 	})
 

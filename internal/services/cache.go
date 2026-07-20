@@ -57,21 +57,8 @@ func (s *CacheService) GetCachedTerms() (string, error) {
 	return string(termsData), nil
 }
 
-func (s *CacheService) GetLatestNew() (*NewsItem, error) {
-	return getLatestNew()
-}
-
 func (s *CacheService) GetAllNews() ([]*NewsItem, error) {
 	return getAllNews()
-}
-
-func (s *CacheService) GetLatestNewDate() string {
-	new, err := getLatestNew()
-	if err != nil {
-		return ""
-	}
-
-	return new.Date
 }
 
 func (s *CacheService) GetNewsImage(name string) []byte {

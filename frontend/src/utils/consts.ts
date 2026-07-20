@@ -7,6 +7,7 @@ export const State = {
 export const Event = {
   App: {
     ready: "app:ready",
+    domReady: "app:domReady",
     navigate: "app:navigate",
     close: "app:close",
     minimize: "app:minimize",

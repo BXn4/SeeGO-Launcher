@@ -1,7 +1,5 @@
 import {
   GetAllNews,
-  GetLatestNew,
-  GetLatestNewDate,
   GetNewsImage,
 } from "../../bindings/seegolauncher/internal/services/cacheservice";
 import { NewsItem } from "../../bindings/seegolauncher/internal/services/models";
@@ -12,13 +10,13 @@ import { Events } from "@wailsio/runtime";
 import { writable } from "svelte/store";
 
 export const news = writable<NewsItem[]>([]);
-export let loadingSuccess: boolean = false;
+export const loadingSuccess = writable<boolean | null>(null);
 
 export async function initNews() {
-  loadingSuccess = await setAllNews()
+  loadingSuccess.set(await setAllNews())
 
   Events.On(Event.Global.newsFeedUpdated, async (e) => {
-    loadingSuccess = await setAllNews()
+    loadingSuccess.set(await setAllNews())
   })
 }
 
@@ -40,23 +38,4 @@ export async function setAllNews() {
 
   news.set(allNews)
   return true
-}
-
-export async function getLatestNew(): Promise<NewsItem | undefined> {
-  const latestNew = (await GetLatestNew()) as NewsItem;
-
-  if (latestNew == undefined) {
-    return undefined;
-  }
-
-  const imageData = await GetNewsImage(latestNew.ImageName);
-  const imageUrl = base64ToBlob(imageData);
-  latestNew.Image = imageUrl;
-
-  latestNew.Content = stripMarkup(latestNew.Content)
-  return latestNew;
-}
-
-export async function getLatestNewDate(): Promise<string> {
-  return await GetLatestNewDate();
 }

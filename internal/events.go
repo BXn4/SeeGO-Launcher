@@ -2,6 +2,7 @@ package internal
 
 const (
 	AppReady          = "app:ready"
+	DomReady          = "app:domReady"
 	AppNavigate       = "app:navigate"
 	AppClose          = "app:close"
 	AppMinimize       = "app:minimize"
