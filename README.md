@@ -1,10 +1,9 @@
-
-
 <div align="center">
   <img src="https://i.imgur.com/FPArktl.png" alt="logo" width="120" height="120" />
   <img src="https://i.imgur.com/xqcd4sK.png" alt="logo" width="120" height="120" />
   <h1>SeeGO Launcher</h1>
   <p>An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.</p>
+   <p>If you decide to join their Discord server, be aware: They are acting childish, as a grown (30+) 🤡! And several members have been banned without warning or explanation for something as minor as a emoji reaction (😮‍💨).</p>
   <p>
     <a href="https://go.dev">
       <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=Go&logoColor=white" alt="Golang" /></a>
