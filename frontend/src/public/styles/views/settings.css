@@ -17,7 +17,7 @@
     padding: 8px 16px;
     font-size: 12px;
     text-transform: uppercase;
-    color: var(--comment);
+    color: var(--gray);
     border-bottom: 1px solid var(--surface1);
     background: var(--surface1)
 }
@@ -44,7 +44,7 @@
 
 .setting-desc {
     font-size: 12px;
-    color: var(--comment);
+    color: var(--gray);
 }
 
 .switch {
@@ -66,7 +66,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--comment);
+    background-color: var(--gray);
 }
 
 .slider:before {

@@ -6,16 +6,23 @@
         locales,
         localization,
     } from "../../managers/localization";
-    import { loadingSuccess, news } from "../../managers/news";
+    import {
+        loadingSuccess,
+        news,
+        readingNews,
+        getNew,
+        formatToHTML,
+    } from "../../managers/news";
     import { stripMarkup } from "../../utils/string";
     import { Icons } from "../../utils/icons";
-    import { Event, View } from "../../utils/consts";
+    import { Event } from "../../utils/consts";
+
+    let selectedNewId: number;
 
     onMount(() => {
         initLocalization();
-
         const readLatest = Events.On(Event.Main.News.readLatest, async (e) => {
-            alert("a");
+            openNewsFeed(0);
         });
 
         return () => {
@@ -26,6 +33,15 @@
     const style = ["big", "medium", "medium"];
     function GetStyle(i: number) {
         return style[i % style.length];
+    }
+
+    function openNewsFeed(id: number) {
+        selectedNewId = id;
+        readingNews.set(true);
+    }
+
+    function closeNewsFeed() {
+        readingNews.set(false);
     }
 </script>
 
@@ -69,13 +85,40 @@
                             </p>
                             <button
                                 class="button news-read interactive"
-                                id="news-read-{i}"
+                                onclick={() => openNewsFeed(i)}
                                 >{$locales[localization.newsRead]}</button
                             >
                         </div>
                     </div>
                 {/each}
             </div>
+        </div>
+    {/if}
+
+    {#if $readingNews == true}
+        <div
+            class="news-popup-overlay"
+            onclick={closeNewsFeed}
+            role="presentation"
+        >
+            {#await getNew(selectedNewId) then item}
+                {#if item}
+                    <div class="news-popup">
+                        <div
+                            class="news-popup-image"
+                            style="background-image: url('{item.Image}')"
+                        >
+                            <span class="news-overlay"></span>
+                            <div class="news-popup-header">
+                                <span class="news-badge">{item.Date}</span>
+                                <p class="news-title">{item.Title}</p>
+                            </div>
+                        </div>
+
+                        <div class="news-popup-content"></div>
+                    </div>
+                {/if}
+            {/await}
         </div>
     {/if}
 </main>
@@ -89,5 +132,6 @@
         grid-template-columns: var(--width, 240px) 1fr;
         grid-template-rows: var(--height, 48px) 1fr;
         overflow: hidden;
+        position: relative;
     }
 </style>

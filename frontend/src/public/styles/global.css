@@ -27,7 +27,7 @@ main {
 }
 
 .comment {
-    color: var(--comment);
+    color: var(--gray);
 }
 
 .highlighted {

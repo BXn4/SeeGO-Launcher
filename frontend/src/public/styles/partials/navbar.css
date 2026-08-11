@@ -37,7 +37,7 @@
     border-radius: 8px;
     border: none;
     background: transparent;
-    color: var(--comment);
+    color: var(--gray);
 }
 
 .navbar-button svg {

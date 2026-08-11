@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount, tick } from "svelte";
+    import { onMount } from "svelte";
     import { Events } from "@wailsio/runtime";
     import { Icons } from "../../utils/icons";
     import { news, loadingSuccess } from "../../managers/news";
@@ -9,6 +9,7 @@
         localization,
     } from "../../managers/localization";
     import { Event, View } from "../../utils/consts";
+    import { stripMarkup } from "../../utils/string";
     import { sleep } from "../../utils/helper";
     import {
         initServerStatus,
@@ -113,7 +114,7 @@
                             {item.Title}
                         </p>
                         <p id="hero-news-comment" class="news-comment">
-                            {item.Content}
+                            {stripMarkup(item.Content)}
                         </p>
                         <button
                             class="button news-read interactive"

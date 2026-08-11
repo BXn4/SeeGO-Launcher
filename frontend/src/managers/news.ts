@@ -5,12 +5,12 @@ import {
 import { NewsItem } from "../../bindings/seegolauncher/internal/services/models";
 import { Event } from "../utils/consts";
 import { base64ToBlob } from "../utils/helper";
-import { stripMarkup } from "../utils/string";
 import { Events } from "@wailsio/runtime";
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 
 export const news = writable<NewsItem[]>([]);
 export const loadingSuccess = writable<boolean | null>(null);
+export const readingNews = writable<boolean | null>(null)
 
 export async function initNews() {
   loadingSuccess.set(await setAllNews())
@@ -20,7 +20,7 @@ export async function initNews() {
   })
 }
 
-export async function setAllNews() {
+export async function setAllNews(): Promise<boolean> {
   const allNews = (await GetAllNews()) as NewsItem[];
 
   if (allNews.length === 0) {
@@ -33,9 +33,18 @@ export async function setAllNews() {
     const blob = base64ToBlob(imageData);
     item.Image = blob;
 
-    item.Content = stripMarkup(item.Content)
+    item.Content = item.Content
   }
 
   news.set(allNews)
   return true
+}
+
+export async function getNew(id: number): Promise<NewsItem> {
+  return get(news)[id];
+}
+
+export function formatToHTML(content: string): string {
+
+  return ""
 }
