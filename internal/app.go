@@ -82,7 +82,7 @@ func (a *App) OnReady() {
 				success := services.LoadCache()
 				return success == nil
 			},
-			5*time.Second,
+			10*time.Second,
 		) {
 			// will notify, if the cache was not successed
 			a.Quit()

@@ -9,6 +9,7 @@ import (
 	"seegolauncher/internal/net"
 	"seegolauncher/internal/paths"
 	"seegolauncher/internal/utils"
+	"sync"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -296,18 +297,22 @@ func LoadCache() error {
 			return err
 		}
 
+		log.Debug("Terms done!")
+
 		// only need to refresh, if the cached latest new different from the remote
 		if err := refreshNews(); err != nil {
 			log.Errorf("Failed to refresh news: %v", err)
 			return err
 		}
-		return err
+
+		log.Debug("News done!")
 	}
 
 	return nil
 }
 
 func refreshTerms() error {
+	log.Debug("Refreshing terms...")
 	termsPath, err := paths.GetCachedFilePath("", TermsFileName)
 	if err != nil {
 		return err
@@ -338,16 +343,24 @@ func refreshNews() error {
 	// each news have ["next"]
 	// fetch until theres no ["next"] in it.
 	// 1/i until no ["next"]
+	log.Debug("Refreshing news...")
 	page := 0
 	count := 1
+
 	var allNews []json.RawMessage
+	var imageNames []string
+
+	bar := utils.CreateProgressBar(-1, "Downloading news")
+
 	for {
 		body, err := net.RequestNewsFeed("feed", count, page)
 		if err != nil {
+			bar.Finish()
 			return fmt.Errorf("Failed to fetch news content: %w", err)
 		}
 		var items []json.RawMessage
 		if err := json.Unmarshal([]byte(body), &items); err != nil {
+			bar.Finish()
 			return fmt.Errorf("Failed to parse news content: %w", err)
 		}
 		continueFetch := false
@@ -360,9 +373,7 @@ func refreshNews() error {
 
 			var entry []string
 			if err := json.Unmarshal(raw, &entry); err == nil && len(entry) >= 4 && entry[3] != "" {
-				if err := downloadNewsImage(entry[3]); err != nil {
-					return fmt.Errorf("Failed to download news image %s: %w", entry[3], err)
-				}
+				imageNames = append(imageNames, entry[3])
 			}
 			allNews = append(allNews, raw)
 		}
@@ -370,8 +381,20 @@ func refreshNews() error {
 			break
 		}
 		page++
+		bar.Set(page)
+		// log.Debugf("Page: %d Count: %d", page, count)
 		time.Sleep(250 * time.Millisecond)
 	}
+
+	bar.Finish()
+
+	if len(imageNames) > 0 {
+		log.Debugf("Downloading news images")
+		if err := downloadNewsImages(imageNames); err != nil {
+			return fmt.Errorf("Failed to download news images: %w", err)
+		}
+	}
+
 	joined, err := json.Marshal(allNews)
 	if err != nil {
 		return fmt.Errorf("Failed to marshal news content: %w", err)
@@ -382,21 +405,62 @@ func refreshNews() error {
 	return nil
 }
 
-func downloadNewsImage(name string) error {
-	imagesPath, err := paths.GetCachedFilePath("news", name)
-	if err != nil {
-		return err
-	}
-	if _, err := os.Stat(imagesPath); err == nil {
+func downloadNewsImages(names []string) error {
+	if len(names) == 0 {
 		return nil
 	}
 
-	image, err := net.Request(endpoints.NewsImage + name)
-	if err != nil {
-		return err
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(names))
+
+	sem := make(chan struct{}, 4)
+
+	bar := utils.CreateProgressBar(len(names), "Downloading news images")
+	for _, name := range names {
+		wg.Add(1)
+		go func(imgName string) {
+			defer wg.Done()
+			defer bar.Add(1)
+
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			imagesPath, err := paths.GetCachedFilePath("news", imgName)
+			if err != nil {
+				bar.Finish()
+				errChan <- err
+				return
+			}
+
+			if _, err := os.Stat(imagesPath); err == nil {
+				bar.Finish()
+				return
+			}
+
+			image, err := net.Request(endpoints.NewsImage + imgName)
+			if err != nil {
+				bar.Finish()
+				errChan <- fmt.Errorf("failed to download %s: %w", imgName, err)
+				return
+			}
+
+			if err := os.WriteFile(imagesPath, []byte(image), 0644); err != nil {
+				bar.Finish()
+				errChan <- fmt.Errorf("failed to save %s: %w", imgName, err)
+				return
+			}
+		}(name)
 	}
-	if err := os.WriteFile(imagesPath, []byte(image), 0644); err != nil {
-		return err
+
+	wg.Wait()
+	close(errChan)
+
+	if len(errChan) > 0 {
+		bar.Finish()
+		return <-errChan
 	}
+
+	bar.Finish()
+
 	return nil
 }

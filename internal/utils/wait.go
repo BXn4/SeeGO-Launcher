@@ -1,7 +1,11 @@
 package utils
 
-import "time"
+import (
+	"time"
+)
 
+// Timeout to condition
+// true = TIMED OUT!
 func WaitUntil(condition func() bool, timeout time.Duration) bool {
 	startTime := time.Now()
 	for !condition() {

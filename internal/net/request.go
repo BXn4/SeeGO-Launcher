@@ -65,6 +65,7 @@ func RequestNewsFeed(feed string, count, page int) (string, error) {
 	// "simplefeed" to the titles comment, and "feed" to the content
 	// im not going to use the simplefeed
 	url := fmt.Sprintf("%s/%s/launcher_rpg/%d/%d", endpoints.News, feed, count, page)
+	// log.Debugf("REQUEST NEWS FEED URL: %s", url)
 
 	response, err := Request(url)
 	if err != nil {
