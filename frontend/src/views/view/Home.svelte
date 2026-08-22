@@ -124,7 +124,9 @@
                                     Event.Main.Navbar.switchNavTab,
                                     View.news,
                                 );
-                                await sleep(100);
+                                await sleep(1); // sleep needed, due to race conditions!
+                                // first need to switch to the news view, then emit the readLatest function while on the news view.
+                                // if its happens too fast, then its not going to be shown.
                                 Events.Emit(Event.Main.News.readLatest, null);
                             }}>{$locales[localization.newsRead]}</button
                         >
