@@ -1,7 +1,8 @@
 export const State = {
   currentAppView: "splash",
   currentMainView: "home",
-  currentNavbarActive: "home"
+  currentNavbarActive: "home",
+  isTermsView: false
 };
 
 export const Event = {

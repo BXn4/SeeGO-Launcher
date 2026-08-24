@@ -21,11 +21,20 @@
         );
 
         await sleep(1500);
+        if (State.isTermsView) {
+          navigate(View.terms)
+        } else {
         navigate(View.main);
+        }
 
         Events.Emit(Event.Main.navigate, State.currentMainView);
     };
     Events.On(Event.App.navigate, (e) => {
+        if (e.data == "terms") {
+          State.isTermsView = true
+        } else if (e.data == "main") {
+          State.isTermsView = false
+        }
         navigate(e.data);
     });
 
