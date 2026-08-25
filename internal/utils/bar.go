@@ -10,8 +10,14 @@ type ProgressBar struct {
 
 func CreateProgressBar(max int, desc string) *ProgressBar {
 	return &ProgressBar{
-		bar: progressbar.Default(int64(max), desc),
-	}
+		bar: progressbar.NewOptions(max,
+			progressbar.OptionSetWidth(15),
+			progressbar.OptionShowElapsedTimeOnFinish(),
+			progressbar.OptionShowIts(),
+			progressbar.OptionShowCount(),
+			progressbar.OptionSpinnerType(14),
+			progressbar.OptionSetDescription(desc),
+		)}
 }
 
 func (p *ProgressBar) Add(n int) error {

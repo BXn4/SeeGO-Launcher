@@ -3,10 +3,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: clamp(8px, 1.5vw, 14px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     opacity: 1;
     animation: fadeIn 1s ease-out forwards;
 }
+
 
 #splash-logo {
     width: 120px;
@@ -15,6 +19,11 @@
 
 .text.splash-title {
     font-size: 28px;
+    margin: 0;
+}
+
+.comment.splash-alt {
+    font-size: 12px;
     margin: 0;
 }
 
