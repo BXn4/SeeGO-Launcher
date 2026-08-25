@@ -36,6 +36,8 @@
             })),
         );
 
+        Events.Emit(Event.App.updateLanguage);
+
         initLocalization();
     }
 

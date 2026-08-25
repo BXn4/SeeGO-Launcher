@@ -25,6 +25,10 @@
         setLocales();
     });
 
+    Events.On(Event.Global.updateLanguage, async (e) => {
+        setLocales();
+    });
+
     async function setLocales() {
         const lang = await Config.GetLanguage();
         const minButton = document.getElementById("min-button");
