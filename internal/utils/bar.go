@@ -22,6 +22,10 @@ func (p *ProgressBar) Set(n int) error {
 	return p.bar.Set(n)
 }
 
+func (p *ProgressBar) GetRender() string {
+	return p.bar.String()
+}
+
 func (p *ProgressBar) Finish() error {
 	return p.bar.Finish()
 }

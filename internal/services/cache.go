@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"seegolauncher/internal/endpoints"
+	"seegolauncher/internal/locales"
 	"seegolauncher/internal/net"
 	"seegolauncher/internal/paths"
 	"seegolauncher/internal/utils"
@@ -350,7 +351,8 @@ func refreshNews() error {
 	var allNews []json.RawMessage
 	var imageNames []string
 
-	bar := utils.CreateProgressBar(-1, "Downloading news")
+	locale := localization.Get(locales.SplashDownloadingNews, ConfigService().GetLanguage())
+	bar := utils.CreateProgressBar(-1, locale)
 
 	for {
 		body, err := net.RequestNewsFeed("feed", count, page)
@@ -382,6 +384,7 @@ func refreshNews() error {
 		}
 		page++
 		bar.Set(page)
+		utils.CurrentLoadingProgress = bar.GetRender()
 		// log.Debugf("Page: %d Count: %d", page, count)
 		time.Sleep(250 * time.Millisecond)
 	}
@@ -389,7 +392,6 @@ func refreshNews() error {
 	bar.Finish()
 
 	if len(imageNames) > 0 {
-		log.Debugf("Downloading news images")
 		if err := downloadNewsImages(imageNames); err != nil {
 			return fmt.Errorf("Failed to download news images: %w", err)
 		}
@@ -406,6 +408,7 @@ func refreshNews() error {
 }
 
 func downloadNewsImages(names []string) error {
+	log.Debugf("Downloading news images")
 	if len(names) == 0 {
 		return nil
 	}
@@ -414,13 +417,17 @@ func downloadNewsImages(names []string) error {
 	errChan := make(chan error, len(names))
 
 	sem := make(chan struct{}, 4)
+	locale := localization.Get(locales.SplashDownloadingImages, ConfigService().GetLanguage())
 
-	bar := utils.CreateProgressBar(len(names), "Downloading news images")
+	bar := utils.CreateProgressBar(len(names), locale)
 	for _, name := range names {
 		wg.Add(1)
 		go func(imgName string) {
 			defer wg.Done()
-			defer bar.Add(1)
+			defer func() {
+				bar.Add(1)
+				utils.CurrentLoadingProgress = bar.GetRender()
+			}()
 
 			sem <- struct{}{}
 			defer func() { <-sem }()
@@ -450,6 +457,8 @@ func downloadNewsImages(names []string) error {
 				return
 			}
 		}(name)
+
+		time.Sleep(250 * time.Millisecond)
 	}
 
 	wg.Wait()

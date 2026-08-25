@@ -3,7 +3,7 @@ package internal
 import (
 	"embed"
 	"fmt"
-	"seegolauncher/internal/localization"
+	"seegolauncher/internal/locales"
 	"seegolauncher/internal/services"
 	"seegolauncher/internal/utils"
 	"time"
@@ -74,58 +74,77 @@ func (a *App) Quit() {
 func (a *App) OnReady() {
 	a.window.Show()
 
-	a.EmitEvent(SplashSetProgress, "splash-loading")
+	done := make(chan error, 1)
 
 	go func() {
-		if utils.WaitUntil(
-			func() bool {
-				success := services.LoadCache()
-				return success == nil
-			},
-			10*time.Second,
-		) {
-			// will notify, if the cache was not successed
-			a.Quit()
-		}
+		done <- services.LoadCache()
+	}()
 
-		ticker := time.NewTicker(1 * time.Hour)
-		a.listenRefreshNews = make(chan struct{})
-		go func() {
-			for {
-				select {
-				case <-ticker.C:
-					hasNewsRefreshed, _ := services.RefreshNews()
-					if hasNewsRefreshed {
-						a.EmitEvent(NewsFeedUpdated, nil)
-					}
-				case <-a.listenRefreshNews:
-					ticker.Stop()
-					return
-				}
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+
+	timeout := time.NewTimer(15 * time.Second)
+	defer timeout.Stop()
+
+waitForCache:
+	for {
+		select {
+		case err := <-done:
+			if err != nil {
+				a.Quit()
+				return
 			}
-		}()
 
-		// after splash
-		a.window.SetAlwaysOnTop(false)
+			break waitForCache
 
-		a.EmitEvent(AppReady, nil)
+		case <-ticker.C:
+			a.EmitEvent(SplashSetProgress, utils.CurrentLoadingProgress)
 
-		if !a.config.GetTermsAccepted() {
-			seeGOInfo1 := services.LocalizationService().Get(localization.SeeGOInfo1, a.config.GetLanguage())
-			seeGOInfo2 := services.LocalizationService().Get(localization.SeeGOInfo2, a.config.GetLanguage())
-			seeGOInfo3 := services.LocalizationService().Get(localization.SeeGOInfo3, a.config.GetLanguage())
-			seeGOInfo4 := services.LocalizationService().Get(localization.SeeGOInfo4, a.config.GetLanguage())
-			a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
-			log.Info("Terms is not accepted, showing the terms window")
-
-			a.SetView(620, 480, AppNavigate, "terms")
-			a.window.Center()
+		case <-timeout.C:
+			a.Quit()
 			return
 		}
+	}
 
-		a.SetView(1200, int(1200/(16.0/9.0)), AppNavigate, "main")
-		a.window.Center()
+	newsTicker := time.NewTicker(1 * time.Hour)
+	a.listenRefreshNews = make(chan struct{})
+
+	go func() {
+		for {
+			select {
+			case <-newsTicker.C:
+				hasNewsRefreshed, _ := services.RefreshNews()
+				if hasNewsRefreshed {
+					a.EmitEvent(NewsFeedUpdated, nil)
+				}
+
+			case <-a.listenRefreshNews:
+				newsTicker.Stop()
+				return
+			}
+		}
 	}()
+
+	// after splash
+	a.window.SetAlwaysOnTop(false)
+
+	a.EmitEvent(AppReady, nil)
+
+	if !a.config.GetTermsAccepted() {
+		seeGOInfo1 := services.LocalizationService().Get(locales.SeeGOInfo1, a.config.GetLanguage())
+		seeGOInfo2 := services.LocalizationService().Get(locales.SeeGOInfo2, a.config.GetLanguage())
+		seeGOInfo3 := services.LocalizationService().Get(locales.SeeGOInfo3, a.config.GetLanguage())
+		seeGOInfo4 := services.LocalizationService().Get(locales.SeeGOInfo4, a.config.GetLanguage())
+		a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
+		log.Info("Terms is not accepted, showing the terms window")
+
+		a.SetView(620, 480, AppNavigate, "terms")
+		a.window.Center()
+		return
+	}
+
+	a.SetView(1200, int(1200/(16.0/9.0)), AppNavigate, "main")
+	a.window.Center()
 }
 
 func (a *App) CreateNewWindow(options application.WebviewWindowOptions) *application.WebviewWindow {
@@ -158,7 +177,7 @@ func (a *App) ToTray() {
 	a.appState = Tray
 	if !a.trayNotified {
 		a.trayNotified = true
-		utils.Notify(services.LocalizationService().Get(localization.LauncherMinimized, a.config.GetLanguage()), a.icon)
+		utils.Notify(services.LocalizationService().Get(locales.LauncherMinimized, a.config.GetLanguage()), a.icon)
 	}
 }
 
@@ -315,8 +334,8 @@ func (a *App) RegisterListeners() {
 		a.window.SetIgnoreMouseEvents(true)
 		if a.dialog == nil {
 			dialog := a.app.Dialog.Warning().
-				SetTitle(services.LocalizationService().Get(localization.TermsDeclinedTitle, a.config.GetLanguage())).
-				SetMessage(services.LocalizationService().Get(localization.TermsDeclinedContent, a.config.GetLanguage()))
+				SetTitle(services.LocalizationService().Get(locales.TermsDeclinedTitle, a.config.GetLanguage())).
+				SetMessage(services.LocalizationService().Get(locales.TermsDeclinedContent, a.config.GetLanguage()))
 
 			ok := dialog.AddButton("Ok")
 			ok.OnClick(
