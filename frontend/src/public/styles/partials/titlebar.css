@@ -1,0 +1,55 @@
+#titlebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--height);
+    background: var(--surface2);
+    border-bottom: 0.5px solid var(--border);
+    z-index: 10;
+    align-items: center;
+    display: flex;
+    --wails-draggable: drag;
+}
+
+#window-title {
+    position: absolute;
+    left: 50%;
+    font-size: 12px;
+}
+
+#window-title .dim1 {
+    color: var(--dim1);
+}
+
+#window-title .dim2 {
+    color: var(--dim2);
+}
+
+#window-controls {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+}
+
+.window-control {
+    width: 44px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: var(--foreground);
+    cursor: pointer;
+}
+
+.window-control:hover {
+    color: var(--foreground);
+    background: var(--border);
+}
+
+#close-button:hover {
+    color: var(--red);
+}
