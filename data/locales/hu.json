@@ -69,5 +69,10 @@
   "enable-animations-desc": "Animációk engedélyezése",
   "news-load-failed": "Nem sikerült betölteni a híreket",
   "news-load-failed-desc": "A hírek betöltése során probléma merült fel. Kérlek próbáld meg újra később.",
-  "retry": "Újra"
+  "retry": "Újra",
+  "discord-social-title": "SeeRPG a Discordon",
+  "facebook-social-title": "SeeRPG a Facebookon",
+  "tiktok-social-title": "SeeRPG a TikTokon",
+  "youtube-social-title": "SeeRPG a YouTube-on",
+  "sponsor": "Támogatás ❤️"
 }

@@ -22,8 +22,8 @@ main {
     color: var(--news-title);
 }
 
-.news-comment {
-    color: var(--news-comment);
+.news-alt {
+    color: var(--news-alt);
 }
 
 .comment {
@@ -78,7 +78,7 @@ main {
     cursor: pointer;
 }
 
-.error-view {
+#error-view {
     width: 100%;
     height: 100%;
     grid-column: 2;
@@ -91,7 +91,7 @@ main {
     text-align: center;
 }
 
-.error-view svg {
+#error-view svg {
     width: 48px;
     height: 48px;
     margin-bottom: 16px;
@@ -119,4 +119,74 @@ main {
 .alt-icon svg {
     width: 100% !important;
     height: 100% !important;
+}
+
+.icon {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    text-decoration: none;
+    width: 48px;
+    height: 48px;
+}
+
+.icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.icon:hover {
+    color: var(--dim1);
+}
+
+.icon-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.icon-group-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+}
+
+.icon-group-button {
+    position: relative;
+    aspect-ratio: 1;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    text-decoration: none;
+    width: 32px;
+    height: 32px;
+    overflow: visible;
+}
+
+.icon-group-button:hover {
+    color: var(--dim1);
+}
+
+.icon-group-button .hand {
+    transform-box: fill-box;
+    transform-origin: 10% 100%;
+}
+
+.icon-group-button .heart {
+    transform-box: fill-box;
+    transform-origin: center;
 }

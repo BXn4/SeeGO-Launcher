@@ -1,5 +1,7 @@
-import { writable } from "svelte/store"
+import { get, writable } from "svelte/store"
 import { Config, Localization } from "../../bindings/seegolauncher/internal/services";
+import { Events } from "@wailsio/runtime";
+import { Event } from "../utils/consts";
 
 export const localization = {
   lang: "lang",
@@ -85,7 +87,13 @@ export const localization = {
 
   NewsLoadFailed: "news-load-failed",
   NewsLoadFailedDesc: "news-load-failed-desc",
-  Retry: "retry"
+  Retry: "retry",
+
+  discordSocialTitle: "discord-social-title",
+  facebookSocialTitle: "facebook-social-title",
+  tiktokSocialTitle: "tiktok-social-title",
+  youtubeSocialTitle: "youtube-social-title",
+  sponsor: "sponsor"
 } as const;
 
 export const locales = writable<Record<string, string>>({});
@@ -97,4 +105,13 @@ export async function initLocalization() {
   const map: Record<string, string> = {};
   keys.forEach((k, i) => (map[k] = values[i]));
   locales.set(map);
+}
+
+export function getFromKey(v: string): string {
+  const map = get(locales);
+
+  if (map[v]) {
+    return map[v];
+  }
+  return v;
 }

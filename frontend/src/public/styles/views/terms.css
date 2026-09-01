@@ -1,4 +1,4 @@
-#terms {
+#terms-view {
     margin-top: var(--height);
     height: calc(100vh - var(--height) - 120px);
     overflow-y: auto;
@@ -31,7 +31,7 @@
     margin-bottom: 12px;
 }
 
-.terms-comment {
+.terms-alt {
     font-size: 12px;
     margin-bottom: 12px;
 }

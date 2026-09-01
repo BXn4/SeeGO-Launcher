@@ -1,11 +1,7 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
-    import {
-        Config,
-        Localization,
-    } from "../../../bindings/seegolauncher/internal/services";
-    import { onMount } from "svelte";
-    import { Event } from "../../utils/consts";
+    import { Classes, Event, IDs } from "../../utils/consts";
+    import { localization, locales } from "../../managers/localization";
 
     async function closeWindow() {
         await Events.Emit(Event.App.notActive, null);
@@ -20,51 +16,26 @@
     async function toggleMaximize() {
         // await Events.Emit("toggle-maximize", null);
     }
-
-    onMount(() => {
-        setLocales();
-    });
-
-    Events.On(Event.Global.updateLanguage, async (e) => {
-        setLocales();
-    });
-
-    async function setLocales() {
-        const lang = await Config.GetLanguage();
-        const minButton = document.getElementById("min-button");
-        const closeButton = document.getElementById("close-button");
-
-        if (minButton) {
-            minButton.setAttribute(
-                "title",
-                await Localization.Get("window-minimize", lang),
-            );
-        }
-
-        if (closeButton) {
-            closeButton.setAttribute(
-                "title",
-                await Localization.Get("window-close", lang),
-            );
-        }
-    }
 </script>
 
 <main>
     <div
-        id="titlebar"
+        id={IDs.Partials.Titlebar.ID}
         role="button"
         tabindex="0"
         ondblclick={() => toggleMaximize()}
     >
-        <div id="window-title">
-            <span class="dim1">See</span><span class="dim2">Go</span>
+        <div id={IDs.Partials.Titlebar.windowTitle}>
+            <span class={Classes.Partials.Titlebar.dim1}>See</span><span
+                class={Classes.Partials.Titlebar.dim2}>Go</span
+            >
         </div>
-        <div id="window-controls">
+        <div id={IDs.Partials.Titlebar.windowControls}>
             <span
-                class="window-control interactive"
-                id="min-button"
-                title=""
+                class="{Classes.Partials.Titlebar.windowControl} {Classes.Global
+                    .interactive}"
+                id={IDs.Partials.Titlebar.minimizeButton}
+                title={$locales[localization.windowMinimize]}
                 role="button"
                 tabindex="0"
                 onclick={() => minimizeWindow()}
@@ -73,9 +44,10 @@
                 <span>−</span>
             </span>
             <span
-                class="window-control interactive"
-                id="close-button"
-                title=""
+                class="{Classes.Partials.Titlebar.windowControl} {Classes.Global
+                    .interactive}"
+                id={IDs.Partials.Titlebar.closeButton}
+                title={$locales[localization.windowClose]}
                 role="button"
                 tabindex="0"
                 onclick={() => closeWindow()}

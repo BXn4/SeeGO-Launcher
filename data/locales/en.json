@@ -69,5 +69,10 @@
   "enable-animations-desc": "Enables the animations",
   "news-load-failed": "Failed to load news",
   "news-load-failed-desc": "Something went wrong while loading the news. Please try again later.",
-  "retry": "Retry"
+  "retry": "Retry",
+  "discord-social-title": "SeeRPG on Discord",
+  "facebook-social-title": "SeeRPG on Facebook",
+  "tiktok-social-title": "SeeRPG on TikTok",
+  "youtube-social-title": "SeeRPG on YouTube",
+  "sponsor": "Sponsor ❤️"
 }

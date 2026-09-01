@@ -74,7 +74,7 @@
     font-weight: bold;
 }
 
-.news-comment {
+.news-alt {
     margin: 0 0 20px 0;
     font-size: 16px;
     display: -webkit-box;
@@ -140,7 +140,7 @@
     padding: 32px
 }
 
-.news-popup-comment {
+.news-popup-alt {
     margin: 0;
     font-size: 16px;
     line-height: 1.5;

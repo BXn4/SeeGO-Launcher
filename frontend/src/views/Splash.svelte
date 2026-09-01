@@ -1,27 +1,38 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
     import logo from "../public/images/seego_nobg.svg";
-    import { Event } from "../utils/consts";
-    import {
-        Config,
-        Localization,
-    } from "../../bindings/seegolauncher/internal/services";
+    import { Classes, Event, IDs } from "../utils/consts";
+    import { getFromKey } from "../managers/localization";
+    import { onMount } from "svelte";
 
-    Events.On(Event.Splash.setCurrentProgress, async (e) => {
-        const splashAlt = document.getElementById("splash-alt");
-        if (splashAlt) {
-            let lang = await Config.GetLanguage();
-            splashAlt.textContent = await Localization.Get(e.data, lang);
-        }
+    let setCurrrentProgressEvent: () => void;
+
+    onMount(() => {
+        setCurrrentProgressEvent = Events.On(
+            Event.Splash.setCurrentProgress,
+            async (e) => {
+                const splashAlt = document.getElementById(IDs.Views.Splash.alt);
+                splashAlt!.textContent = getFromKey(e.data);
+            },
+        );
+
+        return () => {
+            setCurrrentProgressEvent();
+        };
     });
 </script>
 
 <main>
-    <div id="splash">
-        <img id="splash-logo" src={logo} alt="SeeGO Launcher logo" />
-        <h1 class="text splash-title">SeeGO Launcher</h1>
-        <p id="splash-alt" class="comment splash-alt"></p>
-        <span class="loader"></span>
+    <div id={IDs.Views.Splash.ID}>
+        <img id={IDs.Views.Splash.logo} src={logo} alt="SeeGO Launcher logo" />
+        <h1 class="{Classes.Global.text} {Classes.Views.Splash.title}">
+            SeeGO Launcher
+        </h1>
+        <p
+            id={IDs.Views.Splash.alt}
+            class="{Classes.Global.comment} {Classes.Views.Splash.alt}"
+        ></p>
+        <span class={Classes.Views.Splash.loader}></span>
     </div>
 </main>
 

@@ -1,20 +1,28 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
-    import { State, Event, View } from "../utils/consts";
+    import { currentMainView, Event, View } from "../utils/consts";
     import Home from "./view/Home.svelte";
     import News from "./view/News.svelte";
     import Settings from "./view/Settings.svelte";
+    import { onMount } from "svelte";
 
-    Events.On(Event.Main.navigate, (e) => {
-        // State.currentNavbarActive = e.data; not works
-        State.currentMainView = e.data;
+    let navigateEvent: () => void;
+
+    onMount(() => {
+        navigateEvent = Events.On(Event.Main.navigate, (e) => {
+            currentMainView.set(e.data);
+        });
+
+        return () => {
+            navigateEvent();
+        };
     });
 </script>
 
-{#if State.currentMainView === View.home}
+{#if $currentMainView === View.home}
     <Home />
-{:else if State.currentMainView === View.news}
+{:else if $currentMainView === View.news}
     <News />
-{:else if State.currentMainView === View.settings}
+{:else if $currentMainView === View.settings}
     <Settings />
 {/if}

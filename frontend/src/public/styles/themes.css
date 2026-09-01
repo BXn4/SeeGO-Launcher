@@ -15,7 +15,7 @@
     --dim1: #ffb86c;
     --dim2: #8be9fd;
     --news-title: #cacbcf;
-    --news-comment: #84888f;
+    --news-alt: #84888f;
 }
 
 :root.dark {
@@ -35,7 +35,7 @@
     --dim1: #dfa406;
     --dim2: #69cae7;
     --news-title: #cacbcf;
-    --news-comment: #84888f;
+    --news-alt: #84888f;
 }
 
 :root.light {
@@ -55,5 +55,5 @@
     --dim1: #c08500;
     --dim2: #1a9dbf;
     --news-title: #cacbcf;
-    --news-comment: #84888f;
+    --news-alt: #84888f;
 }

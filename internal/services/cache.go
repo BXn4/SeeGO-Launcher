@@ -241,13 +241,27 @@ func CheckHashes() error {
 	if err != nil {
 		return err
 	}
+	locale := localization.Get(locales.SplashLoadingTerms, ConfigService().GetLanguage())
+	bar := utils.CreateProgressBar(1, locale)
+	bar.Set(0)
+	utils.CurrentLoadingProgress = bar.GetRender()
 	termsLocal, err := os.ReadFile(termsLocalPath)
 	if err != nil {
+		bar.Finish()
 		return err
 	}
 	if !utils.CompareHashes(termsRemote, string(termsLocal)) {
+		bar.Finish()
 		return fmt.Errorf("The hashes different!")
 	}
+
+	bar.Set(1)
+	bar.Finish()
+
+	localeNews := localization.Get(locales.SplashLoadingNews, ConfigService().GetLanguage())
+	barNews := utils.CreateProgressBar(1, localeNews)
+	barNews.Set(0)
+	utils.CurrentLoadingProgress = barNews.GetRender()
 
 	latestNewsRemote, err := net.RequestNewsFeed("feed", 1, 0)
 	if err != nil {
@@ -280,6 +294,9 @@ func CheckHashes() error {
 		return fmt.Errorf("The news date is different!")
 	}
 
+	barNews.Set(1)
+	barNews.Finish()
+
 	log.Info("Hashes okay!")
 
 	return nil
@@ -305,7 +322,6 @@ func LoadCache() error {
 			log.Errorf("Failed to refresh news: %v", err)
 			return err
 		}
-
 		log.Debug("News done!")
 	}
 
@@ -326,16 +342,24 @@ func refreshTerms() error {
 	}
 
 	if termsMissing {
+		locale := localization.Get(locales.SplashDownloadingTerms, ConfigService().GetLanguage())
+		bar := utils.CreateProgressBar(1, locale)
+		bar.Set(0)
+		utils.CurrentLoadingProgress = bar.GetRender()
 		terms, err := net.Request(endpoints.Terms)
 		if err != nil {
+			bar.Finish()
 			return fmt.Errorf("Failed to fetch terms content: %w", err)
 		}
 
 		if err := writeCache("", TermsFileName, terms); err != nil {
+			bar.Finish()
 			return fmt.Errorf("Failed to write terms: %w", err)
 		}
-	}
 
+		bar.Set(1)
+		bar.Finish()
+	}
 	return nil
 }
 
@@ -379,12 +403,12 @@ func refreshNews() error {
 			}
 			allNews = append(allNews, raw)
 		}
-		if !continueFetch {
-			break
-		}
 		page++
 		bar.Set(page)
 		utils.CurrentLoadingProgress = bar.GetRender()
+		if !continueFetch {
+			break
+		}
 		// log.Debugf("Page: %d Count: %d", page, count)
 		time.Sleep(250 * time.Millisecond)
 	}

@@ -243,30 +243,6 @@ add-to-card svg {
     gap: 10px;
 }
 
-.socials {
-    position: relative;
-    aspect-ratio: 1;
-    background: var(--surface1);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gray);
-    text-decoration: none;
-    width: 48px;
-    height: 48px;
-}
-
-.socials svg {
-    width: 22px;
-    height: 22px;
-}
-
-.socials:hover {
-    color: var(--dim1);
-}
-
 .button.connect {
     background: var(--green);
     color: var(--background);

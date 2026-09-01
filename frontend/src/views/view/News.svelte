@@ -1,11 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { Events } from "@wailsio/runtime";
-    import {
-        initLocalization,
-        locales,
-        localization,
-    } from "../../managers/localization";
+    import { locales, localization } from "../../managers/localization";
     import {
         loadingSuccess,
         news,
@@ -15,12 +11,11 @@
     } from "../../managers/news";
     import { stripMarkup } from "../../utils/string";
     import { Icons } from "../../utils/icons";
-    import { Event } from "../../utils/consts";
+    import { Classes, Event, IDs } from "../../utils/consts";
 
     let selectedNewId: number;
 
     onMount(() => {
-        initLocalization();
         const readLatest = Events.On(Event.Main.News.readLatest, async (e) => {
             openNewsFeed(0);
         });
@@ -47,44 +42,48 @@
 
 <main>
     {#if $loadingSuccess == false}
-        <div class="error-view">
+        <div id={IDs.Views.Error.ID}>
             {@html Icons.UI.Alert}
-            <p class="error-title text">
+            <p class="{Classes.Views.Error.title} {Classes.Global.text}">
                 {$locales[localization.NewsLoadFailed]}
             </p>
-            <p class="error-comment comment">
+            <p class="{Classes.Views.Error.alt} {Classes.Global.comment}">
                 {$locales[localization.NewsLoadFailedDesc]}
             </p>
             <button
-                class="button interactive"
+                class="{Classes.Global.button} {Classes.Global.interactive}"
                 onclick={() => Events.Emit(Event.Global.newsFeedUpdated, null)}
             >
                 {$locales[localization.Retry]}
             </button>
         </div>
     {:else if $loadingSuccess == true}
-        <div id="news-view">
-            <div class="news-layout">
+        <div id={IDs.Views.News.ID}>
+            <div class={Classes.Views.News.layout}>
                 {#each $news as item, i}
                     <div
-                        class="news-card {GetStyle(i)}"
+                        class="{Classes.Views.News.card} {GetStyle(i)}"
                         style="background-image: url('{item.Image}')"
                     >
-                        <span class="news-overlay"></span>
-                        <div class="news-content">
+                        <span class={Classes.Views.News.overlay}></span>
+                        <div class={Classes.Views.News.content}>
                             {#if i === 0}
-                                <span class="news-badge"
+                                <span class={Classes.Global.newsBadge}
                                     >{$locales[localization.newsLatest]}</span
                                 >
                             {:else}
-                                <span class="news-badge old">{item.Date}</span>
+                                <span
+                                    class="{Classes.Global.newsBadge} {Classes
+                                        .Global.old}">{item.Date}</span
+                                >
                             {/if}
-                            <p class="news-title">{item.Title}</p>
-                            <p class="news-comment">
+                            <p class={Classes.Global.newsTitle}>{item.Title}</p>
+                            <p class={Classes.Global.newsAlt}>
                                 {stripMarkup(item.Content)}
                             </p>
                             <button
-                                class="button news-read interactive"
+                                class="{Classes.Global.button} {Classes.Global
+                                    .newsRead} {Classes.Global.interactive}"
                                 onclick={() => openNewsFeed(i)}
                                 >{$locales[localization.newsRead]}</button
                             >
@@ -97,25 +96,29 @@
 
     {#if $readingNews == true}
         <div
-            class="news-popup-overlay"
+            class={Classes.Views.News.popupOverlay}
             onclick={closeNewsFeed}
             role="presentation"
         >
             {#await getNew(selectedNewId) then item}
                 {#if item}
-                    <div class="news-popup">
+                    <div class={Classes.Views.News.popup}>
                         <div
-                            class="news-popup-image"
+                            class={Classes.Views.News.popupImage}
                             style="background-image: url('{item.Image}')"
                         >
-                            <span class="news-overlay"></span>
-                            <div class="news-popup-header">
-                                <span class="news-badge">{item.Date}</span>
-                                <p class="news-title">{item.Title}</p>
+                            <span class={Classes.Views.News.overlay}></span>
+                            <div class={Classes.Views.News.popupHeader}>
+                                <span class={Classes.Global.newsBadge}
+                                    >{item.Date}</span
+                                >
+                                <p class={Classes.Global.newsTitle}>
+                                    {item.Title}
+                                </p>
                             </div>
                         </div>
 
-                        <div class="news-popup-content"></div>
+                        <div class={Classes.Views.News.popupContent}></div>
                     </div>
                 {/if}
             {/await}

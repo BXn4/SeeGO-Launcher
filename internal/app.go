@@ -83,7 +83,7 @@ func (a *App) OnReady() {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 
-	timeout := time.NewTimer(15 * time.Second)
+	timeout := time.NewTimer(time.Minute) // sometimes the site is slow.
 	defer timeout.Stop()
 
 waitForCache:

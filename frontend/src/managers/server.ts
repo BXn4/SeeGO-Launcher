@@ -1,4 +1,3 @@
-import { Events } from "@wailsio/runtime";
 import { writable, get } from "svelte/store";
 import { GetServerPlayers } from "../../bindings/seegolauncher/internal/services/api";
 
@@ -32,7 +31,7 @@ export async function initServerStatus() {
   // without prio
   // about 1-3 players enters from the queue to the server in every 1 mins
   // update: i connected at 14:00 with 200 queue. After 2 hours, i was 150. My pos always changed between 140 and 160, so i will incrase the queue
-  if (serverPlayers >= serverSlots) {
+  if (get(serverPlayers) >= get(serverSlots)) {
     // about 30-35 seconds one player disconnects // update up (changed to 50)
     // sometimes with the gold prio theres 100 queue, so without pro its like 30-35 seconds disconnect * 10
     if (get(serverQueue) > 0) {

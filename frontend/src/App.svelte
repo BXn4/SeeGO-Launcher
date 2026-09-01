@@ -7,9 +7,23 @@
     import Navbar from "./views/partials/Navbar.svelte";
     import { Config } from "../bindings/seegolauncher/internal/services";
     import { onMount } from "svelte";
-    import { State, Event, View } from "./utils/consts";
+    import {
+        Event,
+        View,
+        currentAppView,
+        currentMainView,
+        isTermsView,
+    } from "./utils/consts";
     import { initNews } from "./managers/news";
     import { initServerStatus } from "./managers/server";
+    import { initLocalization } from "./managers/localization";
+    import { get } from "svelte/store";
+
+    let navigateEvent: () => void;
+    let updateSettingEvent: () => void;
+    let notActiveEvent: () => void;
+    let activeEVent: () => void;
+    let appReadyEvent: () => void;
 
     (window as any)._openURL = async (url: string) => {
         navigate(View.splash);
@@ -21,55 +35,17 @@
         );
 
         await sleep(1500);
-        if (State.isTermsView) {
+        if (get(isTermsView)) {
             navigate(View.terms);
         } else {
             navigate(View.main);
         }
 
-        Events.Emit(Event.Main.navigate, State.currentMainView);
+        Events.Emit(Event.Main.navigate, get(currentMainView));
     };
-    Events.On(Event.App.navigate, (e) => {
-        if (e.data == "terms") {
-            State.isTermsView = true;
-        } else if (e.data == "main") {
-            State.isTermsView = false;
-        }
-        navigate(e.data);
-    });
 
-    Events.On(Event.App.updateSetting, async (e) => {
-        const [key, value] = e.data;
-        switch (key) {
-            case "theme":
-                setTheme(value);
-                Config.SetTheme(value);
-                return;
-            case "language":
-                Config.SetLanguage(value);
-                Events.Emit(Event.Global.updateLanguage);
-                return;
-            case "anims":
-                setAnimations(value);
-                Config.SetEnableAnimations(value);
-                return;
-        }
-    });
-
-    Events.On(Event.App.notActive, async (e) => {
-        Events.Emit(Event.Global.stopInterval, null);
-    });
-
-    Events.On(Event.App.active, async (e) => {
-        Events.Emit(Event.Global.startInterval, null);
-    });
-
-    Events.On(Event.App.ready, async (e) => {
-        initServerStatus();
-        initNews();
-    });
     function navigate(view: string) {
-        State.currentAppView = view;
+        currentAppView.set(view);
     }
 
     async function sleep(ms: number): Promise<void> {
@@ -85,19 +61,74 @@
         document.documentElement.classList.toggle("disable-animations", !value);
     }
 
-    onMount(async () => {
-        setTheme(await Config.GetTheme());
-        setAnimations(await Config.GetEnableAnimations());
+    onMount(() => {
+        (async () => {
+            await initLocalization();
+            setTheme(await Config.GetTheme());
+            setAnimations(await Config.GetEnableAnimations());
 
-        Events.Emit(Event.App.domReady);
+            navigateEvent = Events.On(Event.App.navigate, (e) => {
+                if (e.data == View.terms) {
+                    isTermsView.set(true);
+                } else if (e.data == View.main) {
+                    isTermsView.set(false);
+                }
+                navigate(e.data);
+            });
+
+            updateSettingEvent = Events.On(
+                Event.App.updateSetting,
+                async (e) => {
+                    const [key, value] = e.data;
+                    switch (key) {
+                        case "theme":
+                            setTheme(value);
+                            Config.SetTheme(value);
+                            return;
+                        case "language":
+                            Config.SetLanguage(value);
+                            Events.Emit(Event.Global.updateLanguage);
+                            return;
+                        case "anims":
+                            setAnimations(value);
+                            Config.SetEnableAnimations(value);
+                            return;
+                    }
+                },
+            );
+
+            notActiveEvent = Events.On(Event.App.notActive, async (e) => {
+                Events.Emit(Event.Global.stopInterval, null);
+            });
+
+            activeEVent = Events.On(Event.App.active, async (e) => {
+                Events.Emit(Event.Global.startInterval, null);
+            });
+
+            appReadyEvent = Events.On(Event.App.ready, async (e) => {
+                initServerStatus();
+                initNews();
+            });
+
+            Events.Emit(Event.App.domReady);
+        })();
+
+        return () => {
+            navigateEvent();
+            updateSettingEvent();
+            notActiveEvent();
+            activeEVent();
+            appReadyEvent();
+        };
     });
 </script>
 
-{#if State.currentAppView === View.splash}
+{#if $currentAppView === View.splash}
     <Splash />
-{:else if State.currentAppView === View.terms}
+{:else if $currentAppView === View.terms}
     <Terms />
-{:else if State.currentAppView === View.main}
+    <Titlebar />
+{:else if $currentAppView === View.main}
     <Main />
     <Titlebar />
     <Navbar />

@@ -1,4 +1,4 @@
-#splash {
+#splash-view {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
     margin: 0;
 }
 
-.comment.splash-alt {
+.splash-alt {
     font-size: 12px;
     margin: 0;
 }
