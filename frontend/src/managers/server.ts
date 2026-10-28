@@ -1,5 +1,7 @@
 import { writable, get } from "svelte/store";
 import { GetServerPlayers } from "../../bindings/seegolauncher/internal/services/api";
+import { Events } from "@wailsio/runtime";
+import { Event } from "../utils/consts";
 
 export let serverPlayers = writable<number>(0);
 export let serverSlots = writable<number>(0);
@@ -8,8 +10,10 @@ export let serverQueue = writable<number>(0);
 export let serverOnline = writable<boolean>(false)
 export let queueTime = writable<number>(0)
 
+let interval: ReturnType<typeof setInterval> | undefined;
 
-export async function initServerStatus() {
+export async function fetchServerStatus() {
+  Events.Emit(Event.Global.debugFeedback, "Fetching server status")
   let server;
   try {
     server = await GetServerPlayers();
@@ -55,4 +59,19 @@ export async function initServerStatus() {
   }
 
   serverOnline.set(true)
+}
+
+export async function startFetchServerStatusInterval() {
+  if (!interval) {
+    Events.Emit(Event.Global.debugFeedback, "Server status fetch interval started")
+    interval = setInterval(fetchServerStatus, 60 * 1000);
+  }
+}
+
+export async function stopFetchServerStatusInterval() {
+  if (interval) {
+    Events.Emit(Event.Global.debugFeedback, "Server status fetch interval stopped")
+    clearInterval(interval);
+    interval = undefined;
+  }
 }

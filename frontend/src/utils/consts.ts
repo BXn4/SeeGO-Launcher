@@ -43,7 +43,8 @@ export const Event = {
     startInterval: "startInterval",
     stopInterval: "stoptInterval",
     newsFeedUpdated: "newsFeedUpdated",
-    feedback: "feedback",
+    infoFeedback: "infoFeedback",
+    debugFeedback: "debugFeedback",
     updateLanguage: "updateLanguage"
   }
 }

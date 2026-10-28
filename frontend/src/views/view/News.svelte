@@ -95,11 +95,7 @@
     {/if}
 
     {#if $readingNews == true}
-        <div
-            class={Classes.Views.News.popupOverlay}
-            onclick={closeNewsFeed}
-            role="presentation"
-        >
+        <div class={Classes.Views.News.popupOverlay}>
             {#await getNew(selectedNewId) then item}
                 {#if item}
                     <div class={Classes.Views.News.popup}>

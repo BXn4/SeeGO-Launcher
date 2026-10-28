@@ -15,7 +15,11 @@
         isTermsView,
     } from "./utils/consts";
     import { initNews } from "./managers/news";
-    import { initServerStatus } from "./managers/server";
+    import {
+        fetchServerStatus,
+        startFetchServerStatusInterval,
+        stopFetchServerStatusInterval,
+    } from "./managers/server";
     import { initLocalization } from "./managers/localization";
     import { get } from "svelte/store";
 
@@ -98,16 +102,17 @@
             );
 
             notActiveEvent = Events.On(Event.App.notActive, async (e) => {
-                Events.Emit(Event.Global.stopInterval, null);
+                stopFetchServerStatusInterval();
             });
 
             activeEVent = Events.On(Event.App.active, async (e) => {
-                Events.Emit(Event.Global.startInterval, null);
+                startFetchServerStatusInterval();
             });
 
             appReadyEvent = Events.On(Event.App.ready, async (e) => {
-                initServerStatus();
+                fetchServerStatus();
                 initNews();
+                startFetchServerStatusInterval();
             });
 
             Events.Emit(Event.App.domReady);

@@ -136,7 +136,7 @@ waitForCache:
 		seeGOInfo3 := services.LocalizationService().Get(locales.SeeGOInfo3, a.config.GetLanguage())
 		seeGOInfo4 := services.LocalizationService().Get(locales.SeeGOInfo4, a.config.GetLanguage())
 		a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
-		log.Info("Terms is not accepted, showing the terms window")
+		log.Debug("Terms is not accepted, showing the terms window")
 
 		a.SetView(620, 480, AppNavigate, "terms")
 		a.window.Center()
@@ -152,7 +152,7 @@ func (a *App) CreateNewWindow(options application.WebviewWindowOptions) *applica
 
 	window.OnWindowEvent(events.Common.WindowClosing, func(e *application.WindowEvent) {
 		if a.view != "main" {
-			log.Info("Application closed on not main view")
+			log.Debug("Application closed on not main view")
 			e.Cancel()
 			a.Quit()
 			return
@@ -175,9 +175,11 @@ func (a *App) ToTray() {
 
 	a.window.Hide()
 	a.appState = Tray
+	log.Debug("App minimized to tray")
+
 	if !a.trayNotified {
 		a.trayNotified = true
-		utils.Notify(services.LocalizationService().Get(locales.LauncherMinimized, a.config.GetLanguage()), a.icon)
+		utils.Notify(services.LocalizationService().Get(locales.LauncherMinimized, a.config.GetLanguage()), a.icon, locales.LauncherMinimized)
 	}
 }
 
@@ -204,12 +206,16 @@ func (a *App) RestoreFromTray() {
 	a.window.Focus()
 	a.appState = Show
 
+	log.Debug("App restored from tray")
+
 	a.EmitEvent(AppActive, nil)
 }
 
 func (a *App) Minimize() {
 	a.window.Minimise()
 	a.appState = Minimized
+
+	log.Debug("App minimized to tray")
 
 	a.EmitEvent(AppNotActive, nil)
 }
@@ -230,7 +236,7 @@ func CreateApp(assets embed.FS, icon []byte) App {
 		SingleInstance: &application.SingleInstanceOptions{
 			UniqueID: "1000",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
-				log.Info("Tried to open a new instance, but its already running. Showing the instance.")
+				log.Debug("Tried to open a new instance, but its already running. Showing the existing instance.")
 				switch app.appState {
 				case Tray:
 					app.RestoreFromTray()
@@ -320,7 +326,7 @@ func (a *App) CreateSysTray(icon []byte) {
 
 func (a *App) RegisterListeners() {
 	a.app.Event.On(DomReady, func(e *application.CustomEvent) {
-		log.Info("Dom is ready to show!")
+		log.Debug("Dom is ready to show!")
 		a.OnReady()
 	})
 
@@ -351,8 +357,12 @@ func (a *App) RegisterListeners() {
 		a.dialog.Show()
 	})
 
-	a.app.Event.On(FeedbackEvent, func(e *application.CustomEvent) {
+	a.app.Event.On(InfoFeedbackEvent, func(e *application.CustomEvent) {
 		log.Info(e.Data)
+	})
+
+	a.app.Event.On(DebugFeedbackEvent, func(e *application.CustomEvent) {
+		log.Debug(e.Data)
 	})
 
 	a.app.Event.On(AppMinimize, func(e *application.CustomEvent) {

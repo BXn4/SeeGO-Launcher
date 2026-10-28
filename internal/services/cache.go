@@ -137,7 +137,7 @@ func getNewsImage(name string) ([]byte, error) {
 		return nil, err
 	}
 
-	log.Infof("Loaded image %s", path)
+	log.Debugf("Loaded image %s", path)
 
 	return data, nil
 }
