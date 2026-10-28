@@ -22,6 +22,7 @@
     } from "./managers/server";
     import { initLocalization } from "./managers/localization";
     import { get } from "svelte/store";
+    import { initSettings } from "./managers/settings";
 
     let navigateEvent: () => void;
     let updateSettingEvent: () => void;
@@ -112,6 +113,7 @@
             appReadyEvent = Events.On(Event.App.ready, async (e) => {
                 fetchServerStatus();
                 initNews();
+                initSettings();
                 startFetchServerStatusInterval();
             });
 
