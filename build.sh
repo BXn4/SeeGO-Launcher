@@ -3,5 +3,5 @@ source .env
 
 wails3 task common:update:build-assets
 sed -i "s/^var OA string$/var TEBEXACCOUNT string = \"${OA}\"/" internal/services/api.go
-wails3 package GOOS=windows
+wails3 task windows:package
 sed -i "s/^var OA string = \"${OA}\"$/var TEBEXACCOUNT string/" internal/services/api.go
