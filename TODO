@@ -1,2 +1,0 @@
-Not done:
-Interval to fetch the server status in every 1 min, and stop it, if the current view is not home, and also if the app is minimized.

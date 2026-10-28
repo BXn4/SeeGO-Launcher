@@ -25,34 +25,18 @@
 
 
 ## Information
-<p>
 This project was created as an independent development and does not use the source code, modify, distribute, decompile, reverse enginner, or include any source from the official SeeRPG launcher.
-This software is not a modified version of the official launcher, but rather a standalone implementation designed exclusively for compatibility with SeeRPG's services.</p>
-<p>This project is unofficial. It is not affiliated with SEE-ONLINE Kft. or the operators of SeeRPG, and does not have their support, approval, or partnership.
-This project does not include, distribute, or use the source code of SeeRPG's official client, launcher, or other software.</p>
-<p>The purpose of this project is to ensure compatibility and improve the user experience for the SeeRPG community. Since the launcher was originally created for anti-cheat purposes, I decided to add several useful features to it, to make it more usefull.</p>
+This software is not a modified version of the official launcher, and the purpose of this project is to ensure compatibility and improve the user experience for the community.
 
-Key differences from Electron:
-| Aspect   |      Wails      |  Electron |
-|----------|:-------------:|------:|
-| Browser | OS-provided WebView| Bundled Chromium (~100MB) |
-| Backend | Go (compiled) | Node.js (interpreted) |
-| Communication | In-memory bridge | IPC (inter-process) |
-| Bundle Size | ~15MB | ~150MB |
-| Memory | ~10MB | ~100MB+ |
-| Startup | <0.5s | 2-3s |
+Difference from the original:
+| Aspect | SeeGO | Official Launcher |
+|---|---|---|
+| Frontend | Svelte | HTML, CSS, JavaScript |
+| Backend | Go (compiled binary) | Node.js (JavaScript runtime) |
+| Framework | Wails | Electron |
+|Browser | System Webview | Chromium |
 
-
-### Development
-**Depends on:**:
-- [Go](https://go.dev/dl/) `>= 1.26`
-- [Node.js](https://nodejs.org/) `>= 26.2`
-- [Wails](https://v3.wails.io/quick-start/installation/) `v3`
-```bash
-go install github.com/wailsapp/wails/v3/cmd/wails@latest
-```
-
-**Operating System:**
+**Webview by the OS:**
 
 | OS | WebView |
 |--|--|
@@ -60,6 +44,15 @@ go install github.com/wailsapp/wails/v3/cmd/wails@latest
 | macOS 12+ | WKWebView (Safari) |
 | Linux (GTK) | WebKitGTK |
 
+
+### Development
+**Depends on:**
+- [Go](https://go.dev/dl/) `>= 1.26`
+- [Node.js](https://nodejs.org/) `>= 26.2`
+- [Wails](https://v3.wails.io/quick-start/installation/) `v3`
+```bash
+go install github.com/wailsapp/wails/v3/cmd/wails@latest
+```
 
 ### Running locally
 **1. Clone this repo**
