@@ -3,13 +3,13 @@
 		"file_version": "1.0.0"
 	},
 	"info": {
-		"0000": {
+		"0409": {
 			"ProductVersion": "1.0.0",
 			"CompanyName": "BXn4",
-			"FileDescription": "SeeGO Launcher",
+			"FileDescription": "Open-source SeeRPG Launcher built with Wails",
 			"LegalCopyright": "(c) 2026, Fodor Bence",
 			"ProductName": "SeeGO Launcher",
-			"Comments": "Some Product Comments"
+			"Comments": "Open-source SeeRPG Launcher built with Wails"
 		}
 	}
 }

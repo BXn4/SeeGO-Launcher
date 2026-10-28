@@ -8,9 +8,9 @@ info:
   companyName: "BXn4" # The name of the company
   productName: "SeeGO Launcher" # The name of the application
   productIdentifier: "com.bxn4.seegolaunhcer" # The unique product identifier
-  description: "SeeGO Launcher" # The application description
+  description: "Open-source SeeRPG Launcher built with Wails" # The application description
   copyright: "(c) 2026, Fodor Bence" # Copyright text
-  comments: "Some Product Comments" # Comments
+  comments: "Open-source SeeRPG Launcher built with Wails" # Comments
   version: "1.0.0" # The application version
   # cfBundleIconName: "appicon" # The macOS icon name in Assets.car icon bundles (optional)
   #                               # Should match the name of your .icon file without the extension

@@ -10,7 +10,7 @@ version: "1.0.0"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "SeeGO Launcher"
+description: "Open-source SeeRPG Launcher built with Wails"
 vendor: "BXn4"
 homepage: "https://wails.io"
 license: "MIT"

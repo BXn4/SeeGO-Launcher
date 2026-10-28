@@ -5,7 +5,7 @@
 		<key>CFBundleExecutable</key>
 		<string>seego-launcher</string>
 		<key>CFBundleGetInfoString</key>
-		<string>Some Product Comments</string>
+		<string>Open-source SeeRPG Launcher built with Wails</string>
 		<key>CFBundleIconFile</key>
 		<string>icons</string>
 		<key>CFBundleIconName</key>

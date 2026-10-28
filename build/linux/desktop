@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=SeeGO Launcher
-Comment=SeeGO Launcher
+Comment=Open-source SeeRPG Launcher built with Wails
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/seego-launcher %u
 Terminal=false
