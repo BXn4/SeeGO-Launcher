@@ -43,8 +43,3 @@ export async function setAllNews(): Promise<boolean> {
 export async function getNew(id: number): Promise<NewsItem> {
   return get(news)[id];
 }
-
-export function formatToHTML(content: string): string {
-
-  return ""
-}

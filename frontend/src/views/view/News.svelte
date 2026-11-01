@@ -7,9 +7,8 @@
         news,
         readingNews,
         getNew,
-        formatToHTML,
     } from "../../managers/news";
-    import { stripMarkup } from "../../utils/string";
+    import { stripMarkup, formatNewsMarkdownToHTML } from "../../utils/string";
     import { Icons } from "../../utils/icons";
     import { Classes, Event, IDs } from "../../utils/consts";
 
@@ -114,7 +113,12 @@
                             </div>
                         </div>
 
-                        <div class={Classes.Views.News.popupContent}></div>
+                        <div
+                            class="{Classes.Views.News.popupContent} {Classes
+                                .Global.text}"
+                        >
+                            {@html formatNewsMarkdownToHTML(item.Content)}
+                        </div>
                     </div>
                 {/if}
             {/await}

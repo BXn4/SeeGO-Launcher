@@ -9,6 +9,46 @@ export function stripMarkup(raw: string): string {
     .trim();
 }
 
+export function formatNewsMarkdownToHTML(v: string): string {
+  const esc = (s: string) =>
+    s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const linkCard = (url: string) => {
+    const yt = url.match(/(?:youtu\.be\/|[?&;]v=)([\w-]{11})/);
+    const domain = url.replace(/^https?:\/\//, "").split("/")[0];
+    const thumb = yt
+      ? `<img src="https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg" alt="">`
+      : "";
+
+    return (
+      `<a class="link-card interactive" onclick="window._openURL('${url}')">` +
+      thumb +
+      `<span class="link-card-info">` +
+      `<span class="link-card-url highlighted link interactive">${url}</span>` +
+      `</span></a>`
+    );
+  };
+
+  return v
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((raw) => {
+      const m = raw.match(/^\s*(c#)?\s*(#{1,3})?\s*(c#)?/)!;
+      const size = m[2]?.length ?? 0;
+
+      let text = raw.slice(m[0].length).replace(/\[\[(?!href\]\])[^\]]*\]\]/g, "");
+      text = esc(text).replace(/\[\[href\]\](.*?)\[\[href\]\]/g, (_, url) => linkCard(url));
+
+      if (size) return `<h${size}>${text}</h${size}>`;
+      return `<p>${text}</p>`;
+    })
+    .join("");
+}
 
 export function parseTerms(raw: string): [string, string, string] {
   let title = "";

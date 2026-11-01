@@ -107,6 +107,7 @@ export const IDs = {
     },
     News: {
       ID: "news-view",
+      Content: "news-content"
     },
     Settings: {
       ID: "settings-view",

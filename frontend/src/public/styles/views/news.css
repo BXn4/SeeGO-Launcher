@@ -146,3 +146,32 @@
     line-height: 1.5;
     color: var(--foreground);
 }
+
+.link-card {
+    display: block;
+    max-width: 320px;
+    border-radius: 12px;
+    background: var(--surface1);
+    border: 2px solid var(--border);
+    text-decoration: none;
+}
+
+.link-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.link-card-info {
+    display: block;
+    padding: 8px;
+}
+
+.link-card-url {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+}
