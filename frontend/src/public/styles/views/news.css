@@ -106,7 +106,7 @@
 
 .news-popup {
     position: relative;
-    width: 720px;
+    width: 840px;
     max-height: 80vh;
     display: flex;
     flex-direction: column;
@@ -154,6 +154,7 @@
     background: var(--surface1);
     border: 2px solid var(--border);
     text-decoration: none;
+    padding: 12px;
 }
 
 .link-card img {
@@ -161,11 +162,7 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
-}
-
-.link-card-info {
-    display: block;
-    padding: 8px;
+    margin: 0px 0px 12px 0px;
 }
 
 .link-card-url {
@@ -174,4 +171,5 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 14px;
+    margin: 4px 0px 4px 0px;
 }

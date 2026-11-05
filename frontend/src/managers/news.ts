@@ -10,7 +10,10 @@ import { writable, get } from "svelte/store";
 
 export const news = writable<NewsItem[]>([]);
 export const loadingSuccess = writable<boolean | null>(null);
-export const readingNews = writable<boolean | null>(null)
+export const readingNews = writable<boolean | null>(null);
+export const selectedNewId = writable<number>(0); // 0 latest
+
+const styles = ["big", "medium", "medium"];
 
 export async function initNews() {
   loadingSuccess.set(await setAllNews())
@@ -42,4 +45,17 @@ export async function setAllNews(): Promise<boolean> {
 
 export async function getNew(id: number): Promise<NewsItem> {
   return get(news)[id];
+}
+
+export function openNewsFeed(id: number) {
+  selectedNewId.set(id);
+  readingNews.set(true);
+}
+
+export function closeNewsFeed() {
+  readingNews.set(false);
+}
+
+export function GetStyle(i: number) {
+  return styles[i % styles.length];
 }

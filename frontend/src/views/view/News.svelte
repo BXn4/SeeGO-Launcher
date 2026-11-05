@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { Events } from "@wailsio/runtime";
     import { locales, localization } from "../../managers/localization";
     import {
@@ -7,36 +6,13 @@
         news,
         readingNews,
         getNew,
+        GetStyle,
+        openNewsFeed,
+        selectedNewId,
     } from "../../managers/news";
     import { stripMarkup, formatNewsMarkdownToHTML } from "../../utils/string";
     import { Icons } from "../../utils/icons";
     import { Classes, Event, IDs } from "../../utils/consts";
-
-    let selectedNewId: number;
-
-    onMount(() => {
-        const readLatest = Events.On(Event.Main.News.readLatest, async (e) => {
-            openNewsFeed(0);
-        });
-
-        return () => {
-            readLatest();
-        };
-    });
-
-    const style = ["big", "medium", "medium"];
-    function GetStyle(i: number) {
-        return style[i % style.length];
-    }
-
-    function openNewsFeed(id: number) {
-        selectedNewId = id;
-        readingNews.set(true);
-    }
-
-    function closeNewsFeed() {
-        readingNews.set(false);
-    }
 </script>
 
 <main>
@@ -95,7 +71,7 @@
 
     {#if $readingNews == true}
         <div class={Classes.Views.News.popupOverlay}>
-            {#await getNew(selectedNewId) then item}
+            {#await getNew($selectedNewId) then item}
                 {#if item}
                     <div class={Classes.Views.News.popup}>
                         <div

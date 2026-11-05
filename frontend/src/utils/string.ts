@@ -1,3 +1,5 @@
+import { Classes } from "./consts";
+
 export function stripMarkup(raw: string): string {
   return raw
     .replace(/\[\[href\]\].*?\[\[href\]\]/gs, "")
@@ -20,16 +22,15 @@ export function formatNewsMarkdownToHTML(v: string): string {
 
   const linkCard = (url: string) => {
     const yt = url.match(/(?:youtu\.be\/|[?&;]v=)([\w-]{11})/);
-    const domain = url.replace(/^https?:\/\//, "").split("/")[0];
     const thumb = yt
       ? `<img src="https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg" alt="">`
       : "";
 
     return (
-      `<a class="link-card interactive" onclick="window._openURL('${url}')">` +
+      `<a class="${Classes.Views.News.linkCard} ${Classes.Global.interactive}" onclick="window._openURL('${url}')">` +
       thumb +
-      `<span class="link-card-info">` +
-      `<span class="link-card-url highlighted link interactive">${url}</span>` +
+      `<span class="${Classes.Views.News.linkCardContent}">` +
+      `<span class="${Classes.Views.News.linkCardURL} ${Classes.Global.interactive} ${Classes.Global.highlighted} ${Classes.Global.link}">${url}</span>` +
       `</span></a>`
     );
   };
@@ -37,14 +38,14 @@ export function formatNewsMarkdownToHTML(v: string): string {
   return v
     .replace(/\r\n/g, "\n")
     .split("\n")
-    .map((raw) => {
+    .map((raw, i) => {
       const m = raw.match(/^\s*(c#)?\s*(#{1,3})?\s*(c#)?/)!;
       const size = m[2]?.length ?? 0;
 
       let text = raw.slice(m[0].length).replace(/\[\[(?!href\]\])[^\]]*\]\]/g, "");
       text = esc(text).replace(/\[\[href\]\](.*?)\[\[href\]\]/g, (_, url) => linkCard(url));
 
-      if (size) return `<h${size}>${text}</h${size}>`;
+      if (size) return `<h${size} id="news-h-${i}">${text}</h${size}>`;
       return `<p>${text}</p>`;
     })
     .join("");

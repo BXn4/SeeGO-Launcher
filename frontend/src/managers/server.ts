@@ -1,7 +1,7 @@
 import { writable, get } from "svelte/store";
 import { GetServerPlayers } from "../../bindings/seegolauncher/internal/services/api";
 import { Events } from "@wailsio/runtime";
-import { Event } from "../utils/consts";
+import { currentMainView, Event, View } from "../utils/consts";
 
 export let serverPlayers = writable<number>(0);
 export let serverSlots = writable<number>(0);
@@ -62,7 +62,7 @@ export async function fetchServerStatus() {
 }
 
 export async function startFetchServerStatusInterval() {
-  if (!interval) {
+  if (!interval && get(currentMainView) == View.home) {
     Events.Emit(Event.Global.debugFeedback, "Server status fetch interval started")
     interval = setInterval(fetchServerStatus, 60 * 1000);
   }

@@ -184,7 +184,10 @@ export const Classes = {
       popup: "news-popup",
       popupImage: "news-popup-image",
       popupHeader: "news-popup-header",
-      popupContent: "news-popup-content"
+      popupContent: "news-popup-content",
+      linkCard: "link-card",
+      linkCardContent: "link-card-content",
+      linkCardURL: "link-card-url"
     },
     Settings: {
       category: "settings-category",
@@ -220,6 +223,8 @@ export const Classes = {
     newsAlt: "news-alt",
     old: "old",
     newsRead: "news-read",
+    highlighted: "highlighted",
+    link: "link",
   }
 }
 

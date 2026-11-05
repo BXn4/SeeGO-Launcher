@@ -4,7 +4,7 @@
     import { news, loadingSuccess } from "../../managers/news";
     import { locales, localization } from "../../managers/localization";
     import { Classes, Event, IDs, URLs, View } from "../../utils/consts";
-    import { stripMarkup } from "../../utils/string";
+    import { formatNewsMarkdownToHTML, stripMarkup } from "../../utils/string";
     import { sleep } from "../../utils/helper";
     import {
         serverPlayers,
@@ -14,6 +14,14 @@
         serverOnline,
         queueTime,
     } from "../../managers/server";
+
+    import {
+        readingNews,
+        getNew,
+        GetStyle,
+        openNewsFeed,
+        selectedNewId,
+    } from "../../managers/news";
 </script>
 
 <main>
@@ -74,17 +82,44 @@
                                 .read} {Classes.Global.interactive}"
                             id={IDs.Views.Home.read}
                             onclick={async () => {
-                                Events.Emit(
-                                    Event.Main.Navbar.switchNavTab,
-                                    View.news,
-                                );
-                                await sleep(1); // sleep needed, due to race conditions!
-                                // first need to switch to the news view, then emit the readLatest function while on the news view.
-                                // if its happens too fast, then its not going to be shown.
-                                Events.Emit(Event.Main.News.readLatest, null);
+                                openNewsFeed($selectedNewId); // default value: 0 -> latest
                             }}>{$locales[localization.newsRead]}</button
                         >
                     </div>
+                </div>
+            {/if}
+            {#if $readingNews == true}
+                <div class={Classes.Views.News.popupOverlay}>
+                    {#await getNew($selectedNewId) then item}
+                        {#if item}
+                            <div class={Classes.Views.News.popup}>
+                                <div
+                                    class={Classes.Views.News.popupImage}
+                                    style="background-image: url('{item.Image}')"
+                                >
+                                    <span class={Classes.Views.News.overlay}
+                                    ></span>
+                                    <div class={Classes.Views.News.popupHeader}>
+                                        <span class={Classes.Global.newsBadge}
+                                            >{item.Date}</span
+                                        >
+                                        <p class={Classes.Global.newsTitle}>
+                                            {item.Title}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="{Classes.Views.News
+                                        .popupContent} {Classes.Global.text}"
+                                >
+                                    {@html formatNewsMarkdownToHTML(
+                                        item.Content,
+                                    )}
+                                </div>
+                            </div>
+                        {/if}
+                    {/await}
                 </div>
             {/if}
             <div class={Classes.Views.Home.items}>
