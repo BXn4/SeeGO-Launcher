@@ -187,7 +187,8 @@ export const Classes = {
       popupContent: "news-popup-content",
       linkCard: "link-card",
       linkCardContent: "link-card-content",
-      linkCardURL: "link-card-url"
+      linkCardURL: "link-card-url",
+      closeNews: "close-news",
     },
     Settings: {
       category: "settings-category",
@@ -225,6 +226,7 @@ export const Classes = {
     newsRead: "news-read",
     highlighted: "highlighted",
     link: "link",
+    backdropOverlay: "backdrop-overlay",
   }
 }
 

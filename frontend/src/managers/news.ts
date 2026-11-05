@@ -54,6 +54,7 @@ export function openNewsFeed(id: number) {
 
 export function closeNewsFeed() {
   readingNews.set(false);
+  selectedNewId.set(0);
 }
 
 export function GetStyle(i: number) {

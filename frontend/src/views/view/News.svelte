@@ -9,6 +9,7 @@
         GetStyle,
         openNewsFeed,
         selectedNewId,
+        closeNewsFeed,
     } from "../../managers/news";
     import { stripMarkup, formatNewsMarkdownToHTML } from "../../utils/string";
     import { Icons } from "../../utils/icons";
@@ -71,9 +72,25 @@
 
     {#if $readingNews == true}
         <div class={Classes.Views.News.popupOverlay}>
+            <div
+                class={Classes.Global.backdropOverlay}
+                onclick={() => closeNewsFeed()}
+                onkeydown={() => {}}
+                role="button"
+                tabindex="0"
+                aria-label="Close"
+            ></div>
             {#await getNew($selectedNewId) then item}
                 {#if item}
                     <div class={Classes.Views.News.popup}>
+                        <button
+                            class="{Classes.Views.News.closeNews} {Classes
+                                .Global.interactive}"
+                            onclick={() => closeNewsFeed()}
+                            aria-label="Close"
+                            type="button"
+                            title={$locales[localization.windowClose]}>×</button
+                        >
                         <div
                             class={Classes.Views.News.popupImage}
                             style="background-image: url('{item.Image}')"

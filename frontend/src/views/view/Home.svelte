@@ -1,11 +1,10 @@
 <script lang="ts">
     import { Events } from "@wailsio/runtime";
     import { Icons } from "../../utils/icons";
-    import { news, loadingSuccess } from "../../managers/news";
+    import { news, loadingSuccess, closeNewsFeed } from "../../managers/news";
     import { locales, localization } from "../../managers/localization";
-    import { Classes, Event, IDs, URLs, View } from "../../utils/consts";
+    import { Classes, Event, IDs, URLs } from "../../utils/consts";
     import { formatNewsMarkdownToHTML, stripMarkup } from "../../utils/string";
-    import { sleep } from "../../utils/helper";
     import {
         serverPlayers,
         serverQueue,
@@ -18,7 +17,6 @@
     import {
         readingNews,
         getNew,
-        GetStyle,
         openNewsFeed,
         selectedNewId,
     } from "../../managers/news";
@@ -90,9 +88,27 @@
             {/if}
             {#if $readingNews == true}
                 <div class={Classes.Views.News.popupOverlay}>
+                    <div
+                        class={Classes.Global.backdropOverlay}
+                        onclick={() => closeNewsFeed()}
+                        onkeydown={() => {}}
+                        role="button"
+                        tabindex="0"
+                        aria-label="Close"
+                    ></div>
                     {#await getNew($selectedNewId) then item}
                         {#if item}
                             <div class={Classes.Views.News.popup}>
+                                <button
+                                    class="{Classes.Views.News
+                                        .closeNews} {Classes.Global
+                                        .interactive}"
+                                    onclick={() => closeNewsFeed()}
+                                    aria-label="Close"
+                                    type="button"
+                                    title={$locales[localization.windowClose]}
+                                    >×</button
+                                >
                                 <div
                                     class={Classes.Views.News.popupImage}
                                     style="background-image: url('{item.Image}')"
