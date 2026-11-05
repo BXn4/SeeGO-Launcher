@@ -34,7 +34,7 @@ func main() {
 		services.TEBEXACCOUNT = envFile["TEBEXACCOUNT"]
 	}
 
-	log.Info("SeeGO Launcher by BXn4")
+	log.Info("SeeGO Launcher by Fodor Becen (BXn4)")
 
 	app := internal.CreateApp(assets, icon)
 
