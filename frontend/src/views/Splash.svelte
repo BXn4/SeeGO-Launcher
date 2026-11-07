@@ -32,7 +32,7 @@
             id={IDs.Views.Splash.alt}
             class="{Classes.Global.comment} {Classes.Views.Splash.alt}"
         ></p>
-        <span class={Classes.Views.Splash.loader}></span>
+        <!-- <span class={Classes.Views.Splash.loader}></span> -->
     </div>
 </main>
 
