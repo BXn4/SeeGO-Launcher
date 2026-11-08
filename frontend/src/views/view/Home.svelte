@@ -314,9 +314,9 @@
                     class="{Classes.Global.text} {Classes.Global
                         .button} {Classes.Views.Home.connect} {Classes.Global
                         .interactive}"
-                    ><!-->{@html Icons.Launcher.Play}<--->{$locales[
+                    ><!--{@html Icons.Launcher.Play}{$locales[
                         localization.launcherConnect
-                    ]}</button
+                        ]}--></button
                 >
             </div>
         </aside>
