@@ -98,7 +98,8 @@ export const IDs = {
       adminsCount: "admins-count",
       queueCount: "queue-count",
       estimatedConnect: "estimated-connect",
-      connectButton: "connect-button"
+      connectButton: "connect-button",
+      itemsContainer: "items-container"
     },
     Terms: {
       ID: "terms-view",

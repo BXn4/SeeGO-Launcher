@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 )
 
 func GetRootPath() (string, error) {
@@ -13,9 +12,6 @@ func GetRootPath() (string, error) {
 		return "", err
 	}
 
-	if runtime.GOOS == "windows" {
-		return filepath.Join(path, "seego-launcher"), nil
-	}
 	return filepath.Join(path, "seego-launcher"), nil
 }
 

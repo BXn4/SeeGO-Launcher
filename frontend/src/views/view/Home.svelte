@@ -138,15 +138,6 @@
                     {/await}
                 </div>
             {/if}
-            <div class={Classes.Views.Home.items}>
-                <h3
-                    class="{Classes.Global.text} {Classes.Views.Home
-                        .itemsTitle}"
-                >
-                    SeeRPG Club {$locales[localization.clubMembership]}
-                </h3>
-                <div id={IDs.Views.Home.container}></div>
-            </div>
         </div>
         <aside class={Classes.Views.Home.sidebar}>
             <div class={Classes.Views.Home.widget}>
@@ -314,9 +305,9 @@
                     class="{Classes.Global.text} {Classes.Global
                         .button} {Classes.Views.Home.connect} {Classes.Global
                         .interactive}"
-                    ><!--{@html Icons.Launcher.Play}{$locales[
+                    ><!--{@html Icons.Launcher.Play}-->{$locales[
                         localization.launcherConnect
-                        ]}--></button
+                    ]}</button
                 >
             </div>
         </aside>
@@ -329,8 +320,8 @@
         width: 100vw;
         height: 100vh;
         display: grid;
-        grid-template-columns: var(--width, 240px) 1fr;
-        grid-template-rows: var(--height, 48px) 1fr;
+        grid-template-columns: var(--width, 240px);
+        grid-template-rows: var(--height, 48px);
         overflow: hidden;
     }
 </style>

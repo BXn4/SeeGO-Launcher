@@ -135,7 +135,7 @@ waitForCache:
 		seeGOInfo2 := services.LocalizationService().Get(locales.SeeGOInfo2, a.config.GetLanguage())
 		seeGOInfo3 := services.LocalizationService().Get(locales.SeeGOInfo3, a.config.GetLanguage())
 		seeGOInfo4 := services.LocalizationService().Get(locales.SeeGOInfo4, a.config.GetLanguage())
-		a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
+		a.app.Dialog.Info().SetTitle("SeeGO Launcher").SetMessage(fmt.Sprintf("%s\n\n%s\n%s\n%s", seeGOInfo1, seeGOInfo2, seeGOInfo3, seeGOInfo4)).Show()
 		log.Debug("Terms is not accepted, showing the terms window")
 
 		a.SetView(620, 480, AppNavigate, "terms")

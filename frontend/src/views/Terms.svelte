@@ -27,7 +27,9 @@
             <p class="{Classes.Global.comment} {Classes.Views.Terms.alt}">
                 SeeGO Launcher is an open-source project distributed under the
                 MIT License. It is provided "as is", without warranty of any
-                kind. You are free to use, modify, and distribute it.
+                kind. You are free to use, modify, and distribute it. The entire
+                source code for this software, is available at:
+                https://github.com/BXn4/seego-launcher
             </p>
             {@html $terms}
         </div>
