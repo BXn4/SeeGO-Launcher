@@ -9,7 +9,7 @@ import (
 
 type API struct{}
 
-var TEBEXACCOUNT string = ""
+// var TEBEXACCOUNT string = ""
 
 type ServerDetail struct {
 	Players int `json:"players"`

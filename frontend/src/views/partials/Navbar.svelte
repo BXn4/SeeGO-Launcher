@@ -88,12 +88,14 @@
             <button
                 class="{Classes.Partials.Navbar.button} {Classes.Global
                     .interactive}"
-                class:active={$currentNavbarActive === View.shop}
                 id={IDs.View.shop}
                 title={$locales[localization.shopTitle]}
-                onclick={() => switchNavTab(View.shop)}
+                onclick={() => window._openURL(URLs.Store)}
             >
                 {@html Icons.Navbar.Shop}
+                <span class={Classes.Global.altIcon}
+                    >{@html Icons.UI.External}</span
+                >
                 <span class={Classes.Partials.Navbar.indicator}></span>
             </button>
             <button

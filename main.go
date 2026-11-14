@@ -3,10 +3,8 @@ package main
 import (
 	"embed"
 	"seegolauncher/internal"
-	"seegolauncher/internal/services"
 
 	"github.com/charmbracelet/log"
-	"github.com/joho/godotenv"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -21,18 +19,7 @@ func init() {
 }
 
 func main() {
-	envFile, err := godotenv.Read(".env")
 	log.SetLevel(log.DebugLevel)
-
-	hasConfig := err == nil
-
-	if !hasConfig {
-		log.Warnf("Cannot find .env file!")
-	}
-
-	if services.TEBEXACCOUNT == "" {
-		services.TEBEXACCOUNT = envFile["TEBEXACCOUNT"]
-	}
 
 	log.Info("SeeGO Launcher by Fodor Bence (BXn4)")
 

@@ -8,7 +8,8 @@ export const URLs = {
   Tiktok: "https://www.tiktok.com/@seerpg",
   Youtube: "https://www.youtube.com/@seerpgofficial",
   Repo: "https://github.com/BXn4/SeeGO-Launcher",
-  Support: "https://github.com/sponsors/BXn4"
+  Support: "https://github.com/sponsors/BXn4",
+  Store: "https://store.see-rpg.com/"
 }
 
 export const Event = {

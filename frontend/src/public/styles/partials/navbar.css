@@ -78,3 +78,7 @@
 #shop {
     color: var(--cyan);
 }
+
+#shop .alt-icon {
+    color: var(--gray);
+}
