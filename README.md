@@ -75,8 +75,6 @@ wails3 dev
 ```
 
 **4. Building**
-Before you build it, please place the Tebex account in the .env TEBEXACCOUNT varible. You can get this from the website store http request.
-Starts with: "11osk"
 ```bash
 ./build.sh
 ```
