@@ -4,7 +4,7 @@ import {
   currentNavbarActive,
 } from "../utils/consts";
 
-export async function SwitchNavTab(value: string) {
+export async function switchNavTab(value: string) {
   currentNavbarActive.set(value);
   await Events.Emit(Event.Main.navigate, value);
 }

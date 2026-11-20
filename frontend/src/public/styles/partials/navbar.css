@@ -49,6 +49,7 @@
 .navbar-button:hover {
     color: var(--foreground);
     background: var(--border);
+    text-decoration: underline;
 }
 
 .navbar-button:active {

@@ -1,7 +1,6 @@
 html.disable-animations *:not(.loader):not(.loader *),
 html.disable-animations *:not(.loader):not(.loader *)::before,
 html.disable-animations *:not(.loader):not(.loader *)::after {
-
     transition: none !important;
 }
 

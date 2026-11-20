@@ -9,7 +9,7 @@
         currentNavbarActive,
     } from "../../utils/consts";
     import { locales, localization } from "../../managers/localization";
-    import { SwitchNavTab } from "../../controllers/navbar";
+    import { switchNavTab } from "../../controllers/navbar";
 </script>
 
 <main>
@@ -21,7 +21,7 @@
                 class:active={$currentNavbarActive === View.home}
                 id={IDs.View.home}
                 title={$locales[localization.homeTitle]}
-                onclick={() => SwitchNavTab(View.home)}
+                onclick={() => switchNavTab(View.home)}
             >
                 {@html Icons.Navbar.Home}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -32,7 +32,7 @@
                 class:active={$currentNavbarActive === View.news}
                 id={IDs.View.news}
                 title={$locales[localization.newsTitle]}
-                onclick={() => SwitchNavTab(View.news)}
+                onclick={() => switchNavTab(View.news)}
             >
                 {@html Icons.Navbar.News}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -86,7 +86,7 @@
                 class:active={$currentNavbarActive === View.gallery}
                 id={IDs.View.gallery}
                 title={$locales[localization.galleryTitle]}
-                onclick={() => SwitchNavTab(View.gallery)}
+                onclick={() => switchNavTab(View.gallery)}
             >
                 {@html Icons.Navbar.Gallery}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -97,7 +97,7 @@
                 class:active={$currentNavbarActive === View.help}
                 id={IDs.View.help}
                 title={$locales[localization.helpTitle]}
-                onclick={() => SwitchNavTab(View.help)}
+                onclick={() => switchNavTab(View.help)}
             >
                 {@html Icons.Navbar.Help}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -108,7 +108,7 @@
                 class:active={$currentNavbarActive === View.settings}
                 id={IDs.View.settings}
                 title={$locales[localization.settingsTitle]}
-                onclick={() => SwitchNavTab(View.settings)}
+                onclick={() => switchNavTab(View.settings)}
             >
                 {@html Icons.Navbar.Settings}
                 <span class={Classes.Partials.Navbar.indicator}></span>
