@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { Events } from "@wailsio/runtime";
     import { Icons } from "../../utils/icons";
     import {
         Event,
@@ -11,23 +9,7 @@
         currentNavbarActive,
     } from "../../utils/consts";
     import { locales, localization } from "../../managers/localization";
-    onMount(() => {
-        const switchNavTabEvent = Events.On(
-            Event.Main.Navbar.switchNavTab,
-            async (e) => {
-                switchNavTab(e.data);
-            },
-        );
-
-        return () => {
-            switchNavTabEvent();
-        };
-    });
-
-    async function switchNavTab(value: string) {
-        currentNavbarActive.set(value);
-        await Events.Emit(Event.Main.navigate, value);
-    }
+    import { SwitchNavTab } from "../../controllers/navbar";
 </script>
 
 <main>
@@ -39,7 +21,7 @@
                 class:active={$currentNavbarActive === View.home}
                 id={IDs.View.home}
                 title={$locales[localization.homeTitle]}
-                onclick={() => switchNavTab(View.home)}
+                onclick={() => SwitchNavTab(View.home)}
             >
                 {@html Icons.Navbar.Home}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -50,7 +32,7 @@
                 class:active={$currentNavbarActive === View.news}
                 id={IDs.View.news}
                 title={$locales[localization.newsTitle]}
-                onclick={() => switchNavTab(View.news)}
+                onclick={() => SwitchNavTab(View.news)}
             >
                 {@html Icons.Navbar.News}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -104,7 +86,7 @@
                 class:active={$currentNavbarActive === View.gallery}
                 id={IDs.View.gallery}
                 title={$locales[localization.galleryTitle]}
-                onclick={() => switchNavTab(View.gallery)}
+                onclick={() => SwitchNavTab(View.gallery)}
             >
                 {@html Icons.Navbar.Gallery}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -115,7 +97,7 @@
                 class:active={$currentNavbarActive === View.help}
                 id={IDs.View.help}
                 title={$locales[localization.helpTitle]}
-                onclick={() => switchNavTab(View.help)}
+                onclick={() => SwitchNavTab(View.help)}
             >
                 {@html Icons.Navbar.Help}
                 <span class={Classes.Partials.Navbar.indicator}></span>
@@ -126,7 +108,7 @@
                 class:active={$currentNavbarActive === View.settings}
                 id={IDs.View.settings}
                 title={$locales[localization.settingsTitle]}
-                onclick={() => switchNavTab(View.settings)}
+                onclick={() => SwitchNavTab(View.settings)}
             >
                 {@html Icons.Navbar.Settings}
                 <span class={Classes.Partials.Navbar.indicator}></span>
