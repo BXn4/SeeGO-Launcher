@@ -17,6 +17,7 @@ const (
 	// dialog
 	TermsDeclinedTitle   = "terms-declined-dialog-title"
 	TermsDeclinedContent = "terms-declined-dialog-content"
+	AppError             = "app-error"
 
 	// seego info
 	SeeGOInfo1 = "seego-info1"

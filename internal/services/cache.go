@@ -43,6 +43,8 @@ func writeCache(dir, filename, v string) error {
 		log.Errorf("Failed to write %s: %v", file, err)
 		return err
 	}
+
+	log.Debug("Cache was written!")
 	return nil
 }
 
@@ -55,6 +57,8 @@ func (s *CacheService) GetCachedTerms() (string, error) {
 		log.Error(err)
 		return err.Error(), err
 	}
+
+	log.Debug("Returned cached terms")
 
 	return string(termsData), nil
 }
@@ -241,6 +245,7 @@ func CheckHashes() error {
 	if err != nil {
 		return err
 	}
+
 	locale := localization.Get(locales.SplashLoadingTerms, ConfigService().GetLanguage())
 	bar := utils.CreateProgressBar(1, locale)
 	bar.Set(0)
@@ -250,6 +255,7 @@ func CheckHashes() error {
 		bar.Finish()
 		return err
 	}
+
 	if !utils.CompareHashes(termsRemote, string(termsLocal)) {
 		bar.Finish()
 		return fmt.Errorf("The hashes different!")
@@ -307,6 +313,15 @@ func LoadCache() error {
 		return err
 	}
 
+	seeFilesListRemote, err := net.Request(endpoints.FilesList)
+	if err != nil {
+		return err
+	}
+
+	if !(net.IsJSONResponseOK(seeFilesListRemote)) {
+		return fmt.Errorf("SeeFiles response is not OK!")
+	}
+
 	if err := CheckHashes(); err != nil {
 		log.Info("Hash mismatch! Refreshing cache...")
 
@@ -315,14 +330,14 @@ func LoadCache() error {
 			return err
 		}
 
-		log.Debug("Terms done!")
+		log.Info("Terms done!")
 
 		// only need to refresh, if the cached latest new different from the remote
 		if err := refreshNews(); err != nil {
 			log.Errorf("Failed to refresh news: %v", err)
 			return err
 		}
-		log.Debug("News done!")
+		log.Info("News done!")
 	}
 
 	return nil
@@ -407,9 +422,10 @@ func refreshNews() error {
 		bar.Set(page)
 		utils.CurrentLoadingProgress = bar.GetRender()
 		if !continueFetch {
+			log.Debug("All news was downloaded!")
 			break
 		}
-		// log.Debugf("Page: %d Count: %d", page, count)
+		log.Debugf("Page: %d Count: %d", page, count)
 		time.Sleep(250 * time.Millisecond)
 	}
 
@@ -471,16 +487,18 @@ func downloadNewsImages(names []string) error {
 			image, err := net.Request(endpoints.NewsImage + imgName)
 			if err != nil {
 				bar.Finish()
-				errChan <- fmt.Errorf("failed to download %s: %w", imgName, err)
+				errChan <- fmt.Errorf("Failed to download %s: %w", imgName, err)
 				return
 			}
 
 			if err := os.WriteFile(imagesPath, []byte(image), 0644); err != nil {
 				bar.Finish()
-				errChan <- fmt.Errorf("failed to save %s: %w", imgName, err)
+				errChan <- fmt.Errorf("Failed to save %s: %w", imgName, err)
 				return
 			}
 		}(name)
+
+		log.Debugf("Image was downloaed: %s", name)
 
 		time.Sleep(250 * time.Millisecond)
 	}

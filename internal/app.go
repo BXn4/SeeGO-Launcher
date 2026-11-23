@@ -33,6 +33,10 @@ type App struct {
 	dialog            *application.MessageDialog
 	trayNotified      bool
 	listenRefreshNews chan struct{}
+	name              string
+	version           string
+	logName           string
+	saveLog           func()
 }
 
 func (a *App) Run() error {
@@ -65,6 +69,27 @@ func (a *App) CheckForLatestVersion() error {
 	return nil
 } */
 
+func (a *App) Error(key any, message string) {
+	a.saveLog()
+	textToShow := message
+	if key != nil {
+		textToShow = services.LocalizationService().Get(fmt.Sprint(key), a.config.GetLanguage())
+	}
+
+	dialog := a.app.Dialog.Error().
+		SetTitle(a.name).
+		SetMessage(fmt.Sprintf(textToShow, a.logName))
+
+	button := dialog.AddButton("OK")
+	button.OnClick(func() {
+		a.Quit()
+	})
+
+	dialog.SetDefaultButton(button)
+	a.dialog = dialog
+	dialog.Show()
+}
+
 func (a *App) Quit() {
 	log.Info("App quit called, quiting")
 	close(a.listenRefreshNews)
@@ -77,7 +102,12 @@ func (a *App) OnReady() {
 	done := make(chan error, 1)
 
 	go func() {
-		done <- services.LoadCache()
+		err := services.LoadCache()
+		if err != nil {
+			log.Errorf("Failed to load cache: %s", err)
+			a.Error(locales.AppError, "")
+		}
+		done <- err
 	}()
 
 	ticker := time.NewTicker(100 * time.Millisecond)
@@ -91,7 +121,6 @@ waitForCache:
 		select {
 		case err := <-done:
 			if err != nil {
-				a.Quit()
 				return
 			}
 
@@ -226,8 +255,8 @@ func (a *App) SetView(w, h int, n, v string) {
 	a.view = v
 }
 
-func CreateApp(assets embed.FS, icon []byte) App {
-	app := App{appState: Show, dialog: nil}
+func CreateApp(assets embed.FS, icon []byte, logName string, saveLog func()) App {
+	app := App{appState: Show, dialog: nil, name: "SeeGO Launcher", version: "1.0.0", logName: logName, saveLog: saveLog}
 	app.config = services.ConfigService()
 
 	app.app = application.New(application.Options{
@@ -291,7 +320,7 @@ func CreateApp(assets embed.FS, icon []byte) App {
 
 func (a *App) CreateSysTray(icon []byte) {
 	systray := a.app.SystemTray.New()
-	systray.SetLabel("SeeGO Launcher")
+	systray.SetLabel(a.name)
 	systray.SetIcon(icon)
 	systray.OnDoubleClick(func() {
 		switch a.appState {

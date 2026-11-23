@@ -74,5 +74,6 @@
   "facebook-social-title": "SeeRPG a Facebookon",
   "tiktok-social-title": "SeeRPG a TikTokon",
   "youtube-social-title": "SeeRPG a YouTube-on",
-  "sponsor": "Támogatás ❤️"
+  "sponsor": "Támogatás ❤️",
+  "app-error": "Az alkalmazás indítása közben hiba történt. A részletekért nézd meg a(z) %s fájlt."
 }

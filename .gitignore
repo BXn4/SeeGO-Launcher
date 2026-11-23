@@ -8,3 +8,4 @@ see
 .env
 frontend/package-lock.json
 build/ios
+*.log

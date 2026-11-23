@@ -181,6 +181,8 @@ func LoadConfig() (*ConfigData, error) {
 		}
 	}
 
+	log.Debugf("Using config: %+v", config)
+
 	return &config, nil
 }
 
@@ -208,8 +210,7 @@ func saveConfig(config *ConfigData) error {
 	if err := os.WriteFile(path, data, 0644); err != nil {
 		return fmt.Errorf("Failed to write config file: %w", err)
 	}
-	log.Info("Config saved", "language", config.Language)
-	log.Info("Config saved", "terms", config.TermsAccepted)
-	log.Info("Config saved", "theme", config.Theme)
+
+	log.Debugf("Saved config: %+v", config)
 	return nil
 }
