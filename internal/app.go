@@ -263,7 +263,7 @@ func CreateApp(assets embed.FS, icon []byte, logName string, saveLog func()) App
 		Name:        "seego-launcher",
 		Description: "Opensource alternative launcher for SeeRPG server",
 		SingleInstance: &application.SingleInstanceOptions{
-			UniqueID: "1000",
+			UniqueID: "com.bxn4.seegolauncher",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
 				log.Debug("Tried to open a new instance, but its already running. Showing the existing instance.")
 				switch app.appState {
