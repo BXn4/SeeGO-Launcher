@@ -18,7 +18,7 @@ var icon []byte
 
 func main() {
 	log.SetOutput(io.MultiWriter(os.Stdout, &utils.LogBuffer))
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.ErrorLevel)
 	log.SetReportTimestamp(true)
 	log.SetReportCaller(true)
 

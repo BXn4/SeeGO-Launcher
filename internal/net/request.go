@@ -13,16 +13,26 @@ func Request(url string) (string, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		log.Error(err)
-		return err.Error(), err
+		return "", err
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("HTTP status is: %s", response.Status)
 	}
 
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		log.Error(err)
-		return err.Error(), err
+		return "", err
 	}
+
+	if len(body) == 0 {
+		return "", fmt.Errorf("The body is empty!")
+	}
+
 	return string(body), nil
 }
 
