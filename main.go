@@ -1,12 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"embed"
 	"io"
 	"os"
 	"seegolauncher/internal"
-	"time"
+	"seegolauncher/internal/utils"
 
 	"github.com/charmbracelet/log"
 )
@@ -18,27 +17,18 @@ var assets embed.FS
 var icon []byte
 
 func main() {
-	var logBuffer bytes.Buffer
-	currentTime := time.Now().Format("2006-01-02_15-04-05")
-	logFile := "seego-launcher-" + currentTime + ".log"
-
-	log.SetOutput(io.MultiWriter(os.Stdout, &logBuffer))
+	log.SetOutput(io.MultiWriter(os.Stdout, &utils.LogBuffer))
 	log.SetLevel(log.DebugLevel)
 	log.SetReportTimestamp(true)
 	log.SetReportCaller(true)
 
-	saveLog := func() {
-		log.Infof("Created a new log file: %s", logFile)
-		_ = os.WriteFile(logFile, logBuffer.Bytes(), 0o644)
-	}
-
 	log.Info("SeeGO Launcher by Fodor Bence (BXn4)")
 
-	app := internal.CreateApp(assets, icon, logFile, saveLog)
+	app := internal.CreateApp(assets, icon)
 
 	if err := app.Run(); err != nil {
 		log.Error(err)
-		saveLog()
+		utils.SaveLog()
 		os.Exit(1)
 	}
 }

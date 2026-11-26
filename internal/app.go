@@ -35,8 +35,6 @@ type App struct {
 	listenRefreshNews chan struct{}
 	name              string
 	version           string
-	logName           string
-	saveLog           func()
 }
 
 func (a *App) Run() error {
@@ -70,7 +68,7 @@ func (a *App) CheckForLatestVersion() error {
 } */
 
 func (a *App) Error(key any, message string) {
-	a.saveLog()
+	utils.SaveLog()
 	textToShow := message
 	if key != nil {
 		textToShow = services.LocalizationService().Get(fmt.Sprint(key), a.config.GetLanguage())
@@ -78,7 +76,7 @@ func (a *App) Error(key any, message string) {
 
 	dialog := a.app.Dialog.Error().
 		SetTitle(a.name).
-		SetMessage(fmt.Sprintf(textToShow, a.logName))
+		SetMessage(fmt.Sprintf(textToShow, utils.LogFileName))
 
 	button := dialog.AddButton("OK")
 	button.OnClick(func() {
@@ -255,8 +253,8 @@ func (a *App) SetView(w, h int, n, v string) {
 	a.view = v
 }
 
-func CreateApp(assets embed.FS, icon []byte, logName string, saveLog func()) App {
-	app := App{appState: Show, dialog: nil, name: "SeeGO Launcher", version: "1.0.0", logName: logName, saveLog: saveLog}
+func CreateApp(assets embed.FS, icon []byte) App {
+	app := App{appState: Show, dialog: nil, name: "SeeGO Launcher", version: "1.0.0"}
 	app.config = services.ConfigService()
 
 	app.app = application.New(application.Options{
