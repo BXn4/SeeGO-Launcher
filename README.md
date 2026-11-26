@@ -2,7 +2,7 @@
   <img src="https://i.imgur.com/FPArktl.png" alt="logo" width="120" height="120" />
   <img src="https://i.imgur.com/xqcd4sK.png" alt="logo" width="120" height="120" />
   <h1>SeeGO Launcher</h1>
-  <p>An alternative open-source launcher for the SeeRPG server that uses WebView instead of Electron.</p>
+  <p>An alternative open-source launcher for the SeeRPG server that uses Webview instead of bundled Chromium (Electron).</p>
     <a href="https://go.dev">
       <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=Go&logoColor=white" alt="Golang" /></a>
     <a href="https://v3.wails.io/">
@@ -29,36 +29,35 @@ This project was created as an independent development and does not use the sour
 This software is not a modified version of the official launcher, and the purpose of this project is to ensure compatibility and improve the user experience for the community.
 
 Difference from the original:
-| Aspect | SeeGO | Official Launcher |
-|---|---|---|
-| Frontend | Svelte | HTML, CSS, JavaScript |
-| Backend | Go (compiled binary) | Node.js (JavaScript runtime) |
-| Framework | Wails | Electron |
-|Browser | System Webview | Chromium |
+| Aspect    | SeeGO              | Official Launcher             |
+|-----------|--------------------|-------------------------------|
+| Frontend  | Svelte, TypeScript | Vanilla HTML, CSS, JavaScript |
+| Backend   | Go                 | Node.js                       |
+| Framework | Wails              | Electron                      |
+| Browser   | System Webview     | Chromium                      |
 
 **Webview by the OS:**
 
-| OS | WebView |
-|--|--|
-| Windows 10/11 | WebView2 (Edge) |
-| macOS 12+ | WKWebView (Safari) |
-| Linux (GTK) | WebKitGTK |
+| OS            | WebView            |
+|---------------|--------------------|
+| Windows 10/11 | WebView2 (Edge)    |
+| macOS 12+     | WKWebView (Safari) |
+| Linux (GTK)   | WebKitGTK          |
 
 
 ### Development
 **Depends on:**
 - [Go](https://go.dev/dl/) `>= 1.26`
-- [Node.js](https://nodejs.org/) `>= 26.2`
-- [Wails](https://v3.wails.io/quick-start/installation/) `v3`
+- [Wails](https://v3.wails.io/quick-start/installation/) `v3.0.0`
 ```bash
-go install github.com/wailsapp/wails/v3/cmd/wails@latest
+go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0
 ```
 
 ### Running locally
 **1. Clone this repo**
 
 ```bash
-git clone https://github.com/bxn4/seego-launcher.git
+git clone https://github.com/BXN4/SeeGO-Launcher.git
 cd seego-launcher
 ```
 
